@@ -30,6 +30,9 @@ import {
   Menu,
   FolderPlus,
   ListCheck,
+  Layers3,
+  TestTube,
+  ChartLine
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -44,10 +47,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { title: 'Projects', icon: FolderPlus, path: '/projects' }, // New project menu item
-    { title: 'Tasks', icon: ListCheck, path: '/tasks' }, // New task menu item
+    { title: 'Projects', icon: FolderPlus, path: '/projects' },
+    { title: 'Tasks', icon: ListCheck, path: '/tasks' },
     { title: 'Requirements', icon: FileText, path: '/requirements' },
+    { title: 'Design Management', icon: Layers3, path: '/design-management' }, // New item
     { title: 'Test Cases', icon: CheckSquare, path: '/test-cases' },
+    { title: 'Automation Testing', icon: TestTube, path: '/automation-testing' }, // New item
+    { title: 'Performance Testing', icon: ChartLine, path: '/performance-testing' }, // New item
     { title: 'Chat', icon: MessageSquare, path: '/chat' },
     { title: 'Defects', icon: Bug, path: '/defects' },
     { title: 'Reports', icon: BarChart, path: '/reports' },

@@ -9,7 +9,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { DashboardProvider } from "./contexts/DashboardContext";
 import { RequirementsProvider } from "./contexts/RequirementsContext";
 import { ChatProvider } from "./contexts/ChatContext";
-import { ProjectProvider } from "./contexts/ProjectContext"; // Add ProjectContext
+import { ProjectProvider } from "./contexts/ProjectContext";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -21,8 +21,11 @@ import Defects from "./pages/Defects";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import Projects from "./pages/Projects"; // Add Projects page
-import Tasks from "./pages/Tasks"; // Add Tasks page
+import Projects from "./pages/Projects";
+import Tasks from "./pages/Tasks";
+import DesignManagement from "./pages/DesignManagement"; // Add new page
+import AutomationTesting from "./pages/AutomationTesting"; // Add new page
+import PerformanceTesting from "./pages/PerformanceTesting"; // Add new page
 
 const queryClient = new QueryClient();
 
@@ -100,7 +103,6 @@ const App = () => (
                       </ProtectedRoute>
                     } />
                     
-                    {/* New Project and Task Routes */}
                     <Route path="/projects" element={
                       <ProtectedRoute>
                         <Projects />
@@ -110,6 +112,25 @@ const App = () => (
                     <Route path="/tasks" element={
                       <ProtectedRoute>
                         <Tasks />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* New Routes */}
+                    <Route path="/design-management" element={
+                      <ProtectedRoute>
+                        <DesignManagement />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/automation-testing" element={
+                      <ProtectedRoute>
+                        <AutomationTesting />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/performance-testing" element={
+                      <ProtectedRoute>
+                        <PerformanceTesting />
                       </ProtectedRoute>
                     } />
                     
