@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { 
   MessageSquare, 
-  Telegram, 
+  SendHorizontal,
   Mail, 
   Send,
   Settings,
@@ -209,7 +208,7 @@ const NotificationSettings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="bg-sky-100 p-2 rounded-md">
-                  <Telegram className="h-6 w-6 text-sky-600" />
+                  <SendHorizontal className="h-6 w-6 text-sky-600" />
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Telegram Notifications</h3>
