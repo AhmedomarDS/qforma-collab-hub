@@ -28,6 +28,8 @@ import {
   Settings, 
   LogOut,
   Menu,
+  FolderPlus,
+  ListCheck,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -42,6 +44,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { title: 'Projects', icon: FolderPlus, path: '/projects' }, // New project menu item
+    { title: 'Tasks', icon: ListCheck, path: '/tasks' }, // New task menu item
     { title: 'Requirements', icon: FileText, path: '/requirements' },
     { title: 'Test Cases', icon: CheckSquare, path: '/test-cases' },
     { title: 'Chat', icon: MessageSquare, path: '/chat' },

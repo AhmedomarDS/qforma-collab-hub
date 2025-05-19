@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { DashboardProvider } from "./contexts/DashboardContext";
 import { RequirementsProvider } from "./contexts/RequirementsContext";
 import { ChatProvider } from "./contexts/ChatContext";
+import { ProjectProvider } from "./contexts/ProjectContext"; // Add ProjectContext
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -20,6 +21,8 @@ import Defects from "./pages/Defects";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Projects from "./pages/Projects"; // Add Projects page
+import Tasks from "./pages/Tasks"; // Add Tasks page
 
 const queryClient = new QueryClient();
 
@@ -43,64 +46,79 @@ const App = () => (
     <AuthProvider>
       <DashboardProvider>
         <RequirementsProvider>
-          <ChatProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/landing" element={<Landing />} />
-                  <Route path="/login" element={<Login />} />
-                  
-                  <Route path="/" element={<Navigate to="/landing" replace />} />
-                  
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/requirements" element={
-                    <ProtectedRoute>
-                      <Requirements />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/test-cases" element={
-                    <ProtectedRoute>
-                      <TestCases />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/chat" element={
-                    <ProtectedRoute>
-                      <Chat />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/defects" element={
-                    <ProtectedRoute>
-                      <Defects />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/reports" element={
-                    <ProtectedRoute>
-                      <Reports />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/settings" element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ChatProvider>
+          <ProjectProvider>
+            <ChatProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/landing" element={<Landing />} />
+                    <Route path="/login" element={<Login />} />
+                    
+                    <Route path="/" element={<Navigate to="/landing" replace />} />
+                    
+                    <Route path="/dashboard" element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/requirements" element={
+                      <ProtectedRoute>
+                        <Requirements />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/test-cases" element={
+                      <ProtectedRoute>
+                        <TestCases />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/chat" element={
+                      <ProtectedRoute>
+                        <Chat />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/defects" element={
+                      <ProtectedRoute>
+                        <Defects />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/reports" element={
+                      <ProtectedRoute>
+                        <Reports />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/settings" element={
+                      <ProtectedRoute>
+                        <Settings />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* New Project and Task Routes */}
+                    <Route path="/projects" element={
+                      <ProtectedRoute>
+                        <Projects />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/tasks" element={
+                      <ProtectedRoute>
+                        <Tasks />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </TooltipProvider>
+            </ChatProvider>
+          </ProjectProvider>
         </RequirementsProvider>
       </DashboardProvider>
     </AuthProvider>
