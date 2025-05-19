@@ -10,6 +10,7 @@ import { DashboardProvider } from "./contexts/DashboardContext";
 import { RequirementsProvider } from "./contexts/RequirementsContext";
 import { ChatProvider } from "./contexts/ChatContext";
 
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Requirements from "./pages/Requirements";
@@ -48,9 +49,10 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
                 <Routes>
+                  <Route path="/landing" element={<Landing />} />
                   <Route path="/login" element={<Login />} />
                   
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/" element={<Navigate to="/landing" replace />} />
                   
                   <Route path="/dashboard" element={
                     <ProtectedRoute>
