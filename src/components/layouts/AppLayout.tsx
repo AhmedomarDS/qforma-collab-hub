@@ -50,10 +50,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: 'Projects', icon: FolderPlus, path: '/projects' },
     { title: 'Tasks', icon: ListCheck, path: '/tasks' },
     { title: 'Requirements', icon: FileText, path: '/requirements' },
-    { title: 'Design Management', icon: Layers3, path: '/design-management' }, // New item
+    { title: 'Design Management', icon: Layers3, path: '/design-management' },
     { title: 'Test Cases', icon: CheckSquare, path: '/test-cases' },
-    { title: 'Automation Testing', icon: TestTube, path: '/automation-testing' }, // New item
-    { title: 'Performance Testing', icon: ChartLine, path: '/performance-testing' }, // New item
+    { title: 'Automation Testing', icon: TestTube, path: '/automation-testing' },
+    { title: 'Performance Testing', icon: ChartLine, path: '/performance-testing' },
     { title: 'Chat', icon: MessageSquare, path: '/chat' },
     { title: 'Defects', icon: Bug, path: '/defects' },
     { title: 'Reports', icon: BarChart, path: '/reports' },
@@ -71,8 +71,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         <Sidebar className="border-r">
           <SidebarHeader className="p-4">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="bg-qforma-teal text-white rounded-lg h-8 w-8 flex items-center justify-center font-bold text-xl">Q</div>
-              <span className="text-xl font-bold text-sidebar-foreground">QForma</span>
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-xl">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+                  <circle cx="12" cy="12" r="3" fill="white" opacity="0.8"/>
+                </svg>
+              </div>
+              <div>
+                <span className="text-lg font-bold text-sidebar-foreground">AI Complete SWDC</span>
+                <p className="text-xs text-sidebar-foreground/70">Management Platform</p>
+              </div>
             </Link>
           </SidebarHeader>
           

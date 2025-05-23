@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,16 +37,16 @@ const Requirements = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState({
-    status: [],
-    priority: [],
+    status: [] as string[],
+    priority: [] as string[],
   });
   
   const [newRequirement, setNewRequirement] = useState({
     title: '',
     description: '',
-    status: 'draft',
-    priority: 'medium',
-    tags: [],
+    status: 'draft' as Requirement['status'],
+    priority: 'medium' as Requirement['priority'],
+    tags: [] as string[],
   });
 
   const handleCreateRequirement = async () => {
