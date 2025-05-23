@@ -26,7 +26,8 @@
     "logout": "Logout",
     "login": "Login",
     "getStarted": "Get Started",
-    "noRequired": "No credit card required"
+    "noRequired": "No credit card required",
+    "error": "Error"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -97,7 +98,10 @@
     "hero": {
       "title": "AI Complete Software Development Life Cycle Management",
       "subtitle": "The Best Choice Platform for Software Development Teams",
-      "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Automation, Performance and Compatibility Testing are not forgotten either."
+      "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Automation, Performance and Compatibility Testing are not forgotten either.",
+      "imageAlt": "QForma Dashboard - Software Development Management Platform",
+      "imageTitle": "Complete SDLC Management",
+      "imageDescription": "Streamline your development process"
     },
     "domain": {
       "title": "Create your QForma domain",
@@ -105,20 +109,152 @@
       "subdomainPlaceholder": "subdomain",
       "emailPlaceholder": "Your email address",
       "buttonText": "Start for Free",
-      "noCreditCard": "No credit card required for free plan"
+      "noCreditCard": "No credit card required for free plan",
+      "missingFields": "Please fill in all fields to continue",
+      "registrationStarted": "Registration Started",
+      "settingUp": "We're setting up your {{plan}} account at {{subdomain}}.qforma.app"
     },
     "pricing": {
       "title": "Pricing Plans",
-      "description": "Choose the right plan for your team's QA needs. All plans include our core QA management features."
+      "description": "Choose the right plan for your team's QA needs. All plans include our core QA management features.",
+      "popular": "Popular",
+      "customSolution": "Need a custom solution?",
+      "contactSales": "Contact our sales team",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "description": "Basic features, 1 user",
+          "period": "month",
+          "buttonText": "Get Started",
+          "features": {
+            "0": "1 user account",
+            "1": "Basic QA tracking", 
+            "2": "Limited requirements",
+            "3": "Manual test cases"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "All QA modules, 10 projects",
+          "period": "user/month",
+          "buttonText": "Subscribe Now",
+          "features": {
+            "0": "Up to 10 users",
+            "1": "Unlimited projects",
+            "2": "Full test management",
+            "3": "Defect tracking",
+            "4": "Basic reporting"
+          }
+        },
+        "premium": {
+          "name": "Premium", 
+          "description": "AI + Traceability Matrix",
+          "period": "user/month",
+          "buttonText": "Go Premium",
+          "features": {
+            "0": "Unlimited users",
+            "1": "AI test generation",
+            "2": "Traceability matrix", 
+            "3": "Advanced analytics",
+            "4": "Priority support"
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "On-prem, SSO, integrations", 
+          "period": "$25K+/year",
+          "buttonText": "Contact Sales",
+          "features": {
+            "0": "On-premises deployment",
+            "1": "Single sign-on",
+            "2": "Custom integrations",
+            "3": "Dedicated support", 
+            "4": "SLA guarantees"
+          }
+        }
+      }
     },
     "features": {
-      "title": "All-in-One QA Platform"
+      "title": "All-in-One QA Platform",
+      "requirements": {
+        "title": "Requirement Management",
+        "description": "Capture, organize, and track requirements with full traceability to test cases."
+      },
+      "testCases": {
+        "title": "Test Case Management", 
+        "description": "Create, execute, and track test cases with detailed reporting and history."
+      },
+      "defects": {
+        "title": "Defect Tracking",
+        "description": "Report, assign, and resolve defects with comprehensive lifecycle management."
+      },
+      "ai": {
+        "title": "AI-Powered Assistance",
+        "description": "Generate test cases and requirements automatically with our advanced AI tools."
+      },
+      "performance": {
+        "title": "Performance Testing",
+        "description": "Record and execute performance test scenarios with detailed analytics."
+      },
+      "design": {
+        "title": "Design Management", 
+        "description": "Create and manage high-level and low-level design documents with approval workflows."
+      },
+      "browser": {
+        "title": "Browser Compatibility Testing",
+        "description": "Test your applications across different browsers and versions to ensure consistent user experience."
+      },
+      "mobile": {
+        "title": "Mobile Compatibility Testing",
+        "description": "Ensure your mobile applications work flawlessly across different devices and operating systems."
+      },
+      "integration": {
+        "title": "AI Platform Integration",
+        "description": "Seamlessly integrate with AI platforms for automated test generation and intelligent analysis."
+      }
     },
     "cta": {
       "title": "Ready to transform your QA process?",
       "description": "Join thousands of QA teams using QForma to deliver better software, faster.",
       "signIn": "Sign In",
       "requestDemo": "Request Demo"
+    },
+    "mobileApps": {
+      "title": "Mobile Apps",
+      "ios": "iOS App",
+      "android": "Android App"
+    },
+    "footer": {
+      "description": "Enterprise-grade QA management platform for modern testing teams",
+      "copyright": "© {{year}} QForma Technologies, Inc. All rights reserved.",
+      "product": {
+        "title": "Product",
+        "features": "Features",
+        "pricing": "Pricing", 
+        "integrations": "Integrations",
+        "changelog": "Changelog"
+      },
+      "resources": {
+        "title": "Resources",
+        "documentation": "Documentation",
+        "blog": "Blog",
+        "community": "Community",
+        "support": "Support"
+      },
+      "company": {
+        "title": "Company",
+        "about": "About",
+        "careers": "Careers",
+        "contact": "Contact",
+        "partners": "Partners"
+      },
+      "legal": {
+        "title": "Legal",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "security": "Security", 
+        "cookies": "Cookies"
+      }
     }
   }
 }

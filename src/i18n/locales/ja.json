@@ -26,7 +26,8 @@
     "logout": "ログアウト",
     "login": "ログイン",
     "getStarted": "開始する",
-    "noRequired": "クレジットカード不要"
+    "noRequired": "クレジットカード不要",
+    "error": "エラー"
   },
   "navigation": {
     "dashboard": "ダッシュボード",
@@ -56,22 +57,51 @@
     "title": "テストケース",
     "description": "プロジェクトのテストケースを管理・追跡",
     "createNew": "新しいテストケースを作成",
-    "uploadCSV": "CSVアップロード"
+    "uploadCSV": "CSVアップロード",
+    "noTestCases": "テストケースが見つかりません",
+    "noTestCasesDescription": "最初のテストケースを作成するか、既存のテストケースを含むCSVファイルをアップロードして開始してください。",
+    "testCaseTitle": "テストケースタイトル",
+    "priority": "優先度",
+    "status": "ステータス",
+    "assignee": "担当者",
+    "category": "カテゴリ",
+    "tags": "タグ",
+    "steps": "テスト手順",
+    "expectedResult": "期待結果",
+    "csvUploadTitle": "CSVからテストケースをアップロード",
+    "csvUploadDescription": "テストケースを含むCSVファイルをアップロードして一括インポートします。",
+    "selectFile": "CSVファイルを選択",
+    "csvFormatNote": "CSVには以下の列が必要です：タイトル、説明、優先度、ステータス、手順、期待結果",
+    "uploadSuccess": "テストケースが正常にアップロードされました！",
+    "uploadError": "CSVファイルのアップロードエラー。フォーマットを確認して再試行してください。"
   },
   "testPlans": {
     "title": "テスト計画",
     "description": "テスト実行計画の作成と管理",
-    "createNew": "テスト計画を作成"
+    "createNew": "テスト計画を作成",
+    "dragAndDrop": "テストケースをドラッグ&ドロップして実行順序を整理",
+    "executionProgress": "実行進捗",
+    "testCasesPool": "テストケースプール"
   },
   "traceabilityMatrix": {
     "title": "トレーサビリティマトリックス",
-    "description": "SDLC全体のカバレッジと関係性を追跡"
+    "description": "SDLC全体のカバレッジと関係性を追跡",
+    "requirementsCoverage": "要件カバレッジマトリックス",
+    "exportMatrix": "マトリックスをエクスポート",
+    "searchRequirements": "要件を検索...",
+    "averageCoverage": "平均カバレッジ",
+    "totalRequirements": "総要件数",
+    "totalTestCases": "総テストケース数",
+    "totalDefects": "総不具合数"
   },
   "landing": {
     "hero": {
       "title": "AI完全ソフトウェア開発ライフサイクル管理",
       "subtitle": "ソフトウェア開発チームにとって最高の選択肢プラットフォーム",
-      "description": "AIアシスタントで要件設計、テストケースの管理、設計、要件、テスト、欠陥、KPI、トレーサビリティ、自動化を実現。自動化、パフォーマンス、互換性テストも忘れていません。"
+      "description": "AIアシスタントで要件設計、テストケースの管理、設計、要件、テスト、欠陥、KPI、トレーサビリティ、自動化を実現。自動化、パフォーマンス、互換性テストも忘れていません。",
+      "imageAlt": "QFormaダッシュボード - ソフトウェア開発管理プラットフォーム",
+      "imageTitle": "完全なSDLC管理",
+      "imageDescription": "開発プロセスを合理化"
     },
     "domain": {
       "title": "QFormaドメインを作成",
@@ -79,20 +109,152 @@
       "subdomainPlaceholder": "サブドメイン",
       "emailPlaceholder": "メールアドレス",
       "buttonText": "無料で開始",
-      "noCreditCard": "無料プランにはクレジットカード不要"
+      "noCreditCard": "無料プランにはクレジットカード不要",
+      "missingFields": "続行するにはすべてのフィールドを入力してください",
+      "registrationStarted": "登録開始",
+      "settingUp": "{{subdomain}}.qforma.appで{{plan}}アカウントを設定中です"
     },
     "pricing": {
       "title": "料金プラン",
-      "description": "チームのQAニーズに適したプランを選択してください。すべてのプランにコアQA管理機能が含まれています。"
+      "description": "チームのQAニーズに適したプランを選択してください。すべてのプランにコアQA管理機能が含まれています。",
+      "popular": "人気",
+      "customSolution": "カスタムソリューションが必要ですか？",
+      "contactSales": "営業チームにお問い合わせ",
+      "plans": {
+        "free": {
+          "name": "無料",
+          "description": "基本機能、1ユーザー",
+          "period": "月",
+          "buttonText": "開始する",
+          "features": {
+            "0": "1ユーザーアカウント",
+            "1": "基本QA追跡",
+            "2": "制限された要件",
+            "3": "手動テストケース"
+          }
+        },
+        "pro": {
+          "name": "プロ",
+          "description": "すべてのQAモジュール、10プロジェクト",
+          "period": "ユーザー/月",
+          "buttonText": "今すぐ購読",
+          "features": {
+            "0": "最大10ユーザー",
+            "1": "無制限プロジェクト",
+            "2": "完全テスト管理",
+            "3": "不具合追跡",
+            "4": "基本レポート"
+          }
+        },
+        "premium": {
+          "name": "プレミアム",
+          "description": "AI + トレーサビリティマトリックス",
+          "period": "ユーザー/月",
+          "buttonText": "プレミアムを選択",
+          "features": {
+            "0": "無制限ユーザー",
+            "1": "AIテスト生成",
+            "2": "トレーサビリティマトリックス",
+            "3": "高度な分析",
+            "4": "優先サポート"
+          }
+        },
+        "enterprise": {
+          "name": "エンタープライズ",
+          "description": "オンプレミス、SSO、統合",
+          "period": "2万5千ドル+/年",
+          "buttonText": "営業に連絡",
+          "features": {
+            "0": "オンプレミス展開",
+            "1": "シングルサインオン",
+            "2": "カスタム統合",
+            "3": "専用サポート",
+            "4": "SLA保証"
+          }
+        }
+      }
     },
     "features": {
-      "title": "オールインワンQAプラットフォーム"
+      "title": "オールインワンQAプラットフォーム",
+      "requirements": {
+        "title": "要件管理",
+        "description": "テストケースへの完全なトレーサビリティで要件をキャプチャ、整理、追跡。"
+      },
+      "testCases": {
+        "title": "テストケース管理",
+        "description": "詳細なレポートと履歴でテストケースを作成、実行、追跡。"
+      },
+      "defects": {
+        "title": "不具合追跡",
+        "description": "包括的なライフサイクル管理で不具合を報告、割り当て、解決。"
+      },
+      "ai": {
+        "title": "AI駆動の支援",
+        "description": "高度なAIツールでテストケースと要件を自動生成。"
+      },
+      "performance": {
+        "title": "パフォーマンステスト",
+        "description": "詳細な分析でパフォーマンステストシナリオを記録・実行。"
+      },
+      "design": {
+        "title": "デザイン管理",
+        "description": "承認ワークフローで高レベル・低レベル設計文書を作成・管理。"
+      },
+      "browser": {
+        "title": "ブラウザ互換性テスト",
+        "description": "異なるブラウザやバージョンでアプリケーションをテストし、一貫したユーザーエクスペリエンスを確保。"
+      },
+      "mobile": {
+        "title": "モバイル互換性テスト",
+        "description": "モバイルアプリケーションが異なるデバイスやオペレーティングシステムで完璧に動作することを確認。"
+      },
+      "integration": {
+        "title": "AIプラットフォーム統合",
+        "description": "自動テスト生成とインテリジェント分析のためのAIプラットフォームとのシームレスな統合。"
+      }
     },
     "cta": {
       "title": "QAプロセスを変革する準備はできていますか？",
       "description": "QFormaを使用してより良いソフトウェアをより速く提供する何千ものQAチームに参加しましょう。",
       "signIn": "サインイン",
       "requestDemo": "デモをリクエスト"
+    },
+    "mobileApps": {
+      "title": "モバイルアプリ",
+      "ios": "iOSアプリ",
+      "android": "Androidアプリ"
+    },
+    "footer": {
+      "description": "現代のテストチーム向けエンタープライズグレードQA管理プラットフォーム",
+      "copyright": "© {{year}} QForma Technologies, Inc. 全著作権所有。",
+      "product": {
+        "title": "製品",
+        "features": "機能",
+        "pricing": "価格",
+        "integrations": "統合",
+        "changelog": "変更履歴"
+      },
+      "resources": {
+        "title": "リソース",
+        "documentation": "ドキュメント",
+        "blog": "ブログ",
+        "community": "コミュニティ",
+        "support": "サポート"
+      },
+      "company": {
+        "title": "会社",
+        "about": "会社について",
+        "careers": "採用情報",
+        "contact": "お問い合わせ",
+        "partners": "パートナー"
+      },
+      "legal": {
+        "title": "法的事項",
+        "privacy": "プライバシー",
+        "terms": "利用規約",
+        "security": "セキュリティ",
+        "cookies": "クッキー"
+      }
     }
   }
 }

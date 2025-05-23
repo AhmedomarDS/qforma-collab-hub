@@ -26,7 +26,8 @@
     "logout": "Se déconnecter",
     "login": "Se connecter",
     "getStarted": "Commencer",
-    "noRequired": "Aucune carte de crédit requise"
+    "noRequired": "Aucune carte de crédit requise",
+    "error": "Erreur"
   },
   "navigation": {
     "dashboard": "Tableau de Bord",
@@ -56,22 +57,51 @@
     "title": "Cas de Test",
     "description": "Gérer et suivre les cas de test pour vos projets",
     "createNew": "Créer un Nouveau Cas de Test",
-    "uploadCSV": "Télécharger CSV"
+    "uploadCSV": "Télécharger CSV",
+    "noTestCases": "Aucun cas de test trouvé",
+    "noTestCasesDescription": "Commencez par créer votre premier cas de test ou télécharger un fichier CSV avec des cas de test existants.",
+    "testCaseTitle": "Titre du Cas de Test",
+    "priority": "Priorité",
+    "status": "Statut",
+    "assignee": "Assigné",
+    "category": "Catégorie",
+    "tags": "Étiquettes",
+    "steps": "Étapes de Test",
+    "expectedResult": "Résultat Attendu",
+    "csvUploadTitle": "Télécharger des Cas de Test depuis CSV",
+    "csvUploadDescription": "Téléchargez un fichier CSV contenant des cas de test pour les importer en masse.",
+    "selectFile": "Sélectionner un Fichier CSV",
+    "csvFormatNote": "Le CSV doit contenir les colonnes : titre, description, priorité, statut, étapes, résultat_attendu",
+    "uploadSuccess": "Cas de test téléchargés avec succès !",
+    "uploadError": "Erreur lors du téléchargement du fichier CSV. Veuillez vérifier le format et réessayer."
   },
   "testPlans": {
     "title": "Plans de Test",
     "description": "Créer et gérer les plans d'exécution de test",
-    "createNew": "Créer un Plan de Test"
+    "createNew": "Créer un Plan de Test",
+    "dragAndDrop": "Glissez-déposez les cas de test pour organiser l'ordre d'exécution",
+    "executionProgress": "Progrès d'Exécution",
+    "testCasesPool": "Pool de Cas de Test"
   },
   "traceabilityMatrix": {
     "title": "Matrice de Traçabilité",
-    "description": "Suivre la couverture et les relations à travers votre SDLC"
+    "description": "Suivre la couverture et les relations à travers votre SDLC",
+    "requirementsCoverage": "Matrice de Couverture des Exigences",
+    "exportMatrix": "Exporter la Matrice",
+    "searchRequirements": "Rechercher des exigences...",
+    "averageCoverage": "Couverture Moyenne",
+    "totalRequirements": "Total des Exigences",
+    "totalTestCases": "Total des Cas de Test",
+    "totalDefects": "Total des Défauts"
   },
   "landing": {
     "hero": {
       "title": "Gestion Complète du Cycle de Vie de Développement Logiciel par IA",
       "subtitle": "La Meilleure Plateforme pour les Équipes de Développement Logiciel",
-      "description": "Gérez, Concevez, Exigences, Tests, Défauts, KPIs, Traçabilité et Automatisez la Conception des Exigences, Cas de Test avec votre Assistant IA. L'Automatisation, Performance et Tests de Compatibilité ne sont pas oubliés."
+      "description": "Gérez, Concevez, Exigences, Tests, Défauts, KPIs, Traçabilité et Automatisez la Conception des Exigences, Cas de Test avec votre Assistant IA. L'Automatisation, Performance et Tests de Compatibilité ne sont pas oubliés.",
+      "imageAlt": "Tableau de bord QForma - Plateforme de gestion du développement logiciel",
+      "imageTitle": "Gestion SDLC Complète",
+      "imageDescription": "Rationalisez votre processus de développement"
     },
     "domain": {
       "title": "Créez votre domaine QForma",
@@ -79,20 +109,152 @@
       "subdomainPlaceholder": "sous-domaine",
       "emailPlaceholder": "Votre adresse e-mail",
       "buttonText": "Commencer Gratuitement",
-      "noCreditCard": "Aucune carte de crédit requise pour le plan gratuit"
+      "noCreditCard": "Aucune carte de crédit requise pour le plan gratuit",
+      "missingFields": "Veuillez remplir tous les champs pour continuer",
+      "registrationStarted": "Inscription Commencée",
+      "settingUp": "Nous configurons votre compte {{plan}} sur {{subdomain}}.qforma.app"
     },
     "pricing": {
       "title": "Plans Tarifaires",
-      "description": "Choisissez le bon plan pour les besoins QA de votre équipe. Tous les plans incluent nos fonctionnalités principales de gestion QA."
+      "description": "Choisissez le bon plan pour les besoins QA de votre équipe. Tous les plans incluent nos fonctionnalités principales de gestion QA.",
+      "popular": "Populaire",
+      "customSolution": "Besoin d'une solution personnalisée ?",
+      "contactSales": "Contactez notre équipe commerciale",
+      "plans": {
+        "free": {
+          "name": "Gratuit",
+          "description": "Fonctionnalités de base, 1 utilisateur",
+          "period": "mois",
+          "buttonText": "Commencer",
+          "features": {
+            "0": "1 compte utilisateur",
+            "1": "Suivi QA de base",
+            "2": "Exigences limitées",
+            "3": "Cas de test manuels"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Tous les modules QA, 10 projets",
+          "period": "utilisateur/mois",
+          "buttonText": "S'abonner Maintenant",
+          "features": {
+            "0": "Jusqu'à 10 utilisateurs",
+            "1": "Projets illimités",
+            "2": "Gestion de test complète",
+            "3": "Suivi des défauts",
+            "4": "Rapports de base"
+          }
+        },
+        "premium": {
+          "name": "Premium",
+          "description": "IA + Matrice de Traçabilité",
+          "period": "utilisateur/mois",
+          "buttonText": "Passer Premium",
+          "features": {
+            "0": "Utilisateurs illimités",
+            "1": "Génération de tests IA",
+            "2": "Matrice de traçabilité",
+            "3": "Analyses avancées",
+            "4": "Support prioritaire"
+          }
+        },
+        "enterprise": {
+          "name": "Entreprise",
+          "description": "Sur site, SSO, intégrations",
+          "period": "25K€+/an",
+          "buttonText": "Contacter les Ventes",
+          "features": {
+            "0": "Déploiement sur site",
+            "1": "Authentification unique",
+            "2": "Intégrations personnalisées",
+            "3": "Support dédié",
+            "4": "Garanties SLA"
+          }
+        }
+      }
     },
     "features": {
-      "title": "Plateforme QA Tout-en-Un"
+      "title": "Plateforme QA Tout-en-Un",
+      "requirements": {
+        "title": "Gestion des Exigences",
+        "description": "Capturez, organisez et suivez les exigences avec une traçabilité complète vers les cas de test."
+      },
+      "testCases": {
+        "title": "Gestion des Cas de Test",
+        "description": "Créez, exécutez et suivez les cas de test avec des rapports détaillés et un historique."
+      },
+      "defects": {
+        "title": "Suivi des Défauts",
+        "description": "Signalez, assignez et résolvez les défauts avec une gestion complète du cycle de vie."
+      },
+      "ai": {
+        "title": "Assistance Alimentée par l'IA",
+        "description": "Générez automatiquement des cas de test et des exigences avec nos outils IA avancés."
+      },
+      "performance": {
+        "title": "Tests de Performance",
+        "description": "Enregistrez et exécutez des scénarios de test de performance avec des analyses détaillées."
+      },
+      "design": {
+        "title": "Gestion de Conception",
+        "description": "Créez et gérez des documents de conception de haut et bas niveau avec des flux d'approbation."
+      },
+      "browser": {
+        "title": "Tests de Compatibilité Navigateur",
+        "description": "Testez vos applications sur différents navigateurs et versions pour assurer une expérience utilisateur cohérente."
+      },
+      "mobile": {
+        "title": "Tests de Compatibilité Mobile",
+        "description": "Assurez-vous que vos applications mobiles fonctionnent parfaitement sur différents appareils et systèmes d'exploitation."
+      },
+      "integration": {
+        "title": "Intégration Plateforme IA",
+        "description": "Intégrez de manière transparente avec les plateformes IA pour la génération automatique de tests et l'analyse intelligente."
+      }
     },
     "cta": {
       "title": "Prêt à transformer votre processus QA?",
       "description": "Rejoignez des milliers d'équipes QA utilisant QForma pour livrer de meilleurs logiciels, plus rapidement.",
       "signIn": "Se Connecter",
       "requestDemo": "Demander une Démo"
+    },
+    "mobileApps": {
+      "title": "Applications Mobiles",
+      "ios": "App iOS",
+      "android": "App Android"
+    },
+    "footer": {
+      "description": "Plateforme de gestion QA de niveau entreprise pour les équipes de test modernes",
+      "copyright": "© {{year}} QForma Technologies, Inc. Tous droits réservés.",
+      "product": {
+        "title": "Produit",
+        "features": "Fonctionnalités",
+        "pricing": "Tarification",
+        "integrations": "Intégrations",
+        "changelog": "Journal des modifications"
+      },
+      "resources": {
+        "title": "Ressources",
+        "documentation": "Documentation",
+        "blog": "Blog",
+        "community": "Communauté",
+        "support": "Support"
+      },
+      "company": {
+        "title": "Entreprise",
+        "about": "À propos",
+        "careers": "Carrières",
+        "contact": "Contact",
+        "partners": "Partenaires"
+      },
+      "legal": {
+        "title": "Légal",
+        "privacy": "Confidentialité",
+        "terms": "Conditions",
+        "security": "Sécurité",
+        "cookies": "Cookies"
+      }
     }
   }
 }

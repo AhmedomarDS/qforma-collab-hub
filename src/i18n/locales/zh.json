@@ -26,7 +26,8 @@
     "logout": "登出",
     "login": "登录",
     "getStarted": "开始使用",
-    "noRequired": "无需信用卡"
+    "noRequired": "无需信用卡",
+    "error": "错误"
   },
   "navigation": {
     "dashboard": "仪表板",
@@ -56,22 +57,51 @@
     "title": "测试用例",
     "description": "管理和跟踪项目的测试用例",
     "createNew": "创建新测试用例",
-    "uploadCSV": "上传CSV"
+    "uploadCSV": "上传CSV",
+    "noTestCases": "未找到测试用例",
+    "noTestCasesDescription": "开始创建您的第一个测试用例或上传包含现有测试用例的CSV文件。",
+    "testCaseTitle": "测试用例标题",
+    "priority": "优先级",
+    "status": "状态",
+    "assignee": "负责人",
+    "category": "类别",
+    "tags": "标签",
+    "steps": "测试步骤",
+    "expectedResult": "预期结果",
+    "csvUploadTitle": "从CSV上传测试用例",
+    "csvUploadDescription": "上传包含测试用例的CSV文件以批量导入。",
+    "selectFile": "选择CSV文件",
+    "csvFormatNote": "CSV应包含列：标题、描述、优先级、状态、步骤、预期结果",
+    "uploadSuccess": "测试用例上传成功！",
+    "uploadError": "上传CSV文件时出错。请检查格式并重试。"
   },
   "testPlans": {
     "title": "测试计划",
     "description": "创建和管理测试执行计划",
-    "createNew": "创建测试计划"
+    "createNew": "创建测试计划",
+    "dragAndDrop": "拖放测试用例以组织执行顺序",
+    "executionProgress": "执行进度",
+    "testCasesPool": "测试用例池"
   },
   "traceabilityMatrix": {
     "title": "可追溯性矩阵",
-    "description": "跟踪SDLC中的覆盖率和关系"
+    "description": "跟踪SDLC中的覆盖率和关系",
+    "requirementsCoverage": "需求覆盖矩阵",
+    "exportMatrix": "导出矩阵",
+    "searchRequirements": "搜索需求...",
+    "averageCoverage": "平均覆盖率",
+    "totalRequirements": "总需求数",
+    "totalTestCases": "总测试用例数",
+    "totalDefects": "总缺陷数"
   },
   "landing": {
     "hero": {
       "title": "AI完整软件开发生命周期管理",
       "subtitle": "软件开发团队的最佳选择平台",
-      "description": "通过您的AI助手管理、设计、需求、测试、缺陷、KPI、可追溯性并自动化需求设计和测试用例。自动化、性能和兼容性测试也没有被忘记。"
+      "description": "通过您的AI助手管理、设计、需求、测试、缺陷、KPI、可追溯性并自动化需求设计和测试用例。自动化、性能和兼容性测试也没有被忘记。",
+      "imageAlt": "QForma仪表板 - 软件开发管理平台",
+      "imageTitle": "完整SDLC管理",
+      "imageDescription": "简化您的开发流程"
     },
     "domain": {
       "title": "创建您的QForma域名",
@@ -79,20 +109,152 @@
       "subdomainPlaceholder": "子域名",
       "emailPlaceholder": "您的邮箱地址",
       "buttonText": "免费开始",
-      "noCreditCard": "免费计划无需信用卡"
+      "noCreditCard": "免费计划无需信用卡",
+      "missingFields": "请填写所有字段以继续",
+      "registrationStarted": "注册已开始",
+      "settingUp": "我们正在为您设置{{plan}}账户：{{subdomain}}.qforma.app"
     },
     "pricing": {
       "title": "价格方案",
-      "description": "为您团队的QA需求选择合适的计划。所有计划都包含我们的核心QA管理功能。"
+      "description": "为您团队的QA需求选择合适的计划。所有计划都包含我们的核心QA管理功能。",
+      "popular": "热门",
+      "customSolution": "需要定制解决方案？",
+      "contactSales": "联系我们的销售团队",
+      "plans": {
+        "free": {
+          "name": "免费",
+          "description": "基础功能，1个用户",
+          "period": "月",
+          "buttonText": "开始使用",
+          "features": {
+            "0": "1个用户账户",
+            "1": "基础QA跟踪",
+            "2": "有限需求",
+            "3": "手动测试用例"
+          }
+        },
+        "pro": {
+          "name": "专业版",
+          "description": "所有QA模块，10个项目",
+          "period": "用户/月",
+          "buttonText": "立即订阅",
+          "features": {
+            "0": "最多10个用户",
+            "1": "无限项目",
+            "2": "完整测试管理",
+            "3": "缺陷跟踪",
+            "4": "基础报告"
+          }
+        },
+        "premium": {
+          "name": "高级版",
+          "description": "AI + 可追溯性矩阵",
+          "period": "用户/月",
+          "buttonText": "选择高级版",
+          "features": {
+            "0": "无限用户",
+            "1": "AI测试生成",
+            "2": "可追溯性矩阵",
+            "3": "高级分析",
+            "4": "优先支持"
+          }
+        },
+        "enterprise": {
+          "name": "企业版",
+          "description": "本地部署、SSO、集成",
+          "period": "2.5万美元+/年",
+          "buttonText": "联系销售",
+          "features": {
+            "0": "本地部署",
+            "1": "单点登录",
+            "2": "自定义集成",
+            "3": "专属支持",
+            "4": "SLA保证"
+          }
+        }
+      }
     },
     "features": {
-      "title": "一体化QA平台"
+      "title": "一体化QA平台",
+      "requirements": {
+        "title": "需求管理",
+        "description": "捕获、组织和跟踪需求，与测试用例完全可追溯。"
+      },
+      "testCases": {
+        "title": "测试用例管理",
+        "description": "创建、执行和跟踪测试用例，提供详细报告和历史记录。"
+      },
+      "defects": {
+        "title": "缺陷跟踪",
+        "description": "报告、分配和解决缺陷，提供全面的生命周期管理。"
+      },
+      "ai": {
+        "title": "AI驱动的辅助",
+        "description": "使用我们先进的AI工具自动生成测试用例和需求。"
+      },
+      "performance": {
+        "title": "性能测试",
+        "description": "记录和执行性能测试场景，提供详细分析。"
+      },
+      "design": {
+        "title": "设计管理",
+        "description": "创建和管理高级和低级设计文档，支持审批工作流。"
+      },
+      "browser": {
+        "title": "浏览器兼容性测试",
+        "description": "在不同浏览器和版本上测试您的应用程序，确保一致的用户体验。"
+      },
+      "mobile": {
+        "title": "移动兼容性测试",
+        "description": "确保您的移动应用程序在不同设备和操作系统上完美运行。"
+      },
+      "integration": {
+        "title": "AI平台集成",
+        "description": "与AI平台无缝集成，实现自动化测试生成和智能分析。"
+      }
     },
     "cta": {
       "title": "准备好转变您的QA流程了吗？",
       "description": "加入数千个使用QForma更快交付更好软件的QA团队。",
       "signIn": "登录",
       "requestDemo": "申请演示"
+    },
+    "mobileApps": {
+      "title": "移动应用",
+      "ios": "iOS应用",
+      "android": "Android应用"
+    },
+    "footer": {
+      "description": "面向现代测试团队的企业级QA管理平台",
+      "copyright": "© {{year}} QForma Technologies, Inc. 保留所有权利。",
+      "product": {
+        "title": "产品",
+        "features": "功能",
+        "pricing": "价格",
+        "integrations": "集成",
+        "changelog": "更新日志"
+      },
+      "resources": {
+        "title": "资源",
+        "documentation": "文档",
+        "blog": "博客",
+        "community": "社区",
+        "support": "支持"
+      },
+      "company": {
+        "title": "公司",
+        "about": "关于",
+        "careers": "招聘",
+        "contact": "联系",
+        "partners": "合作伙伴"
+      },
+      "legal": {
+        "title": "法律",
+        "privacy": "隐私",
+        "terms": "条款",
+        "security": "安全",
+        "cookies": "Cookie"
+      }
     }
   }
 }
