@@ -46,7 +46,7 @@
     "settings": "Settings"
   },
   "app": {
-    "title": "AI Complete SWDC",
+    "title": "AI Complete SDLC",
     "subtitle": "Management Platform",
     "platformName": "QForma Platform"
   },
@@ -60,7 +60,7 @@
   },
   "landing": {
     "hero": {
-      "title": "AI Complete SWDC Management",
+      "title": "AI Complete SDLC Management",
       "subtitle": "The Best Option Platform for Software Development Teams",
       "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Also Automation, Performance and Compatibility Testing were not forgotten."
     },
