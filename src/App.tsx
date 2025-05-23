@@ -23,9 +23,12 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Projects from "./pages/Projects";
 import Tasks from "./pages/Tasks";
-import DesignManagement from "./pages/DesignManagement"; // Add new page
-import AutomationTesting from "./pages/AutomationTesting"; // Add new page
-import PerformanceTesting from "./pages/PerformanceTesting"; // Add new page
+import DesignManagement from "./pages/DesignManagement";
+import AutomationTesting from "./pages/AutomationTesting";
+import PerformanceTesting from "./pages/PerformanceTesting";
+import CompatibilityTesting from "./pages/CompatibilityTesting";
+import MobileCompatibility from "./pages/MobileCompatibility";
+import ReleaseManagement from "./pages/ReleaseManagement";
 
 const queryClient = new QueryClient();
 
@@ -115,7 +118,6 @@ const App = () => (
                       </ProtectedRoute>
                     } />
                     
-                    {/* New Routes */}
                     <Route path="/design-management" element={
                       <ProtectedRoute>
                         <DesignManagement />
@@ -131,6 +133,24 @@ const App = () => (
                     <Route path="/performance-testing" element={
                       <ProtectedRoute>
                         <PerformanceTesting />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/compatibility-testing" element={
+                      <ProtectedRoute>
+                        <CompatibilityTesting />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/mobile-compatibility" element={
+                      <ProtectedRoute>
+                        <MobileCompatibility />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/release-management" element={
+                      <ProtectedRoute>
+                        <ReleaseManagement />
                       </ProtectedRoute>
                     } />
                     
