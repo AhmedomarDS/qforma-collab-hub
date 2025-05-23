@@ -1,0 +1,56 @@
+
+{
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "view": "Ver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "upload": "Subir",
+    "download": "Descargar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "reset": "Restablecer",
+    "confirm": "Confirmar",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión"
+  },
+  "navigation": {
+    "dashboard": "Panel de Control",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "requirements": "Requisitos",
+    "designManagement": "Gestión de Diseño",
+    "testCases": "Casos de Prueba",
+    "automationTesting": "Pruebas de Automatización",
+    "performanceTesting": "Pruebas de Rendimiento",
+    "chat": "Chat",
+    "defects": "Defectos",
+    "reports": "Informes",
+    "settings": "Configuración"
+  },
+  "app": {
+    "title": "IA Completa SWDC",
+    "subtitle": "Plataforma de Gestión",
+    "platformName": "Plataforma QForma"
+  },
+  "testCases": {
+    "title": "Casos de Prueba",
+    "description": "Gestionar y rastrear casos de prueba para tus proyectos",
+    "createNew": "Crear Nuevo Caso de Prueba",
+    "uploadCSV": "Subir CSV",
+    "noTestCases": "No se encontraron casos de prueba",
+    "noTestCasesDescription": "Comienza creando tu primer caso de prueba o subiendo un archivo CSV con casos de prueba existentes."
+  }
+}

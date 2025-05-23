@@ -1,0 +1,91 @@
+
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "upload": "Upload",
+    "download": "Download",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Sign out",
+    "login": "Sign in"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "requirements": "Requirements",
+    "designManagement": "Design Management",
+    "testCases": "Test Cases",
+    "automationTesting": "Automation Testing",
+    "performanceTesting": "Performance Testing",
+    "chat": "Chat",
+    "defects": "Defects",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "app": {
+    "title": "AI Complete SWDC",
+    "subtitle": "Management Platform",
+    "platformName": "QForma Platform"
+  },
+  "testCases": {
+    "title": "Test Cases",
+    "description": "Manage and track test cases for your projects",
+    "createNew": "Create New Test Case",
+    "uploadCSV": "Upload CSV",
+    "noTestCases": "No Test Cases Found",
+    "noTestCasesDescription": "Get started by creating your first test case or uploading a CSV file with existing test cases.",
+    "testCaseTitle": "Test Case Title",
+    "description": "Description",
+    "priority": "Priority",
+    "status": "Status",
+    "assignee": "Assignee",
+    "category": "Category",
+    "tags": "Tags",
+    "steps": "Steps",
+    "expectedResult": "Expected Result",
+    "actualResult": "Actual Result",
+    "csvUploadTitle": "Upload Test Cases from CSV",
+    "csvUploadDescription": "Upload a CSV file containing test case data. The file should include columns for title, description, priority, status, and other test case details.",
+    "selectFile": "Select CSV File",
+    "csvFormatNote": "CSV should include: title, description, priority, status, assignee, category, tags, steps, expected_result",
+    "uploadSuccess": "Test cases uploaded successfully!",
+    "uploadError": "Error uploading test cases. Please check your file format."
+  },
+  "requirements": {
+    "title": "Requirements",
+    "description": "Manage project requirements and specifications",
+    "createNew": "Create New Requirement",
+    "uploadCSV": "Upload CSV",
+    "generateWithAI": "Generate with AI"
+  },
+  "defects": {
+    "title": "Defects",
+    "description": "Track and manage defects and issues",
+    "reportNew": "Report New Defect"
+  },
+  "automation": {
+    "title": "Automation Testing",
+    "description": "Create, manage and execute automated test scenarios",
+    "generateWithAI": "Generate with AI",
+    "recordScenario": "Record Test Scenario",
+    "stopRecording": "Stop Recording"
+  }
+}

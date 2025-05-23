@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,147 +23,86 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FileText, CheckSquare, PlusCircle, Bot, Upload } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import AiChatBox from '@/components/chat/AiChatBox';
+import { Badge } from '@/components/ui/badge';
+import { CheckSquare, PlusCircle, Upload } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { parseCSV } from '@/lib/utils/csvParser';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-interface TestCase {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  status: string;
-  priority: string;
-  createdAt: string;
-  aiGenerated?: boolean;
-}
+import { useToast } from '@/hooks/use-toast';
 
 const TestCases = () => {
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [testCases, setTestCases] = useState<TestCase[]>([]);
-  const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [csvError, setCsvError] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [newTestCase, setNewTestCase] = useState({
     title: '',
     description: '',
-    type: 'functional',
-    status: 'draft',
     priority: 'medium',
+    status: 'draft',
+    assignee: '',
+    category: '',
+    tags: '',
+    steps: '',
+    expectedResult: '',
   });
 
   const handleCreateTestCase = () => {
-    const createdTestCase = {
-      ...newTestCase,
-      id: `tc-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    
-    setTestCases(prev => [...prev, createdTestCase]);
-    
-    toast({
-      title: "Test Case Created",
-      description: `"${newTestCase.title}" has been created successfully.`,
-    });
-    
+    console.log('Creating new test case:', newTestCase);
     setNewTestCase({
       title: '',
       description: '',
-      type: 'functional',
-      status: 'draft',
       priority: 'medium',
+      status: 'draft',
+      assignee: '',
+      category: '',
+      tags: '',
+      steps: '',
+      expectedResult: '',
     });
     setIsDialogOpen(false);
-  };
-  
-  const handleSaveAiContent = (content: string) => {
-    // Extract a title from the content
-    let title = '';
-    const titleMatch = content.match(/\*\*Title\*\*:\s*(.*?)(?:\n|$)/);
-    if (titleMatch && titleMatch[1]) {
-      title = titleMatch[1].trim();
-    }
-    
-    // Create new test case with AI generated content
-    const aiGeneratedTestCase = {
-      id: `tc-${Date.now()}`,
-      title: title || 'AI Generated Test Case',
-      description: content,
-      type: 'functional',
-      status: 'draft',
-      priority: 'medium',
-      createdAt: new Date().toISOString(),
-      aiGenerated: true,
-    };
-    
-    setTestCases(prev => [...prev, aiGeneratedTestCase]);
+    toast({
+      title: "Success",
+      description: "Test case created successfully!",
+    });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCsvFile(e.target.files[0]);
-      setCsvError(null);
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'text/csv') {
+      setSelectedFile(file);
+    } else {
+      toast({
+        title: "Error",
+        description: "Please select a valid CSV file",
+        variant: "destructive",
+      });
     }
   };
 
-  const uploadCsv = async () => {
-    if (!csvFile) {
-      setCsvError("Please select a CSV file");
-      return;
-    }
+  const handleCSVUpload = async () => {
+    if (!selectedFile) return;
 
     try {
-      setUploadProgress(10);
-      // Simulate upload progress
-      const timer = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(timer);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
-      const results = await parseCSV<Partial<TestCase>>(csvFile);
-      clearInterval(timer);
-      setUploadProgress(100);
-
-      // Validate and transform the CSV data
-      const newTestCases = results.map(row => ({
-        id: `tc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        title: row.title || 'Untitled',
-        description: row.description || '',
-        type: row.type || 'functional',
-        status: row.status || 'draft',
-        priority: row.priority || 'medium',
-        createdAt: new Date().toISOString(),
-      }));
-
-      setTestCases(prev => [...prev, ...newTestCases]);
+      const data = await parseCSV(selectedFile);
+      console.log('Parsed CSV data:', data);
       
       toast({
-        title: "Upload Complete",
-        description: `Successfully imported ${newTestCases.length} test cases.`,
+        title: "Success",
+        description: t('testCases.uploadSuccess'),
       });
       
       setIsUploadDialogOpen(false);
-      setCsvFile(null);
-      setUploadProgress(0);
+      setSelectedFile(null);
     } catch (error) {
-      console.error("Error parsing CSV:", error);
-      setCsvError("Error parsing CSV. Please check the format and try again.");
-      setUploadProgress(0);
+      console.error('Error parsing CSV:', error);
+      toast({
+        title: "Error",
+        description: t('testCases.uploadError'),
+        variant: "destructive",
+      });
     }
-  };
-  
-  const generateTestCasePrompt = (userPrompt: string) => {
-    return `Generate a detailed test case for the following requirement: ${userPrompt}. 
-    Include test steps, expected results, prerequisites, and any other necessary details.`;
   };
 
   return (
@@ -170,103 +110,94 @@ const TestCases = () => {
       <div className="animate-fadeIn">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Test Cases</h1>
-            <p className="text-muted-foreground">Manage your test cases and executions</p>
+            <h1 className="text-3xl font-bold">{t('testCases.title')}</h1>
+            <p className="text-muted-foreground">{t('testCases.description')}</p>
           </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => setIsAiChatOpen(true)}
-            >
-              <Bot className="h-4 w-4" />
-              Generate with AI
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => setIsUploadDialogOpen(true)}
-            >
-              <Upload className="h-4 w-4" />
-              Import CSV
-            </Button>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <div className="flex space-x-2">
+            <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-qforma-blue hover:bg-qforma-blue/90">
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  Create Test Case
+                <Button variant="outline">
+                  <Upload className="h-4 w-4 mr-2" />
+                  {t('testCases.uploadCSV')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[550px]">
                 <DialogHeader>
-                  <DialogTitle>Create Test Case</DialogTitle>
+                  <DialogTitle>{t('testCases.csvUploadTitle')}</DialogTitle>
                   <DialogDescription>
-                    Create a new test case to verify system functionality.
+                    {t('testCases.csvUploadDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="csvFile">{t('testCases.selectFile')}</Label>
+                    <Input 
+                      id="csvFile" 
+                      type="file" 
+                      accept=".csv"
+                      onChange={handleFileSelect}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {t('testCases.csvFormatNote')}
+                    </p>
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
+                    {t('common.cancel')}
+                  </Button>
+                  <Button 
+                    onClick={handleCSVUpload} 
+                    disabled={!selectedFile}
+                  >
+                    {t('common.upload')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  {t('testCases.createNew')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[650px] max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{t('testCases.createNew')}</DialogTitle>
+                  <DialogDescription>
+                    Create a comprehensive test case with detailed steps and expected results.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="title">{t('testCases.testCaseTitle')}</Label>
                     <Input 
                       id="title" 
                       value={newTestCase.title}
                       onChange={(e) => setNewTestCase({...newTestCase, title: e.target.value})}
-                      placeholder="Test case title"
+                      placeholder="Enter test case title"
                     />
                   </div>
                   
                   <div className="grid gap-2">
-                    <Label htmlFor="description">Description & Steps</Label>
+                    <Label htmlFor="description">{t('testCases.description')}</Label>
                     <Textarea 
                       id="description"
                       value={newTestCase.description}
                       onChange={(e) => setNewTestCase({...newTestCase, description: e.target.value})}
-                      placeholder="Describe the test steps and expected results"
-                      rows={4}
+                      placeholder="Describe what this test case validates"
+                      rows={3}
                     />
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="type">Test Type</Label>
-                      <Select 
-                        value={newTestCase.type}
-                        onValueChange={(value) => setNewTestCase({...newTestCase, type: value})}
-                      >
-                        <SelectTrigger id="type">
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="functional">Functional</SelectItem>
-                          <SelectItem value="integration">Integration</SelectItem>
-                          <SelectItem value="performance">Performance</SelectItem>
-                          <SelectItem value="security">Security</SelectItem>
-                          <SelectItem value="usability">Usability</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="status">Status</Label>
-                      <Select 
-                        value={newTestCase.status}
-                        onValueChange={(value) => setNewTestCase({...newTestCase, status: value})}
-                      >
-                        <SelectTrigger id="status">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="ready">Ready</SelectItem>
-                          <SelectItem value="review">In Review</SelectItem>
-                          <SelectItem value="approved">Approved</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="grid gap-2">
-                      <Label htmlFor="priority">Priority</Label>
+                      <Label htmlFor="priority">{t('testCases.priority')}</Label>
                       <Select 
                         value={newTestCase.priority}
                         onValueChange={(value) => setNewTestCase({...newTestCase, priority: value})}
@@ -282,19 +213,90 @@ const TestCases = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="status">{t('testCases.status')}</Label>
+                      <Select 
+                        value={newTestCase.status}
+                        onValueChange={(value) => setNewTestCase({...newTestCase, status: value})}
+                      >
+                        <SelectTrigger id="status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="review">Review</SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="deprecated">Deprecated</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="assignee">{t('testCases.assignee')}</Label>
+                      <Input 
+                        id="assignee" 
+                        value={newTestCase.assignee}
+                        onChange={(e) => setNewTestCase({...newTestCase, assignee: e.target.value})}
+                        placeholder="Assign to team member"
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="category">{t('testCases.category')}</Label>
+                      <Input 
+                        id="category" 
+                        value={newTestCase.category}
+                        onChange={(e) => setNewTestCase({...newTestCase, category: e.target.value})}
+                        placeholder="UI, API, Integration, etc."
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="tags">{t('testCases.tags')}</Label>
+                    <Input 
+                      id="tags" 
+                      value={newTestCase.tags}
+                      onChange={(e) => setNewTestCase({...newTestCase, tags: e.target.value})}
+                      placeholder="smoke, regression, critical (comma separated)"
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="steps">{t('testCases.steps')}</Label>
+                    <Textarea 
+                      id="steps"
+                      value={newTestCase.steps}
+                      onChange={(e) => setNewTestCase({...newTestCase, steps: e.target.value})}
+                      placeholder="1. Step one&#10;2. Step two&#10;3. Step three"
+                      rows={4}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="expectedResult">{t('testCases.expectedResult')}</Label>
+                    <Textarea 
+                      id="expectedResult"
+                      value={newTestCase.expectedResult}
+                      onChange={(e) => setNewTestCase({...newTestCase, expectedResult: e.target.value})}
+                      placeholder="Describe the expected outcome"
+                      rows={3}
+                    />
                   </div>
                 </div>
                 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button 
                     onClick={handleCreateTestCase} 
                     disabled={!newTestCase.title || !newTestCase.description}
-                    className="bg-qforma-blue hover:bg-qforma-blue/90"
                   >
-                    Create Test Case
+                    {t('common.create')}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -302,372 +304,23 @@ const TestCases = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="library" className="w-full">
-          <TabsList>
-            <TabsTrigger value="library">Test Library</TabsTrigger>
-            <TabsTrigger value="execution">Test Execution</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="library" className="mt-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Test Case Library</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {testCases.length > 0 ? (
-                  <div className="space-y-4">
-                    {testCases.map((testCase) => (
-                      <Card key={testCase.id} className="hover:bg-muted/50 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <div className="flex items-center space-x-2 mb-1">
-                                <CheckSquare className="h-4 w-4 text-qforma-teal" />
-                                <span className="font-medium">{testCase.title}</span>
-                                {testCase.aiGenerated && (
-                                  <div className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
-                                    AI Generated
-                                  </div>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{testCase.description}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="text-xs bg-muted rounded-full px-2 py-1">
-                                {testCase.type}
-                              </div>
-                              <div className="text-xs bg-muted rounded-full px-2 py-1">
-                                {testCase.priority}
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <div className="mb-4 flex justify-center">
-                      <CheckSquare className="h-16 w-16 text-qforma-teal" />
-                    </div>
-                    <h2 className="text-xl font-semibold mb-2">No Test Cases Yet</h2>
-                    <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                      Create your first test case to start building your test library. Link test cases to requirements for full traceability.
-                    </p>
-                    <Button variant="outline" className="mx-auto">
-                      <FileText className="h-4 w-4 mr-2" />
-                      View Requirements
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="execution" className="mt-4">
-            <TestExecution testCases={testCases} />
-          </TabsContent>
-        </Tabs>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle>Test Case Management</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center py-12">
+            <div className="mb-4 flex justify-center">
+              <CheckSquare className="h-16 w-16 text-primary" />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{t('testCases.noTestCases')}</h2>
+            <p className="text-muted-foreground max-w-md mx-auto mb-6">
+              {t('testCases.noTestCasesDescription')}
+            </p>
+          </CardContent>
+        </Card>
       </div>
-      
-      {/* CSV Upload Dialog */}
-      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Import Test Cases from CSV</DialogTitle>
-            <DialogDescription>
-              Upload a CSV file with test case data. The file should include columns for title, description, type, status, and priority.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="csv-file">CSV File</Label>
-              <Input 
-                id="csv-file" 
-                type="file" 
-                accept=".csv" 
-                onChange={handleFileChange} 
-              />
-              {csvFile && (
-                <p className="text-sm text-muted-foreground">{csvFile.name}</p>
-              )}
-              {csvError && (
-                <p className="text-sm text-destructive">{csvError}</p>
-              )}
-            </div>
-            
-            {uploadProgress > 0 && (
-              <div className="w-full bg-muted rounded-full h-2.5">
-                <div 
-                  className="bg-primary h-2.5 rounded-full" 
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-                <p className="text-xs text-muted-foreground mt-1 text-right">
-                  {uploadProgress}% Uploaded
-                </p>
-              </div>
-            )}
-            
-            <div className="bg-muted p-3 rounded-md">
-              <p className="text-sm font-medium">CSV Format Example:</p>
-              <pre className="text-xs overflow-auto p-2 bg-background rounded mt-1">
-                title,description,type,status,priority<br/>
-                "Login Test","Verify user can login with valid credentials","functional","draft","high"<br/>
-                "Search Feature","Test search functionality","integration","ready","medium"
-              </pre>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={uploadCsv} disabled={!csvFile || uploadProgress > 0}>
-              Upload and Import
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      <AiChatBox
-        title="AI Test Case Generator"
-        placeholder="Describe the functionality you want to test..."
-        onSaveContent={handleSaveAiContent}
-        generatePrompt={generateTestCasePrompt}
-        isOpen={isAiChatOpen}
-        onClose={() => setIsAiChatOpen(false)}
-      />
     </AppLayout>
   );
 };
-
-interface TestExecutionProps {
-  testCases: TestCase[];
-}
-
-const TestExecutionProps: React.FC<TestExecutionProps> = ({ testCases }) => {
-  const [selectedRelease, setSelectedRelease] = useState<string>("");
-  const [executionTests, setExecutionTests] = useState<Array<TestCase & { executionStatus?: string; comment?: string }>>([]);
-  const [isDefectDialogOpen, setIsDefectDialogOpen] = useState(false);
-  const [currentTestCase, setCurrentTestCase] = useState<TestCase | null>(null);
-  const [defect, setDefect] = useState({
-    title: '',
-    description: '',
-    severity: 'medium',
-  });
-
-  // Mock releases for demonstration
-  const releases = [
-    { id: 'r1', name: 'Release 2.0 - August 2025' },
-    { id: 'r2', name: 'Release 1.5 - June 2025' },
-  ];
-
-  const handleSelectRelease = (releaseId: string) => {
-    setSelectedRelease(releaseId);
-    // In a real app, you would fetch test cases assigned to this release
-    // For now, we'll just use the existing test cases as a demo
-    setExecutionTests(testCases.map(tc => ({ 
-      ...tc, 
-      executionStatus: 'not-run' 
-    })));
-  };
-
-  const updateTestStatus = (testId: string, status: string) => {
-    setExecutionTests(prev => prev.map(test => 
-      test.id === testId ? { ...test, executionStatus: status } : test
-    ));
-  };
-
-  const openDefectDialog = (testCase: TestCase) => {
-    setCurrentTestCase(testCase);
-    setDefect({
-      title: `Defect for ${testCase.title}`,
-      description: '',
-      severity: 'medium',
-    });
-    setIsDefectDialogOpen(true);
-  };
-
-  const submitDefect = () => {
-    toast({
-      title: "Defect Reported",
-      description: `"${defect.title}" has been created successfully.`,
-    });
-    
-    // Here you would actually save the defect to your database
-    setIsDefectDialogOpen(false);
-    
-    // Update the test case status to failed since a defect was found
-    if (currentTestCase) {
-      updateTestStatus(currentTestCase.id, 'failed');
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Test Execution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="release-select">Select Release</Label>
-              <Select value={selectedRelease} onValueChange={handleSelectRelease}>
-                <SelectTrigger className="w-[300px]">
-                  <SelectValue placeholder="Select a release..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {releases.map((release) => (
-                    <SelectItem key={release.id} value={release.id}>{release.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {selectedRelease && (
-              <div className="space-y-4 mt-4">
-                <h3 className="font-semibold">Test Cases for Execution</h3>
-                
-                {executionTests.length > 0 ? (
-                  <div className="space-y-4">
-                    {executionTests.map((testCase) => (
-                      <Card key={testCase.id} className="hover:bg-muted/50 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <div className="flex items-center space-x-2 mb-1">
-                                <CheckSquare className="h-4 w-4 text-qforma-teal" />
-                                <span className="font-medium">{testCase.title}</span>
-                                {testCase.executionStatus === 'passed' && (
-                                  <div className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                                    Passed
-                                  </div>
-                                )}
-                                {testCase.executionStatus === 'failed' && (
-                                  <div className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">
-                                    Failed
-                                  </div>
-                                )}
-                                {testCase.executionStatus === 'running' && (
-                                  <div className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
-                                    Running
-                                  </div>
-                                )}
-                                {testCase.executionStatus === 'blocked' && (
-                                  <div className="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full">
-                                    Blocked
-                                  </div>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{testCase.description}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Select 
-                                value={testCase.executionStatus} 
-                                onValueChange={(value) => updateTestStatus(testCase.id, value)}
-                              >
-                                <SelectTrigger className="w-[120px]">
-                                  <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="not-run">Not Run</SelectItem>
-                                  <SelectItem value="passed">Passed</SelectItem>
-                                  <SelectItem value="failed">Failed</SelectItem>
-                                  <SelectItem value="blocked">Blocked</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => openDefectDialog(testCase)}
-                              >
-                                Report Defect
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">No test cases assigned to this release yet.</p>
-                )}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Defect Creation Dialog */}
-      <Dialog open={isDefectDialogOpen} onOpenChange={setIsDefectDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Report Defect</DialogTitle>
-            <DialogDescription>
-              Report a defect found during test execution.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="defect-title">Title</Label>
-              <Input 
-                id="defect-title" 
-                value={defect.title}
-                onChange={(e) => setDefect({...defect, title: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="defect-description">Description</Label>
-              <Textarea 
-                id="defect-description" 
-                rows={4}
-                placeholder="Describe the defect, steps to reproduce, and expected vs actual results..."
-                value={defect.description}
-                onChange={(e) => setDefect({...defect, description: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="defect-severity">Severity</Label>
-              <Select 
-                value={defect.severity}
-                onValueChange={(value) => setDefect({...defect, severity: value})}
-              >
-                <SelectTrigger id="defect-severity">
-                  <SelectValue placeholder="Select severity" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="critical">Critical</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDefectDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={submitDefect} 
-              disabled={!defect.title || !defect.description}
-            >
-              Submit Defect
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export const TestExecution = TestExecutionProps;
 
 export default TestCases;

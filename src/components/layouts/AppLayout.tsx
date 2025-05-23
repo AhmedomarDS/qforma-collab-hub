@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Sidebar, 
   SidebarContent, 
@@ -18,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -42,22 +44,23 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { title: 'Projects', icon: FolderPlus, path: '/projects' },
-    { title: 'Tasks', icon: ListCheck, path: '/tasks' },
-    { title: 'Requirements', icon: FileText, path: '/requirements' },
-    { title: 'Design Management', icon: Layers3, path: '/design-management' },
-    { title: 'Test Cases', icon: CheckSquare, path: '/test-cases' },
-    { title: 'Automation Testing', icon: TestTube, path: '/automation-testing' },
-    { title: 'Performance Testing', icon: ChartLine, path: '/performance-testing' },
-    { title: 'Chat', icon: MessageSquare, path: '/chat' },
-    { title: 'Defects', icon: Bug, path: '/defects' },
-    { title: 'Reports', icon: BarChart, path: '/reports' },
-    { title: 'Settings', icon: Settings, path: '/settings' },
+    { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    { title: t('navigation.projects'), icon: FolderPlus, path: '/projects' },
+    { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
+    { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
+    { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
+    { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
+    { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
+    { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
+    { title: t('navigation.chat'), icon: MessageSquare, path: '/chat' },
+    { title: t('navigation.defects'), icon: Bug, path: '/defects' },
+    { title: t('navigation.reports'), icon: BarChart, path: '/reports' },
+    { title: t('navigation.settings'), icon: Settings, path: '/settings' },
   ];
 
   const handleLogout = () => {
@@ -78,8 +81,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </svg>
               </div>
               <div>
-                <span className="text-lg font-bold text-sidebar-foreground">AI Complete SWDC</span>
-                <p className="text-xs text-sidebar-foreground/70">Management Platform</p>
+                <span className="text-lg font-bold text-sidebar-foreground">{t('app.title')}</span>
+                <p className="text-xs text-sidebar-foreground/70">{t('app.subtitle')}</p>
               </div>
             </Link>
           </SidebarHeader>
@@ -125,7 +128,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   className="w-full bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {t('common.logout')}
                 </Button>
               </div>
             )}
@@ -139,8 +142,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SidebarTrigger>
-            <div className="ml-4 font-medium">QForma Platform</div>
+            <div className="ml-4 font-medium">{t('app.platformName')}</div>
             <div className="flex-1"></div>
+            <LanguageSwitcher />
           </header>
           
           <main className="flex-1 overflow-auto p-6">

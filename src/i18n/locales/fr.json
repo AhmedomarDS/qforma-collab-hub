@@ -1,0 +1,54 @@
+
+{
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "view": "Voir",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "upload": "Télécharger",
+    "download": "Télécharger",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "reset": "Réinitialiser",
+    "confirm": "Confirmer",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "logout": "Se déconnecter",
+    "login": "Se connecter"
+  },
+  "navigation": {
+    "dashboard": "Tableau de Bord",
+    "projects": "Projets",
+    "tasks": "Tâches",
+    "requirements": "Exigences",
+    "designManagement": "Gestion de Conception",
+    "testCases": "Cas de Test",
+    "automationTesting": "Tests d'Automatisation",
+    "performanceTesting": "Tests de Performance",
+    "chat": "Chat",
+    "defects": "Défauts",
+    "reports": "Rapports",
+    "settings": "Paramètres"
+  },
+  "app": {
+    "title": "IA Complète SWDC",
+    "subtitle": "Plateforme de Gestion",
+    "platformName": "Plateforme QForma"
+  },
+  "testCases": {
+    "title": "Cas de Test",
+    "description": "Gérer et suivre les cas de test pour vos projets",
+    "createNew": "Créer un Nouveau Cas de Test",
+    "uploadCSV": "Télécharger CSV"
+  }
+}

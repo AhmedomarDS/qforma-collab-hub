@@ -1,0 +1,66 @@
+
+{
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "view": "عرض",
+    "search": "بحث",
+    "filter": "تصفية",
+    "export": "تصدير",
+    "import": "استيراد",
+    "upload": "رفع",
+    "download": "تحميل",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "reset": "إعادة تعيين",
+    "confirm": "تأكيد",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "projects": "المشاريع",
+    "tasks": "المهام",
+    "requirements": "المتطلبات",
+    "designManagement": "إدارة التصميم",
+    "testCases": "حالات الاختبار",
+    "automationTesting": "اختبار الأتمتة",
+    "performanceTesting": "اختبار الأداء",
+    "chat": "الدردشة",
+    "defects": "العيوب",
+    "reports": "التقارير",
+    "settings": "الإعدادات"
+  },
+  "app": {
+    "title": "منصة الذكي الاصطناعي الكاملة للتطوير",
+    "subtitle": "منصة الإدارة",
+    "platformName": "منصة QForma"
+  },
+  "testCases": {
+    "title": "حالات الاختبار",
+    "description": "إدارة وتتبع حالات الاختبار لمشاريعك",
+    "createNew": "إنشاء حالة اختبار جديدة",
+    "uploadCSV": "رفع ملف CSV",
+    "noTestCases": "لم يتم العثور على حالات اختبار",
+    "noTestCasesDescription": "ابدأ بإنشاء حالة الاختبار الأولى أو رفع ملف CSV يحتوي على حالات اختبار موجودة.",
+    "testCaseTitle": "عنوان حالة الاختبار",
+    "description": "الوصف",
+    "priority": "الأولوية",
+    "status": "الحالة",
+    "assignee": "المكلف",
+    "category": "الفئة",
+    "tags": "العلامات",
+    "steps": "الخطوات",
+    "expectedResult": "النتيجة المتوقعة",
+    "actualResult": "النتيجة الفعلية"
+  }
+}

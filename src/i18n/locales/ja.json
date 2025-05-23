@@ -1,0 +1,54 @@
+
+{
+  "common": {
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "view": "表示",
+    "search": "検索",
+    "filter": "フィルター",
+    "export": "エクスポート",
+    "import": "インポート",
+    "upload": "アップロード",
+    "download": "ダウンロード",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "送信",
+    "reset": "リセット",
+    "confirm": "確認",
+    "settings": "設定",
+    "profile": "プロフィール",
+    "logout": "ログアウト",
+    "login": "ログイン"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "projects": "プロジェクト",
+    "tasks": "タスク",
+    "requirements": "要件",
+    "designManagement": "デザイン管理",
+    "testCases": "テストケース",
+    "automationTesting": "自動化テスト",
+    "performanceTesting": "パフォーマンステスト",
+    "chat": "チャット",
+    "defects": "不具合",
+    "reports": "レポート",
+    "settings": "設定"
+  },
+  "app": {
+    "title": "AI完全SWDC",
+    "subtitle": "管理プラットフォーム",
+    "platformName": "QFormaプラットフォーム"
+  },
+  "testCases": {
+    "title": "テストケース",
+    "description": "プロジェクトのテストケースを管理・追跡",
+    "createNew": "新しいテストケースを作成",
+    "uploadCSV": "CSVアップロード"
+  }
+}

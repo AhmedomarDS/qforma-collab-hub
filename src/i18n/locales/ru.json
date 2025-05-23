@@ -1,0 +1,54 @@
+
+{
+  "common": {
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "view": "Просмотр",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "upload": "Загрузить",
+    "download": "Скачать",
+    "close": "Закрыть",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Предыдущий",
+    "submit": "Отправить",
+    "reset": "Сброс",
+    "confirm": "Подтвердить",
+    "settings": "Настройки",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "login": "Войти"
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "projects": "Проекты",
+    "tasks": "Задачи",
+    "requirements": "Требования",
+    "designManagement": "Управление дизайном",
+    "testCases": "Тест-кейсы",
+    "automationTesting": "Автоматизированное тестирование",
+    "performanceTesting": "Тестирование производительности",
+    "chat": "Чат",
+    "defects": "Дефекты",
+    "reports": "Отчеты",
+    "settings": "Настройки"
+  },
+  "app": {
+    "title": "ИИ Полная SWDC",
+    "subtitle": "Платформа управления",
+    "platformName": "Платформа QForma"
+  },
+  "testCases": {
+    "title": "Тест-кейсы",
+    "description": "Управление и отслеживание тест-кейсов для ваших проектов",
+    "createNew": "Создать новый тест-кейс",
+    "uploadCSV": "Загрузить CSV"
+  }
+}
