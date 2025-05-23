@@ -24,7 +24,9 @@
     "settings": "Configuración",
     "profile": "Perfil",
     "logout": "Cerrar sesión",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "getStarted": "Comenzar",
+    "noRequired": "No se requiere tarjeta de crédito"
   },
   "navigation": {
     "dashboard": "Panel de Control",
@@ -35,6 +37,9 @@
     "testCases": "Casos de Prueba",
     "automationTesting": "Pruebas de Automatización",
     "performanceTesting": "Pruebas de Rendimiento",
+    "securityTesting": "Pruebas de Seguridad",
+    "browserCompatibility": "Compatibilidad del Navegador",
+    "mobileCompatibility": "Compatibilidad Móvil",
     "chat": "Chat",
     "defects": "Defectos",
     "reports": "Informes",
@@ -52,5 +57,33 @@
     "uploadCSV": "Subir CSV",
     "noTestCases": "No se encontraron casos de prueba",
     "noTestCasesDescription": "Comienza creando tu primer caso de prueba o subiendo un archivo CSV con casos de prueba existentes."
+  },
+  "landing": {
+    "hero": {
+      "title": "Gestión Completa del Ciclo de Vida de Desarrollo de Software con IA",
+      "subtitle": "La Mejor Plataforma para Equipos de Desarrollo de Software",
+      "description": "Gestiona, Diseña, Requisitos, Pruebas, Defectos, KPIs, Trazabilidad y Automatiza el Diseño de Requisitos, Casos de Prueba con tu Asistente de IA. También se incluyen Automatización, Rendimiento y Pruebas de Compatibilidad."
+    },
+    "domain": {
+      "title": "Crea tu dominio QForma",
+      "companyPlaceholder": "Nombre de la empresa",
+      "subdomainPlaceholder": "subdominio",
+      "emailPlaceholder": "Tu dirección de correo electrónico",
+      "buttonText": "Comenzar Gratis",
+      "noCreditCard": "No se requiere tarjeta de crédito para el plan gratuito"
+    },
+    "pricing": {
+      "title": "Planes de Precios",
+      "description": "Elige el plan adecuado para las necesidades de QA de tu equipo. Todos los planes incluyen nuestras características principales de gestión de QA."
+    },
+    "features": {
+      "title": "Plataforma QA Todo-en-Uno"
+    },
+    "cta": {
+      "title": "¿Listo para transformar tu proceso de QA?",
+      "description": "Únete a miles de equipos de QA que usan QForma para entregar mejor software, más rápido.",
+      "signIn": "Iniciar Sesión",
+      "requestDemo": "Solicitar Demo"
+    }
   }
 }

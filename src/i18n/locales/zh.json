@@ -24,7 +24,9 @@
     "settings": "设置",
     "profile": "个人资料",
     "logout": "登出",
-    "login": "登录"
+    "login": "登录",
+    "getStarted": "开始使用",
+    "noRequired": "无需信用卡"
   },
   "navigation": {
     "dashboard": "仪表板",
@@ -35,6 +37,9 @@
     "testCases": "测试用例",
     "automationTesting": "自动化测试",
     "performanceTesting": "性能测试",
+    "securityTesting": "安全测试",
+    "browserCompatibility": "浏览器兼容性",
+    "mobileCompatibility": "移动端兼容性",
     "chat": "聊天",
     "defects": "缺陷",
     "reports": "报告",
@@ -50,5 +55,33 @@
     "description": "管理和跟踪项目的测试用例",
     "createNew": "创建新测试用例",
     "uploadCSV": "上传 CSV"
+  },
+  "landing": {
+    "hero": {
+      "title": "AI完整软件开发生命周期管理",
+      "subtitle": "软件开发团队的最佳选择平台",
+      "description": "通过您的AI助手管理、设计、需求、测试、缺陷、KPI、可追溯性并自动化需求设计和测试用例。自动化、性能和兼容性测试也没有被忘记。"
+    },
+    "domain": {
+      "title": "创建您的QForma域名",
+      "companyPlaceholder": "公司名称",
+      "subdomainPlaceholder": "子域名",
+      "emailPlaceholder": "您的邮箱地址",
+      "buttonText": "免费开始",
+      "noCreditCard": "免费计划无需信用卡"
+    },
+    "pricing": {
+      "title": "价格方案",
+      "description": "为您团队的QA需求选择合适的计划。所有计划都包含我们的核心QA管理功能。"
+    },
+    "features": {
+      "title": "一体化QA平台"
+    },
+    "cta": {
+      "title": "准备好转变您的QA流程了吗？",
+      "description": "加入数千个使用QForma更快交付更好软件的QA团队。",
+      "signIn": "登录",
+      "requestDemo": "申请演示"
+    }
   }
 }

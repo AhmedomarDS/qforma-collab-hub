@@ -24,7 +24,9 @@
     "settings": "設定",
     "profile": "プロフィール",
     "logout": "ログアウト",
-    "login": "ログイン"
+    "login": "ログイン",
+    "getStarted": "開始する",
+    "noRequired": "クレジットカード不要"
   },
   "navigation": {
     "dashboard": "ダッシュボード",
@@ -35,6 +37,9 @@
     "testCases": "テストケース",
     "automationTesting": "自動化テスト",
     "performanceTesting": "パフォーマンステスト",
+    "securityTesting": "セキュリティテスト",
+    "browserCompatibility": "ブラウザ互換性",
+    "mobileCompatibility": "モバイル互換性",
     "chat": "チャット",
     "defects": "不具合",
     "reports": "レポート",
@@ -50,5 +55,33 @@
     "description": "プロジェクトのテストケースを管理・追跡",
     "createNew": "新しいテストケースを作成",
     "uploadCSV": "CSVアップロード"
+  },
+  "landing": {
+    "hero": {
+      "title": "AI完全ソフトウェア開発ライフサイクル管理",
+      "subtitle": "ソフトウェア開発チームにとって最高の選択肢プラットフォーム",
+      "description": "AIアシスタントで要件設計、テストケースの管理、設計、要件、テスト、欠陥、KPI、トレーサビリティ、自動化を実現。自動化、パフォーマンス、互換性テストも忘れていません。"
+    },
+    "domain": {
+      "title": "QFormaドメインを作成",
+      "companyPlaceholder": "会社名",
+      "subdomainPlaceholder": "サブドメイン",
+      "emailPlaceholder": "メールアドレス",
+      "buttonText": "無料で開始",
+      "noCreditCard": "無料プランにはクレジットカード不要"
+    },
+    "pricing": {
+      "title": "料金プラン",
+      "description": "チームのQAニーズに適したプランを選択してください。すべてのプランにコアQA管理機能が含まれています。"
+    },
+    "features": {
+      "title": "オールインワンQAプラットフォーム"
+    },
+    "cta": {
+      "title": "QAプロセスを変革する準備はできていますか？",
+      "description": "QFormaを使用してより良いソフトウェアをより速く提供する何千ものQAチームに参加しましょう。",
+      "signIn": "サインイン",
+      "requestDemo": "デモをリクエスト"
+    }
   }
 }

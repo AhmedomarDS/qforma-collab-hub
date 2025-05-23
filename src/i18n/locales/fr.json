@@ -24,7 +24,9 @@
     "settings": "Paramètres",
     "profile": "Profil",
     "logout": "Se déconnecter",
-    "login": "Se connecter"
+    "login": "Se connecter",
+    "getStarted": "Commencer",
+    "noRequired": "Aucune carte de crédit requise"
   },
   "navigation": {
     "dashboard": "Tableau de Bord",
@@ -35,6 +37,9 @@
     "testCases": "Cas de Test",
     "automationTesting": "Tests d'Automatisation",
     "performanceTesting": "Tests de Performance",
+    "securityTesting": "Tests de Sécurité",
+    "browserCompatibility": "Compatibilité Navigateur",
+    "mobileCompatibility": "Compatibilité Mobile",
     "chat": "Chat",
     "defects": "Défauts",
     "reports": "Rapports",
@@ -50,5 +55,33 @@
     "description": "Gérer et suivre les cas de test pour vos projets",
     "createNew": "Créer un Nouveau Cas de Test",
     "uploadCSV": "Télécharger CSV"
+  },
+  "landing": {
+    "hero": {
+      "title": "Gestion Complète du Cycle de Vie de Développement Logiciel par IA",
+      "subtitle": "La Meilleure Plateforme pour les Équipes de Développement Logiciel",
+      "description": "Gérez, Concevez, Exigences, Tests, Défauts, KPIs, Traçabilité et Automatisez la Conception des Exigences, Cas de Test avec votre Assistant IA. L'Automatisation, Performance et Tests de Compatibilité ne sont pas oubliés."
+    },
+    "domain": {
+      "title": "Créez votre domaine QForma",
+      "companyPlaceholder": "Nom de l'entreprise",
+      "subdomainPlaceholder": "sous-domaine",
+      "emailPlaceholder": "Votre adresse e-mail",
+      "buttonText": "Commencer Gratuitement",
+      "noCreditCard": "Aucune carte de crédit requise pour le plan gratuit"
+    },
+    "pricing": {
+      "title": "Plans Tarifaires",
+      "description": "Choisissez le bon plan pour les besoins QA de votre équipe. Tous les plans incluent nos fonctionnalités principales de gestion QA."
+    },
+    "features": {
+      "title": "Plateforme QA Tout-en-Un"
+    },
+    "cta": {
+      "title": "Prêt à transformer votre processus QA?",
+      "description": "Rejoignez des milliers d'équipes QA utilisant QForma pour livrer de meilleurs logiciels, plus rapidement.",
+      "signIn": "Se Connecter",
+      "requestDemo": "Demander une Démo"
+    }
   }
 }
