@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -15,17 +14,21 @@ import {
 import { Layers, Layers3 } from 'lucide-react';
 import AiChatBox from '@/components/chat/AiChatBox';
 
+type DesignType = 'high-level' | 'low-level';
+
+interface Design {
+  id: string;
+  title: string;
+  description: string;
+  type: DesignType;
+  createdAt: Date;
+  author: string;
+}
+
 const DesignManagement = () => {
   const navigate = useNavigate();
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
-  const [designs, setDesigns] = useState<Array<{
-    id: string;
-    title: string;
-    description: string;
-    type: 'high-level' | 'low-level';
-    createdAt: Date;
-    author: string;
-  }>>([
+  const [designs, setDesigns] = useState<Design[]>([
     {
       id: '1',
       title: 'System Architecture Overview',
@@ -45,11 +48,13 @@ const DesignManagement = () => {
   ]);
 
   const handleSaveContent = (content: string) => {
-    const newDesign = {
+    const designType: DesignType = content.toLowerCase().includes('high') ? 'high-level' : 'low-level';
+    
+    const newDesign: Design = {
       id: Math.random().toString(36).substring(7),
       title: content.split('\n')[0].replace(/^#+\s*/, '').substring(0, 50),
       description: content.split('\n').slice(1).join(' ').substring(0, 200),
-      type: content.toLowerCase().includes('high') ? 'high-level' : 'low-level',
+      type: designType,
       createdAt: new Date(),
       author: 'Current User'
     };
