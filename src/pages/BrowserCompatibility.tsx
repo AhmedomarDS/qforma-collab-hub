@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Chrome, Firefox, Safari, Cpu, Zap, AlertCircle } from "lucide-react";
+import { Chrome, Globe, Monitor, Smartphone, Zap, AlertCircle } from "lucide-react";
 import AppLayout from "@/components/layouts/AppLayout";
 import { toast } from "@/components/ui/use-toast";
 import { aiPlatformService } from "@/services/aiPlatformService";
@@ -21,9 +21,9 @@ const BrowserCompatibility = () => {
 
   const browsers = [
     { name: 'Chrome', icon: Chrome, versions: ['Latest', '120', '119', '118'] },
-    { name: 'Firefox', icon: Firefox, versions: ['Latest', '120', '119', '118'] },
-    { name: 'Safari', icon: Safari, versions: ['Latest', '17', '16', '15'] },
-    { name: 'Edge', icon: Cpu, versions: ['Latest', '120', '119', '118'] }
+    { name: 'Firefox', icon: Globe, versions: ['Latest', '120', '119', '118'] },
+    { name: 'Safari', icon: Monitor, versions: ['Latest', '17', '16', '15'] },
+    { name: 'Edge', icon: Smartphone, versions: ['Latest', '120', '119', '118'] }
   ];
 
   const handleGenerateAITest = async () => {
