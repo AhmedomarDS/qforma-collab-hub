@@ -37,6 +37,7 @@
     "testCases": "Test Cases",
     "automationTesting": "Automation Testing",
     "performanceTesting": "Performance Testing",
+    "securityTesting": "Security Testing",
     "browserCompatibility": "Browser Compatibility",
     "mobileCompatibility": "Mobile Compatibility",
     "chat": "Chat",

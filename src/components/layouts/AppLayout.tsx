@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +35,8 @@ import {
   TestTube,
   ChartLine,
   Cpu,
-  Smartphone
+  Smartphone,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -59,6 +59,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
     { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
     { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
+    { title: 'Security Testing', icon: Shield, path: '/security-testing' },
     { title: t('navigation.browserCompatibility'), icon: Cpu, path: '/browser-compatibility' },
     { title: t('navigation.mobileCompatibility'), icon: Smartphone, path: '/mobile-compatibility' },
     { title: t('navigation.chat'), icon: MessageSquare, path: '/chat' },

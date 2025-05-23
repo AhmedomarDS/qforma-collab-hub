@@ -1,8 +1,7 @@
-
 import { toast } from "@/components/ui/use-toast";
 
 export interface AIGenerationRequest {
-  type: 'test-case' | 'requirement' | 'defect-analysis' | 'performance-script' | 'compatibility-test';
+  type: 'test-case' | 'requirement' | 'defect-analysis' | 'performance-script' | 'compatibility-test' | 'security-test';
   prompt: string;
   context?: any;
   parameters?: {
@@ -97,6 +96,18 @@ class AIPlatformService {
         model: 'gpt-4o-mini',
         temperature: 0.6,
         maxTokens: 800
+      }
+    });
+  }
+
+  async generateSecurityTest(requirements: string): Promise<AIGenerationResponse> {
+    return this.makeRequest({
+      type: 'security-test',
+      prompt: `Generate comprehensive security test cases for: ${requirements}. Include tests for authentication, authorization, data protection, input validation, session management, and common vulnerabilities like SQL injection, XSS, and CSRF.`,
+      parameters: {
+        model: 'gpt-4o-mini',
+        temperature: 0.5,
+        maxTokens: 1200
       }
     });
   }
