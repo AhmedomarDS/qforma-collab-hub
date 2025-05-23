@@ -23,8 +23,10 @@
     "confirm": "Confirm",
     "settings": "Settings",
     "profile": "Profile",
-    "logout": "Sign out",
-    "login": "Sign in"
+    "logout": "Logout",
+    "login": "Login",
+    "getStarted": "Get Started",
+    "noRequired": "No credit card required"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -50,42 +52,35 @@
     "description": "Manage and track test cases for your projects",
     "createNew": "Create New Test Case",
     "uploadCSV": "Upload CSV",
-    "noTestCases": "No Test Cases Found",
-    "noTestCasesDescription": "Get started by creating your first test case or uploading a CSV file with existing test cases.",
-    "testCaseTitle": "Test Case Title",
-    "description": "Description",
-    "priority": "Priority",
-    "status": "Status",
-    "assignee": "Assignee",
-    "category": "Category",
-    "tags": "Tags",
-    "steps": "Steps",
-    "expectedResult": "Expected Result",
-    "actualResult": "Actual Result",
-    "csvUploadTitle": "Upload Test Cases from CSV",
-    "csvUploadDescription": "Upload a CSV file containing test case data. The file should include columns for title, description, priority, status, and other test case details.",
-    "selectFile": "Select CSV File",
-    "csvFormatNote": "CSV should include: title, description, priority, status, assignee, category, tags, steps, expected_result",
-    "uploadSuccess": "Test cases uploaded successfully!",
-    "uploadError": "Error uploading test cases. Please check your file format."
+    "noTestCases": "No test cases found",
+    "noTestCasesDescription": "Start by creating your first test case or upload a CSV file with existing test cases."
   },
-  "requirements": {
-    "title": "Requirements",
-    "description": "Manage project requirements and specifications",
-    "createNew": "Create New Requirement",
-    "uploadCSV": "Upload CSV",
-    "generateWithAI": "Generate with AI"
-  },
-  "defects": {
-    "title": "Defects",
-    "description": "Track and manage defects and issues",
-    "reportNew": "Report New Defect"
-  },
-  "automation": {
-    "title": "Automation Testing",
-    "description": "Create, manage and execute automated test scenarios",
-    "generateWithAI": "Generate with AI",
-    "recordScenario": "Record Test Scenario",
-    "stopRecording": "Stop Recording"
+  "landing": {
+    "hero": {
+      "title": "AI Complete SWDC Management",
+      "subtitle": "The Best Option Platform for Software Development Teams",
+      "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Also Automation, Performance and Compatibility Testing were not forgotten."
+    },
+    "domain": {
+      "title": "Create your QForma domain",
+      "companyPlaceholder": "Company name",
+      "subdomainPlaceholder": "subdomain",
+      "emailPlaceholder": "Your email address",
+      "buttonText": "Get Started Free",
+      "noCreditCard": "No credit card required for the free plan"
+    },
+    "pricing": {
+      "title": "Pricing Plans",
+      "description": "Choose the right plan for your team's QA needs. All plans include our core QA management features."
+    },
+    "features": {
+      "title": "All-in-One QA Platform"
+    },
+    "cta": {
+      "title": "Ready to transform your QA process?",
+      "description": "Join thousands of QA teams using QForma to deliver better software, faster.",
+      "signIn": "Sign In",
+      "requestDemo": "Request Demo"
+    }
   }
 }

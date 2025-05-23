@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { 
   Card, 
   CardContent, 
@@ -60,6 +62,7 @@ const pricingPlans = [
 const Landing = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [companyName, setCompanyName] = useState("");
   const [subdomain, setSubdomain] = useState("");
   const [email, setEmail] = useState("");
@@ -93,6 +96,11 @@ const Landing = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+      {/* Language switcher in header */}
+      <header className="fixed top-0 right-0 z-10 p-4">
+        <LanguageSwitcher />
+      </header>
+
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -261,7 +269,7 @@ const Landing = () => {
             <div className="bg-card p-6 rounded-lg border">
               <div className="bg-qforma-teal/10 p-2 rounded-lg inline-block mb-4">
                 <svg className="h-6 w-6 text-qforma-teal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 12a2 2 0 002 2h2a2 2 0 002-2M9 12a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Requirement Management</h3>
