@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -107,31 +108,28 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <div className="flex items-center mb-6">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-16 w-16 flex items-center justify-center font-bold text-2xl mr-4">
-                  <svg viewBox="0 0 24 24" className="h-10 w-10" fill="currentColor">
-                    <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-                    <circle cx="12" cy="12" r="3" fill="white" opacity="0.8"/>
-                  </svg>
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-16 w-16 flex items-center justify-center font-bold text-4xl mr-4">
+                  Q
                 </div>
                 <div>
                   <h1 className="text-4xl md:text-5xl font-bold text-qforma-blue mb-2">
-                    AI Complete SWDC Management
+                    {t('landing.hero.title')}
                   </h1>
                   <p className="text-xl text-qforma-teal font-semibold">
-                    The Best Option Platform for Software Development Teams
+                    {t('landing.hero.subtitle')}
                   </p>
                 </div>
               </div>
               <p className="text-lg mb-8 text-muted-foreground">
-                Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Also Automation, Performance and Compatibility Testing were not forgotten.
+                {t('landing.hero.description')}
               </p>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-muted shadow-lg">
-                <h2 className="text-xl font-semibold mb-4">Create your QForma domain</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('landing.domain.title')}</h2>
                 <div className="space-y-4">
                   <div>
                     <Input 
                       type="text" 
-                      placeholder="Company name" 
+                      placeholder={t('landing.domain.companyPlaceholder')}
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       className="mb-2"
@@ -140,7 +138,7 @@ const Landing = () => {
                   <div className="flex items-center">
                     <Input 
                       type="text" 
-                      placeholder="subdomain" 
+                      placeholder={t('landing.domain.subdomainPlaceholder')}
                       value={subdomain}
                       onChange={handleSubdomainChange}
                       className="rounded-r-none"
@@ -152,7 +150,7 @@ const Landing = () => {
                   <div>
                     <Input 
                       type="email" 
-                      placeholder="Your email address" 
+                      placeholder={t('landing.domain.emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -161,10 +159,10 @@ const Landing = () => {
                     onClick={() => handleRegister('Pro')} 
                     className="w-full bg-qforma-blue hover:bg-qforma-blue/90"
                   >
-                    Get Started Free
+                    {t('landing.domain.buttonText')}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    No credit card required for the free plan
+                    {t('landing.domain.noCreditCard')}
                   </p>
                 </div>
               </div>
@@ -188,9 +186,9 @@ const Landing = () => {
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-muted/50" id="pricing">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-3">Pricing Plans</h2>
+          <h2 className="text-3xl font-bold text-center mb-3">{t('landing.pricing.title')}</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-lg mx-auto">
-            Choose the right plan for your team's QA needs. All plans include our core QA management features.
+            {t('landing.pricing.description')}
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -263,7 +261,7 @@ const Landing = () => {
       {/* Features Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">All-in-One QA Platform</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">{t('landing.features.title')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-card p-6 rounded-lg border">
@@ -325,6 +323,30 @@ const Landing = () => {
               <h3 className="text-xl font-semibold mb-2">Design Management</h3>
               <p className="text-muted-foreground">Create and manage high-level and low-level design documents with approval workflows.</p>
             </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="bg-indigo-500/10 p-2 rounded-lg inline-block mb-4">
+                <Cpu className="h-6 w-6 text-indigo-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Browser Compatibility Testing</h3>
+              <p className="text-muted-foreground">Test your applications across different browsers and versions to ensure consistent user experience.</p>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="bg-pink-500/10 p-2 rounded-lg inline-block mb-4">
+                <Smartphone className="h-6 w-6 text-pink-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Mobile Compatibility Testing</h3>
+              <p className="text-muted-foreground">Ensure your mobile applications work flawlessly across different devices and operating systems.</p>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <div className="bg-cyan-500/10 p-2 rounded-lg inline-block mb-4">
+                <GitBranch className="h-6 w-6 text-cyan-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">AI Platform Integration</h3>
+              <p className="text-muted-foreground">Seamlessly integrate with AI platforms for automated test generation and intelligent analysis.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -332,9 +354,9 @@ const Landing = () => {
       {/* Call to Action */}
       <section className="py-16 px-4 bg-qforma-blue text-white">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to transform your QA process?</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('landing.cta.title')}</h2>
           <p className="text-lg mb-8 opacity-90 max-w-xl mx-auto">
-            Join thousands of QA teams using QForma to deliver better software, faster.
+            {t('landing.cta.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -342,14 +364,14 @@ const Landing = () => {
               size="lg"
               onClick={() => navigate('/login')}
             >
-              Sign In
+              {t('landing.cta.signIn')}
             </Button>
             <Button 
               variant="outline" 
               size="lg" 
               className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
             >
-              Request Demo
+              {t('landing.cta.requestDemo')}
             </Button>
           </div>
         </div>

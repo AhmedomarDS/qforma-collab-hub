@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +26,8 @@ import Tasks from "./pages/Tasks";
 import DesignManagement from "./pages/DesignManagement";
 import AutomationTesting from "./pages/AutomationTesting";
 import PerformanceTesting from "./pages/PerformanceTesting";
+import BrowserCompatibility from "./pages/BrowserCompatibility";
+import MobileCompatibility from "./pages/MobileCompatibility";
 
 const queryClient = new QueryClient();
 
@@ -129,6 +132,18 @@ const App = () => (
                     <Route path="/performance-testing" element={
                       <ProtectedRoute>
                         <PerformanceTesting />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/browser-compatibility" element={
+                      <ProtectedRoute>
+                        <BrowserCompatibility />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/mobile-compatibility" element={
+                      <ProtectedRoute>
+                        <MobileCompatibility />
                       </ProtectedRoute>
                     } />
                     
