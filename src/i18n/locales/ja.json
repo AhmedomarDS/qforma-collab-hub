@@ -35,6 +35,8 @@
     "requirements": "要件",
     "designManagement": "デザイン管理",
     "testCases": "テストケース",
+    "testPlans": "テスト計画",
+    "traceabilityMatrix": "トレーサビリティマトリックス",
     "automationTesting": "自動化テスト",
     "performanceTesting": "パフォーマンステスト",
     "securityTesting": "セキュリティテスト",
@@ -55,6 +57,15 @@
     "description": "プロジェクトのテストケースを管理・追跡",
     "createNew": "新しいテストケースを作成",
     "uploadCSV": "CSVアップロード"
+  },
+  "testPlans": {
+    "title": "テスト計画",
+    "description": "テスト実行計画の作成と管理",
+    "createNew": "テスト計画を作成"
+  },
+  "traceabilityMatrix": {
+    "title": "トレーサビリティマトリックス",
+    "description": "SDLC全体のカバレッジと関係性を追跡"
   },
   "landing": {
     "hero": {

@@ -35,6 +35,8 @@
     "requirements": "Requisitos",
     "designManagement": "Gestión de Diseño",
     "testCases": "Casos de Prueba",
+    "testPlans": "Planes de Prueba",
+    "traceabilityMatrix": "Matriz de Trazabilidad",
     "automationTesting": "Pruebas de Automatización",
     "performanceTesting": "Pruebas de Rendimiento",
     "securityTesting": "Pruebas de Seguridad",
@@ -56,7 +58,40 @@
     "createNew": "Crear Nuevo Caso de Prueba",
     "uploadCSV": "Subir CSV",
     "noTestCases": "No se encontraron casos de prueba",
-    "noTestCasesDescription": "Comienza creando tu primer caso de prueba o subiendo un archivo CSV con casos de prueba existentes."
+    "noTestCasesDescription": "Comienza creando tu primer caso de prueba o subiendo un archivo CSV con casos de prueba existentes.",
+    "testCaseTitle": "Título del Caso de Prueba",
+    "priority": "Prioridad",
+    "status": "Estado",
+    "assignee": "Asignado a",
+    "category": "Categoría",
+    "tags": "Etiquetas",
+    "steps": "Pasos de Prueba",
+    "expectedResult": "Resultado Esperado",
+    "csvUploadTitle": "Subir Casos de Prueba desde CSV",
+    "csvUploadDescription": "Sube un archivo CSV que contenga casos de prueba para importarlos en lote a tu proyecto.",
+    "selectFile": "Seleccionar Archivo CSV",
+    "csvFormatNote": "El CSV debe contener columnas: title, description, priority, status, steps, expected_result",
+    "uploadSuccess": "¡Casos de prueba subidos exitosamente!",
+    "uploadError": "Error al subir el archivo CSV. Por favor verifica el formato e inténtalo de nuevo."
+  },
+  "testPlans": {
+    "title": "Planes de Prueba",
+    "description": "Crear y gestionar planes de ejecución de pruebas",
+    "createNew": "Crear Plan de Prueba",
+    "dragAndDrop": "Arrastra y suelta casos de prueba para organizar el orden de ejecución",
+    "executionProgress": "Progreso de Ejecución",
+    "testCasesPool": "Grupo de Casos de Prueba"
+  },
+  "traceabilityMatrix": {
+    "title": "Matriz de Trazabilidad",
+    "description": "Rastrea la cobertura y relaciones a través de tu SDLC",
+    "requirementsCoverage": "Matriz de Cobertura de Requisitos",
+    "exportMatrix": "Exportar Matriz",
+    "searchRequirements": "Buscar requisitos...",
+    "averageCoverage": "Cobertura Promedio",
+    "totalRequirements": "Total de Requisitos",
+    "totalTestCases": "Total de Casos de Prueba",
+    "totalDefects": "Total de Defectos"
   },
   "landing": {
     "hero": {

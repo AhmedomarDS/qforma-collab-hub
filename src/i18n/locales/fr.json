@@ -35,6 +35,8 @@
     "requirements": "Exigences",
     "designManagement": "Gestion de Conception",
     "testCases": "Cas de Test",
+    "testPlans": "Plans de Test",
+    "traceabilityMatrix": "Matrice de Traçabilité",
     "automationTesting": "Tests d'Automatisation",
     "performanceTesting": "Tests de Performance",
     "securityTesting": "Tests de Sécurité",
@@ -55,6 +57,15 @@
     "description": "Gérer et suivre les cas de test pour vos projets",
     "createNew": "Créer un Nouveau Cas de Test",
     "uploadCSV": "Télécharger CSV"
+  },
+  "testPlans": {
+    "title": "Plans de Test",
+    "description": "Créer et gérer les plans d'exécution de test",
+    "createNew": "Créer un Plan de Test"
+  },
+  "traceabilityMatrix": {
+    "title": "Matrice de Traçabilité",
+    "description": "Suivre la couverture et les relations à travers votre SDLC"
   },
   "landing": {
     "hero": {

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Requirements from "./pages/Requirements";
 import TestCases from "./pages/TestCases";
+import TestPlans from "./pages/TestPlans";
+import TraceabilityMatrix from "./pages/TraceabilityMatrix";
 import Chat from "./pages/Chat";
 import Defects from "./pages/Defects";
 import Reports from "./pages/Reports";
@@ -78,6 +81,18 @@ const App = () => (
                     <Route path="/test-cases" element={
                       <ProtectedRoute>
                         <TestCases />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/test-plans" element={
+                      <ProtectedRoute>
+                        <TestPlans />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/traceability-matrix" element={
+                      <ProtectedRoute>
+                        <TraceabilityMatrix />
                       </ProtectedRoute>
                     } />
                     

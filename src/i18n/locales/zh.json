@@ -35,6 +35,8 @@
     "requirements": "需求",
     "designManagement": "设计管理",
     "testCases": "测试用例",
+    "testPlans": "测试计划",
+    "traceabilityMatrix": "可追溯性矩阵",
     "automationTesting": "自动化测试",
     "performanceTesting": "性能测试",
     "securityTesting": "安全测试",
@@ -46,15 +48,24 @@
     "settings": "设置"
   },
   "app": {
-    "title": "AI 完整 SDLC",
+    "title": "AI完整SDLC",
     "subtitle": "管理平台",
-    "platformName": "QForma 平台"
+    "platformName": "QForma平台"
   },
   "testCases": {
     "title": "测试用例",
     "description": "管理和跟踪项目的测试用例",
     "createNew": "创建新测试用例",
-    "uploadCSV": "上传 CSV"
+    "uploadCSV": "上传CSV"
+  },
+  "testPlans": {
+    "title": "测试计划",
+    "description": "创建和管理测试执行计划",
+    "createNew": "创建测试计划"
+  },
+  "traceabilityMatrix": {
+    "title": "可追溯性矩阵",
+    "description": "跟踪SDLC中的覆盖率和关系"
   },
   "landing": {
     "hero": {

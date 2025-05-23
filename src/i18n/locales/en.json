@@ -35,6 +35,8 @@
     "requirements": "Requirements",
     "designManagement": "Design Management",
     "testCases": "Test Cases",
+    "testPlans": "Test Plans",
+    "traceabilityMatrix": "Traceability Matrix",
     "automationTesting": "Automation Testing",
     "performanceTesting": "Performance Testing",
     "securityTesting": "Security Testing",
@@ -56,21 +58,54 @@
     "createNew": "Create New Test Case",
     "uploadCSV": "Upload CSV",
     "noTestCases": "No test cases found",
-    "noTestCasesDescription": "Start by creating your first test case or upload a CSV file with existing test cases."
+    "noTestCasesDescription": "Get started by creating your first test case or uploading a CSV file with existing test cases.",
+    "testCaseTitle": "Test Case Title",
+    "priority": "Priority",
+    "status": "Status",
+    "assignee": "Assignee",
+    "category": "Category",
+    "tags": "Tags",
+    "steps": "Test Steps",
+    "expectedResult": "Expected Result",
+    "csvUploadTitle": "Upload Test Cases from CSV",
+    "csvUploadDescription": "Upload a CSV file containing test cases to bulk import them into your project.",
+    "selectFile": "Select CSV File",
+    "csvFormatNote": "CSV should contain columns: title, description, priority, status, steps, expected_result",
+    "uploadSuccess": "Test cases uploaded successfully!",
+    "uploadError": "Error uploading CSV file. Please check the format and try again."
+  },
+  "testPlans": {
+    "title": "Test Plans",
+    "description": "Create and manage test execution plans",
+    "createNew": "Create Test Plan",
+    "dragAndDrop": "Drag and drop test cases to organize execution order",
+    "executionProgress": "Execution Progress",
+    "testCasesPool": "Test Cases Pool"
+  },
+  "traceabilityMatrix": {
+    "title": "Traceability Matrix",
+    "description": "Track coverage and relationships across your SDLC",
+    "requirementsCoverage": "Requirements Coverage Matrix",
+    "exportMatrix": "Export Matrix",
+    "searchRequirements": "Search requirements...",
+    "averageCoverage": "Average Coverage",
+    "totalRequirements": "Total Requirements",
+    "totalTestCases": "Total Test Cases",
+    "totalDefects": "Total Defects"
   },
   "landing": {
     "hero": {
-      "title": "AI Complete SDLC Management",
-      "subtitle": "The Best Option Platform for Software Development Teams",
-      "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Also Automation, Performance and Compatibility Testing were not forgotten."
+      "title": "AI Complete Software Development Life Cycle Management",
+      "subtitle": "The Best Choice Platform for Software Development Teams",
+      "description": "Manage, Design, Requirements, Testing, Defects, KPIs, Traceability and Automate Requirements Design, Test Cases with your AI Assistant. Automation, Performance and Compatibility Testing are not forgotten either."
     },
     "domain": {
       "title": "Create your QForma domain",
       "companyPlaceholder": "Company name",
       "subdomainPlaceholder": "subdomain",
       "emailPlaceholder": "Your email address",
-      "buttonText": "Get Started Free",
-      "noCreditCard": "No credit card required for the free plan"
+      "buttonText": "Start for Free",
+      "noCreditCard": "No credit card required for free plan"
     },
     "pricing": {
       "title": "Pricing Plans",
