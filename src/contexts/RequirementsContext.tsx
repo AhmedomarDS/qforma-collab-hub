@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,8 +69,17 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (folderError) throw folderError;
 
-      setRequirements(requirementsData || []);
-      setFolders(foldersData || []);
+      // Type assertion to ensure the data matches our interfaces
+      const typedRequirements: Requirement[] = (requirementsData || []).map(req => ({
+        ...req,
+        status: req.status as Requirement['status'],
+        priority: req.priority as Requirement['priority']
+      }));
+
+      const typedFolders: RequirementFolder[] = foldersData || [];
+
+      setRequirements(typedRequirements);
+      setFolders(typedFolders);
     } catch (error) {
       console.error('Error loading project requirements:', error);
       toast({
@@ -95,7 +103,14 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (error) throw error;
 
-      setRequirements(prev => [...prev, data]);
+      // Type assertion for the returned data
+      const typedRequirement: Requirement = {
+        ...data,
+        status: data.status as Requirement['status'],
+        priority: data.priority as Requirement['priority']
+      };
+
+      setRequirements(prev => [...prev, typedRequirement]);
       toast({
         title: "Requirement created",
         description: `${data.title} has been created successfully.`,
@@ -124,8 +139,15 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (error) throw error;
 
+      // Type assertion for the returned data
+      const typedRequirement: Requirement = {
+        ...data,
+        status: data.status as Requirement['status'],
+        priority: data.priority as Requirement['priority']
+      };
+
       setRequirements(prev =>
-        prev.map(req => req.id === id ? data : req)
+        prev.map(req => req.id === id ? typedRequirement : req)
       );
 
       toast({

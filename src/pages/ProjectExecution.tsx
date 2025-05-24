@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -133,9 +132,7 @@ const ProjectExecution = () => {
   };
 
   const getProjectRequirements = (projectId: string) => {
-    return requirements.filter(req => req.tags.some(tag => 
-      tag.toLowerCase().includes('project') || tag.toLowerCase().includes(projectId)
-    ));
+    return requirements.filter(req => req.project_id === projectId);
   };
 
   const getStatusBadgeVariant = (status: string) => {
