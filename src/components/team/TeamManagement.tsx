@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -62,14 +61,14 @@ const TeamManagement = () => {
 
       if (!profile?.current_company_id) return;
 
-      // Fetch team members with proper join
+      // Fetch team members with corrected join syntax
       const { data: members } = await supabase
         .from('user_roles')
         .select(`
           id,
           role,
           created_at,
-          profiles!user_roles_user_id_fkey (
+          profiles (
             id,
             name,
             email
