@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { ContactForm } from '@/components/ui/contact-form';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -94,7 +95,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
           </Link>
           
-          <LanguageSwitcher />
+          <div className="flex items-center gap-4">
+            <ContactForm>
+              <Button variant="outline" size="sm">
+                Request Demo
+              </Button>
+            </ContactForm>
+            <LanguageSwitcher />
+          </div>
         </div>
 
         <Sidebar className="border-r mt-14">
