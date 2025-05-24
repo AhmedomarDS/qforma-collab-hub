@@ -36,7 +36,8 @@ import {
   ChartLine,
   Cpu,
   Smartphone,
-  Shield
+  Shield,
+  ClipboardList
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -57,6 +58,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
     { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
+    { title: t('navigation.testPlans'), icon: ClipboardList, path: '/test-plans' },
     { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
     { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
     { title: 'Security Testing', icon: Shield, path: '/security-testing' },
