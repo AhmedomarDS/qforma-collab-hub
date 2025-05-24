@@ -234,7 +234,7 @@ const Landing = () => {
                     onClick={handleInitialRegistration} 
                     className="w-full bg-qforma-blue hover:bg-qforma-blue/90"
                   >
-                    {t('landing.domain.createSubdomain') || "Create Subdomain"}
+                    Create your Company Space
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
                     {t('landing.domain.freeTrialInfo') || "Start with a 7-day free trial of all features"}
