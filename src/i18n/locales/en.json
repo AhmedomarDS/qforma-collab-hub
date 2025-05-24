@@ -208,6 +208,10 @@
         "title": "Mobile Compatibility Testing",
         "description": "Ensure your mobile applications work flawlessly across different devices and operating systems."
       },
+      "security": {
+        "title": "Security Testing",
+        "description": "Comprehensive security vulnerability assessments to identify and mitigate potential threats and ensure application security."
+      },
       "integration": {
         "title": "AI Platform Integration",
         "description": "Seamlessly integrate with AI platforms for automated test generation and intelligent analysis."

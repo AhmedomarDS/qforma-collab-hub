@@ -208,6 +208,10 @@
         "title": "移动兼容性测试",
         "description": "确保您的移动应用程序在不同设备和操作系统上完美运行。"
       },
+      "security": {
+        "title": "安全测试",
+        "description": "全面的安全漏洞评估，识别和缓解潜在威胁，确保应用程序安全。"
+      },
       "integration": {
         "title": "AI平台集成",
         "description": "与AI平台无缝集成，实现自动化测试生成和智能分析。"
