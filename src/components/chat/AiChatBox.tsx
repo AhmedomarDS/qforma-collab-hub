@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Bot, Send, MessageSquare, Loader2, SaveAll, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
+import { aiPlatformService } from '@/services/aiPlatformService';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -19,6 +20,7 @@ interface AiChatBoxProps {
   generatePrompt: (userPrompt: string) => string;
   isOpen: boolean;
   onClose: () => void;
+  contentType?: 'test-case' | 'requirement' | 'design' | 'automation-test' | 'performance-script' | 'security-test' | 'compatibility-test';
 }
 
 const AiChatBox: React.FC<AiChatBoxProps> = ({
@@ -27,7 +29,8 @@ const AiChatBox: React.FC<AiChatBoxProps> = ({
   onSaveContent,
   generatePrompt,
   isOpen,
-  onClose
+  onClose,
+  contentType = 'test-case'
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -44,43 +47,39 @@ const AiChatBox: React.FC<AiChatBoxProps> = ({
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
-    // Add user message
     const userMessage = inputValue;
     setMessages(prevMessages => [...prevMessages, { role: 'user', content: userMessage }]);
     setInputValue('');
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call an API with the AI model
-      // For now, we'll simulate a response after a delay
       const fullPrompt = generatePrompt(userMessage);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Create a mock response based on the prompt type
-      let aiResponse = "I've analyzed your request. ";
-      if (title.toLowerCase().includes('requirement')) {
-        aiResponse += "Here's a draft requirement based on your input:\n\n" +
-          "**Title**: Enhanced " + userMessage.slice(0, 20) + "...\n\n" +
-          "**Description**: This requirement involves implementing " + userMessage + "\n\n" +
-          "**Acceptance Criteria**:\n" +
-          "1. System should allow users to perform the requested action\n" +
-          "2. All user interactions should be logged for audit purposes\n" +
-          "3. The functionality should be accessible across all supported devices";
-      } else {
-        aiResponse += "Here's a test case based on your requirements:\n\n" +
-          "**Test Case**: TC-" + Math.floor(Math.random() * 1000) + "\n\n" +
-          "**Title**: Verify " + userMessage.slice(0, 20) + "\n\n" +
-          "**Steps**:\n" +
-          "1. Navigate to the relevant screen\n" +
-          "2. Attempt to " + userMessage + "\n" +
-          "3. Verify the expected behavior\n\n" +
-          "**Expected Results**: The system should successfully process the action and display a confirmation message";
+      let aiResponse;
+      switch (contentType) {
+        case 'requirement':
+          aiResponse = await aiPlatformService.generateRequirement(fullPrompt);
+          break;
+        case 'design':
+          aiResponse = await aiPlatformService.generateDesign(fullPrompt);
+          break;
+        case 'automation-test':
+          aiResponse = await aiPlatformService.generateAutomationTest(fullPrompt);
+          break;
+        case 'performance-script':
+          aiResponse = await aiPlatformService.generatePerformanceScript(fullPrompt);
+          break;
+        case 'security-test':
+          aiResponse = await aiPlatformService.generateSecurityTest(fullPrompt);
+          break;
+        case 'compatibility-test':
+          aiResponse = await aiPlatformService.generateCompatibilityTest('browser', fullPrompt);
+          break;
+        default:
+          aiResponse = await aiPlatformService.generateTestCase(fullPrompt);
       }
       
-      // Add AI response to chat
-      setMessages(prevMessages => [...prevMessages, { role: 'assistant', content: aiResponse }]);
+      setMessages(prevMessages => [...prevMessages, { role: 'assistant', content: aiResponse.content }]);
     } catch (error) {
       console.error('Error getting AI response:', error);
       toast({
@@ -94,7 +93,6 @@ const AiChatBox: React.FC<AiChatBoxProps> = ({
   };
   
   const handleSaveContent = () => {
-    // Find the last assistant message
     const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant');
     
     if (lastAssistantMessage) {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Smartphone, Tablet, Monitor, Zap, AlertCircle } from "lucide-react";
+import { Smartphone, Tablet, Monitor, Zap, AlertCircle, Bot } from "lucide-react";
 import AppLayout from "@/components/layouts/AppLayout";
 import { toast } from "@/components/ui/use-toast";
 import { aiPlatformService } from "@/services/aiPlatformService";
+import AiChatBox from "@/components/chat/AiChatBox";
 
 const MobileCompatibility = () => {
   const { t } = useTranslation();
@@ -18,6 +18,7 @@ const MobileCompatibility = () => {
   const [testDescription, setTestDescription] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
 
   const devices = [
     { 
@@ -80,6 +81,18 @@ const MobileCompatibility = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSaveAiContent = (content: string) => {
+    console.log('Saving AI generated mobile compatibility test:', content);
+    toast({
+      title: "Test Saved",
+      description: "AI-generated mobile compatibility test has been saved",
+    });
+  };
+
+  const generatePrompt = (userPrompt: string) => {
+    return `Generate mobile compatibility tests for: ${userPrompt}`;
   };
 
   return (
@@ -188,6 +201,13 @@ const MobileCompatibility = () => {
                     <Zap className="h-4 w-4 mr-2" />
                     {isGenerating ? 'Generating...' : 'Generate AI Test'}
                   </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setIsAiChatOpen(true)}
+                  >
+                    <Bot className="h-4 w-4 mr-2" />
+                    AI Chat Assistant
+                  </Button>
                   <Button variant="outline">
                     Create Manual Test
                   </Button>
@@ -213,6 +233,16 @@ const MobileCompatibility = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <AiChatBox
+        title="Mobile Compatibility Test Generator"
+        placeholder="Describe the mobile compatibility test you need..."
+        onSaveContent={handleSaveAiContent}
+        generatePrompt={generatePrompt}
+        isOpen={isAiChatOpen}
+        onClose={() => setIsAiChatOpen(false)}
+        contentType="compatibility-test"
+      />
     </AppLayout>
   );
 };

@@ -541,6 +541,7 @@ const Requirements = () => {
         generatePrompt={generatePrompt}
         isOpen={isAiChatOpen}
         onClose={() => setIsAiChatOpen(false)}
+        contentType="requirement"
       />
     </AppLayout>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
@@ -7,17 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, ShieldCheck, ShieldAlert, ShieldX, Zap, AlertCircle } from "lucide-react";
+import { Shield, ShieldCheck, ShieldAlert, ShieldX, Zap, AlertCircle, Bot } from "lucide-react";
 import AppLayout from "@/components/layouts/AppLayout";
 import { toast } from "@/components/ui/use-toast";
 import { aiPlatformService } from "@/services/aiPlatformService";
+import AiChatBox from "@/components/chat/AiChatBox";
 
 const SecurityTesting = () => {
   const { t } = useTranslation();
   const [testName, setTestName] = useState("");
   const [testDescription, setTestDescription] = useState("");
-  const [apiKey, setApiKey] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
 
   const securityCategories = [
     { name: 'Authentication', icon: Shield, tests: ['Login Security', 'Password Policy', 'Multi-Factor Auth'] },
@@ -36,22 +36,9 @@ const SecurityTesting = () => {
       return;
     }
 
-    if (!aiPlatformService.isConfigured() && !apiKey.trim()) {
-      toast({
-        title: "API Key Required",
-        description: "Please enter your AI Platform API key",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsGenerating(true);
     
     try {
-      if (apiKey.trim()) {
-        aiPlatformService.setApiKey(apiKey);
-      }
-
       const response = await aiPlatformService.generateSecurityTest(
         `Test Name: ${testName}\nDescription: ${testDescription}`
       );
@@ -68,6 +55,18 @@ const SecurityTesting = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSaveAiContent = (content: string) => {
+    console.log('Saving AI generated security test:', content);
+    toast({
+      title: "Security Test Saved",
+      description: "AI-generated security test has been saved",
+    });
+  };
+
+  const generatePrompt = (userPrompt: string) => {
+    return `Generate comprehensive security test cases for: ${userPrompt}. Include tests for authentication, authorization, data protection, input validation, session management, and common vulnerabilities.`;
   };
 
   return (
@@ -156,25 +155,17 @@ const SecurityTesting = () => {
                   />
                 </div>
 
-                {!aiPlatformService.isConfigured() && (
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">AI Platform API Key</label>
-                    <Input
-                      type="password"
-                      placeholder="Enter your AI platform API key"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Required for AI-powered security test generation
-                    </p>
-                  </div>
-                )}
-
                 <div className="flex space-x-2">
                   <Button onClick={handleGenerateAITest} disabled={isGenerating}>
                     <Zap className="h-4 w-4 mr-2" />
                     {isGenerating ? 'Generating...' : 'Generate AI Security Test'}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsAiChatOpen(true)}
+                  >
+                    <Bot className="h-4 w-4 mr-2" />
+                    AI Chat Assistant
                   </Button>
                   <Button variant="outline">
                     Create Manual Test
@@ -201,6 +192,16 @@ const SecurityTesting = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <AiChatBox
+        title="Security Test Generator"
+        placeholder="Describe the security test you need..."
+        onSaveContent={handleSaveAiContent}
+        generatePrompt={generatePrompt}
+        isOpen={isAiChatOpen}
+        onClose={() => setIsAiChatOpen(false)}
+        contentType="security-test"
+      />
     </AppLayout>
   );
 };

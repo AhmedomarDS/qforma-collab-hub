@@ -1,7 +1,9 @@
+
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface AIGenerationRequest {
-  type: 'test-case' | 'requirement' | 'defect-analysis' | 'performance-script' | 'compatibility-test' | 'security-test';
+  type: 'test-case' | 'requirement' | 'design' | 'defect-analysis' | 'performance-script' | 'compatibility-test' | 'security-test' | 'automation-test';
   prompt: string;
   context?: any;
   parameters?: {
@@ -16,25 +18,33 @@ export interface AIGenerationResponse {
   content: string;
   type: string;
   metadata?: any;
-  timestamp: string;
 }
 
 class AIPlatformService {
-  private apiKey: string | null = null;
-  private baseUrl: string = 'https://api.openai.com/v1'; // Default to OpenAI, can be configured
+  private async makeRequest(request: AIGenerationRequest): Promise<AIGenerationResponse> {
+    try {
+      console.log('Making AI platform request:', request);
 
-  constructor() {
-    // Try to get API key from localStorage or environment
-    this.apiKey = localStorage.getItem('ai_platform_api_key');
-  }
+      const { data, error } = await supabase.functions.invoke('generate-ai-content', {
+        body: request
+      });
 
-  setApiKey(apiKey: string) {
-    this.apiKey = apiKey;
-    localStorage.setItem('ai_platform_api_key', apiKey);
-  }
+      if (error) {
+        throw new Error(error.message || 'Failed to generate AI content');
+      }
 
-  setBaseUrl(url: string) {
-    this.baseUrl = url;
+      console.log('AI platform response:', data);
+      return data;
+
+    } catch (error) {
+      console.error('AI platform request failed:', error);
+      toast({
+        title: "AI Generation Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    }
   }
 
   async generateTestCase(prompt: string, context?: any): Promise<AIGenerationResponse> {
@@ -59,6 +69,19 @@ class AIPlatformService {
         model: 'gpt-4o-mini',
         temperature: 0.6,
         maxTokens: 800
+      }
+    });
+  }
+
+  async generateDesign(prompt: string, context?: any): Promise<AIGenerationResponse> {
+    return this.makeRequest({
+      type: 'design',
+      prompt: `Generate a detailed design document for: ${prompt}`,
+      context,
+      parameters: {
+        model: 'gpt-4o-mini',
+        temperature: 0.6,
+        maxTokens: 1200
       }
     });
   }
@@ -112,79 +135,21 @@ class AIPlatformService {
     });
   }
 
-  private async makeRequest(request: AIGenerationRequest): Promise<AIGenerationResponse> {
-    if (!this.apiKey) {
-      throw new Error('AI Platform API key not configured. Please set your API key first.');
-    }
-
-    try {
-      console.log('Making AI platform request:', request);
-
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: request.parameters?.model || 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: `You are an AI assistant specialized in QA and software testing. Generate ${request.type} content that is professional, detailed, and actionable.`
-            },
-            {
-              role: 'user',
-              content: request.prompt
-            }
-          ],
-          temperature: request.parameters?.temperature || 0.7,
-          max_tokens: request.parameters?.maxTokens || 1000
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+  async generateAutomationTest(requirements: string): Promise<AIGenerationResponse> {
+    return this.makeRequest({
+      type: 'automation-test',
+      prompt: `Generate an automation test scenario for: ${requirements}`,
+      parameters: {
+        model: 'gpt-4o-mini',
+        temperature: 0.5,
+        maxTokens: 1000
       }
-
-      const data = await response.json();
-      
-      const aiResponse: AIGenerationResponse = {
-        id: crypto.randomUUID(),
-        content: data.choices[0]?.message?.content || 'No content generated',
-        type: request.type,
-        metadata: {
-          model: request.parameters?.model,
-          usage: data.usage,
-          context: request.context
-        },
-        timestamp: new Date().toISOString()
-      };
-
-      console.log('AI platform response:', aiResponse);
-      return aiResponse;
-
-    } catch (error) {
-      console.error('AI platform request failed:', error);
-      toast({
-        title: "AI Generation Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-        variant: "destructive",
-      });
-      throw error;
-    }
+    });
   }
 
-  // Method to check if API key is configured
+  // Method to check if service is available
   isConfigured(): boolean {
-    return !!this.apiKey;
-  }
-
-  // Method to clear API key
-  clearApiKey(): void {
-    this.apiKey = null;
-    localStorage.removeItem('ai_platform_api_key');
+    return true; // Always available with Supabase edge functions
   }
 }
 

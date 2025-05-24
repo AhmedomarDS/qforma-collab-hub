@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
@@ -280,6 +279,7 @@ const PerformanceTesting = () => {
         onClose={() => setIsAiChatOpen(false)}
         onSaveContent={handleSaveContent}
         generatePrompt={generatePrompt}
+        contentType="performance-script"
       />
     </AppLayout>
   );

@@ -135,6 +135,7 @@ const DesignManagement = () => {
         onClose={() => setIsAiChatOpen(false)}
         onSaveContent={handleSaveContent}
         generatePrompt={generatePrompt}
+        contentType="design"
       />
     </AppLayout>
   );
