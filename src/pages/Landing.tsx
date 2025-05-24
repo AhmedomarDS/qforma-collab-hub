@@ -12,7 +12,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { CheckCircle, ShieldCheck, Zap, Package, Cpu, Smartphone, GitBranch, Download, Apple } from "lucide-react";
+import { CheckCircle, ShieldCheck, Zap, Package, Cpu, Smartphone, GitBranch, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 // Pricing plan data
@@ -127,13 +127,19 @@ const Landing = () => {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold mb-4">{t('landing.mobileApps.title')}</h3>
                 <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <Apple className="h-5 w-5" />
-                    {t('landing.mobileApps.ios')}
+                  <Button variant="outline" className="flex items-center gap-2 bg-black text-white hover:bg-gray-800 border-black">
+                    <img 
+                      src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
+                      alt="Download on App Store" 
+                      className="h-8"
+                    />
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <Download className="h-5 w-5" />
-                    {t('landing.mobileApps.android')}
+                  <Button variant="outline" className="flex items-center gap-2 bg-black text-white hover:bg-gray-800 border-black">
+                    <img 
+                      src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
+                      alt="Get it on Google Play" 
+                      className="h-8"
+                    />
                   </Button>
                 </div>
               </div>
@@ -417,13 +423,19 @@ const Landing = () => {
               <div className="mt-4">
                 <h4 className="font-medium mb-2">{t('landing.mobileApps.title')}</h4>
                 <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Button variant="outline" size="sm" className="flex items-center gap-1 text-xs">
-                    <Apple className="h-3 w-3" />
-                    {t('landing.mobileApps.ios')}
+                  <Button variant="outline" size="sm" className="p-1 h-10 bg-black text-white hover:bg-gray-800 border-black">
+                    <img 
+                      src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
+                      alt="Download on App Store" 
+                      className="h-6"
+                    />
                   </Button>
-                  <Button variant="outline" size="sm" className="flex items-center gap-1 text-xs">
-                    <Download className="h-3 w-3" />
-                    {t('landing.mobileApps.android')}
+                  <Button variant="outline" size="sm" className="p-1 h-10 bg-black text-white hover:bg-gray-800 border-black">
+                    <img 
+                      src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
+                      alt="Get it on Google Play" 
+                      className="h-6"
+                    />
                   </Button>
                 </div>
               </div>
@@ -474,9 +486,14 @@ const Landing = () => {
           
           <div className="mt-12 pt-8 border-t border-muted">
             <div className={`flex flex-col md:flex-row justify-between items-center ${isRTL ? 'md:flex-row-reverse' : ''}`}>
-              <p className="text-muted-foreground text-sm">
-                {t('landing.footer.copyright', { year: new Date().getFullYear() })}
-              </p>
+              <div className="text-center md:text-left">
+                <p className="text-muted-foreground text-sm">
+                  {t('landing.footer.copyright', { year: new Date().getFullYear() })}
+                </p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  Owned by SPLabs, Ally Subsidiary by www.Shlenpower.com
+                </p>
+              </div>
               <div className={`flex space-x-4 mt-4 md:mt-0 ${isRTL ? 'space-x-reverse' : ''}`}>
                 {/* Social media icons remain the same */}
                 <Button variant="ghost" size="icon" className="rounded-full">
