@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, PlusCircle, FileText, PlayCircle, Users, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Calendar, PlusCircle, FileText, PlayCircle, Users, CheckCircle, XCircle, Clock, List } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
@@ -48,6 +48,7 @@ interface TestPlan {
   startDate: string;
   endDate: string;
   assignedTo: string[];
+  testingScope: string;
 }
 
 const TestPlans = () => {
@@ -91,6 +92,7 @@ const TestPlans = () => {
       startDate: '2025-05-20',
       endDate: '2025-06-15',
       assignedTo: ['John Doe', 'Jane Smith'],
+      testingScope: 'Functional Testing - Authentication Flow',
     },
     {
       id: 'tp2',
@@ -103,6 +105,20 @@ const TestPlans = () => {
       startDate: '2025-06-01',
       endDate: '2025-06-30',
       assignedTo: ['Mike Johnson'],
+      testingScope: 'Integration Testing - Payment Systems',
+    },
+    {
+      id: 'tp3',
+      name: 'Security Testing Suite',
+      description: 'Security vulnerability testing and penetration testing',
+      project: 'E-commerce Platform',
+      status: 'draft',
+      progress: 0,
+      testCases: [],
+      startDate: '2025-06-15',
+      endDate: '2025-07-15',
+      assignedTo: ['Security Team'],
+      testingScope: 'Security Testing - Vulnerability Assessment',
     },
   ]);
 
@@ -112,6 +128,7 @@ const TestPlans = () => {
     project: '',
     startDate: '',
     endDate: '',
+    testingScope: '',
   });
 
   const handleCreateTestPlan = () => {
@@ -122,6 +139,7 @@ const TestPlans = () => {
       project: '',
       startDate: '',
       endDate: '',
+      testingScope: '',
     });
     setIsDialogOpen(false);
     toast({
@@ -172,13 +190,21 @@ const TestPlans = () => {
     }
   };
 
+  const getScopeColor = (scope: string) => {
+    if (scope.includes('Functional')) return 'bg-blue-100 text-blue-800';
+    if (scope.includes('Integration')) return 'bg-purple-100 text-purple-800';
+    if (scope.includes('Security')) return 'bg-red-100 text-red-800';
+    if (scope.includes('Performance')) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-gray-100 text-gray-800';
+  };
+
   return (
     <AppLayout>
       <div className="animate-fadeIn">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">Test Plans</h1>
-            <p className="text-muted-foreground">Manage and execute test plans for your projects</p>
+            <p className="text-muted-foreground">{t('testPlans.description')}</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -187,11 +213,11 @@ const TestPlans = () => {
                 Create Test Plan
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[550px]">
+            <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle>Create New Test Plan</DialogTitle>
                 <DialogDescription>
-                  Create a comprehensive test plan and organize test cases for execution.
+                  Create a comprehensive test plan and organize test cases for execution within a specific testing scope.
                 </DialogDescription>
               </DialogHeader>
               
@@ -215,6 +241,27 @@ const TestPlans = () => {
                     placeholder="Describe the scope and objectives of this test plan"
                     rows={3}
                   />
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="testingScope">{t('testPlans.testingScope')}</Label>
+                  <Select 
+                    value={newTestPlan.testingScope}
+                    onValueChange={(value) => setNewTestPlan({...newTestPlan, testingScope: value})}
+                  >
+                    <SelectTrigger id="testingScope">
+                      <SelectValue placeholder="Select testing scope" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="functional">Functional Testing</SelectItem>
+                      <SelectItem value="integration">Integration Testing</SelectItem>
+                      <SelectItem value="security">Security Testing</SelectItem>
+                      <SelectItem value="performance">Performance Testing</SelectItem>
+                      <SelectItem value="automation">Automation Testing</SelectItem>
+                      <SelectItem value="regression">Regression Testing</SelectItem>
+                      <SelectItem value="smoke">Smoke Testing</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="grid gap-2">
@@ -263,7 +310,7 @@ const TestPlans = () => {
                 </Button>
                 <Button 
                   onClick={handleCreateTestPlan} 
-                  disabled={!newTestPlan.name || !newTestPlan.project}
+                  disabled={!newTestPlan.name || !newTestPlan.project || !newTestPlan.testingScope}
                 >
                   Create Test Plan
                 </Button>
@@ -280,9 +327,14 @@ const TestPlans = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <Badge className={getStatusColor(plan.status)}>
-                        {plan.status}
-                      </Badge>
+                      <div className="flex gap-2">
+                        <Badge className={getScopeColor(plan.testingScope)}>
+                          {plan.testingScope}
+                        </Badge>
+                        <Badge className={getStatusColor(plan.status)}>
+                          {plan.status}
+                        </Badge>
+                      </div>
                     </div>
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </CardHeader>
@@ -321,11 +373,11 @@ const TestPlans = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <PlayCircle className="h-5 w-5 mr-2" />
-                  Test Cases Pool
+                  <List className="h-5 w-5 mr-2" />
+                  {t('testPlans.testCasesPool')}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Drag and drop test cases to organize execution order
+                  {t('testPlans.dragAndDrop')}
                 </p>
               </CardHeader>
               <CardContent>
@@ -362,7 +414,7 @@ const TestPlans = () => {
                 
                 <Button className="w-full mt-4" variant="outline">
                   <PlusCircle className="h-4 w-4 mr-2" />
-                  Add Test Cases
+                  {t('testPlans.assignTestCases')}
                 </Button>
               </CardContent>
             </Card>

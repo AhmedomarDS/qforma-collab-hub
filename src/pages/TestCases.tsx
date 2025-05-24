@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -24,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { CheckSquare, PlusCircle, Upload } from 'lucide-react';
+import { Library, PlusCircle, Upload } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { parseCSV } from '@/lib/utils/csvParser';
 import { useToast } from '@/hooks/use-toast';
@@ -306,11 +305,11 @@ const TestCases = () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle>Test Case Management</CardTitle>
+            <CardTitle>Test Cases Library Management</CardTitle>
           </CardHeader>
           <CardContent className="text-center py-12">
             <div className="mb-4 flex justify-center">
-              <CheckSquare className="h-16 w-16 text-primary" />
+              <Library className="h-16 w-16 text-primary" />
             </div>
             <h2 className="text-xl font-semibold mb-2">{t('testCases.noTestCases')}</h2>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">

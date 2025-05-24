@@ -34,7 +34,7 @@
     "tasks": "Tareas",
     "requirements": "Requisitos",
     "designManagement": "Gestión de Diseño",
-    "testCases": "Casos de Prueba",
+    "testCases": "Biblioteca de Casos de Prueba",
     "testPlans": "Planes de Prueba",
     "traceabilityMatrix": "Matriz de Trazabilidad",
     "automationTesting": "Pruebas de Automatización",
@@ -53,7 +53,7 @@
     "platformName": "Plataforma QForma"
   },
   "testCases": {
-    "title": "Casos de Prueba",
+    "title": "Biblioteca de Casos de Prueba",
     "description": "Gestionar y rastrear casos de prueba para tus proyectos",
     "createNew": "Crear Nuevo Caso de Prueba",
     "uploadCSV": "Subir CSV",
@@ -76,11 +76,14 @@
   },
   "testPlans": {
     "title": "Planes de Prueba",
-    "description": "Crear y gestionar planes de ejecución de pruebas",
+    "description": "Crear y gestionar planes de ejecución de pruebas organizados por alcance",
     "createNew": "Crear Plan de Prueba",
     "dragAndDrop": "Arrastra y suelta casos de prueba para organizar el orden de ejecución",
     "executionProgress": "Progreso de Ejecución",
-    "testCasesPool": "Grupo de Casos de Prueba"
+    "testCasesPool": "Grupo de Casos de Prueba",
+    "testingScope": "Alcance de Pruebas",
+    "assignTestCases": "Asignar Casos de Prueba",
+    "scopeDescription": "Define el alcance específico de pruebas para este plan"
   },
   "traceabilityMatrix": {
     "title": "Matriz de Trazabilidad",

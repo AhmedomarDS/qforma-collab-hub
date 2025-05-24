@@ -1,4 +1,3 @@
-
 {
   "common": {
     "loading": "加载中...",
@@ -35,7 +34,7 @@
     "tasks": "任务",
     "requirements": "需求",
     "designManagement": "设计管理",
-    "testCases": "测试用例",
+    "testCases": "测试用例库",
     "testPlans": "测试计划",
     "traceabilityMatrix": "可追溯性矩阵",
     "automationTesting": "自动化测试",
@@ -54,7 +53,7 @@
     "platformName": "QForma平台"
   },
   "testCases": {
-    "title": "测试用例",
+    "title": "测试用例库",
     "description": "管理和跟踪项目的测试用例",
     "createNew": "创建新测试用例",
     "uploadCSV": "上传CSV",
@@ -77,11 +76,14 @@
   },
   "testPlans": {
     "title": "测试计划",
-    "description": "创建和管理测试执行计划",
+    "description": "创建和管理按范围组织的测试执行计划",
     "createNew": "创建测试计划",
     "dragAndDrop": "拖放测试用例以组织执行顺序",
     "executionProgress": "执行进度",
-    "testCasesPool": "测试用例池"
+    "testCasesPool": "测试用例池",
+    "testingScope": "测试范围",
+    "assignTestCases": "分配测试用例",
+    "scopeDescription": "为此计划定义具体的测试范围"
   },
   "traceabilityMatrix": {
     "title": "可追溯性矩阵",
