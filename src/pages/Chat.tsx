@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -33,7 +32,7 @@ import {
   PlusCircle,
 } from 'lucide-react';
 import AppLayout from '@/components/layouts/AppLayout';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useChat, Chat as ChatType } from '@/contexts/ChatContext';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -66,7 +65,7 @@ const Chat = () => {
   }, [activeChat?.messages]);
   
   if (!user) {
-    navigate('/login');
+    navigate('/auth');
     return null;
   }
   
