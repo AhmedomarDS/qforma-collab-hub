@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +35,7 @@ type DashboardType = 'kanban' | 'agile' | 'cmmi';
 const ProjectDashboard = () => {
   const navigate = useNavigate();
   const { projectId } = useParams<{ projectId: string }>();
-  const { projects, tasks, getProjectTasks } = useProject();
+  const { projects, tasks, getProjectTasks, updateTask } = useProject();
   const [selectedProject, setSelectedProject] = useState(projectId || '');
   const [dashboardType, setDashboardType] = useState<DashboardType>('kanban');
 
@@ -47,6 +47,25 @@ const ProjectDashboard = () => {
     'in-progress': projectTasks.filter(task => task.status === 'in-progress'),
     review: projectTasks.filter(task => task.status === 'review'),
     done: projectTasks.filter(task => task.status === 'done')
+  };
+
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    // If dropped outside any droppable area
+    if (!destination) return;
+
+    // If dropped in the same position
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // Update task status
+    const newStatus = destination.droppableId as 'todo' | 'in-progress' | 'review' | 'done';
+    updateTask(draggableId, { status: newStatus });
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -70,36 +89,62 @@ const ProjectDashboard = () => {
   };
 
   const KanbanBoard = () => (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {Object.entries(tasksByStatus).map(([status, tasks]) => (
-        <Card key={status} className="h-fit">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium capitalize flex items-center justify-between">
-              {status.replace('-', ' ')}
-              <Badge variant="outline">{tasks.length}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {tasks.map(task => (
-              <Card key={task.id} className="p-3 hover:shadow-sm transition-shadow cursor-pointer">
-                <h4 className="font-medium text-sm mb-1">{task.title}</h4>
-                <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{task.description}</p>
-                <div className="flex items-center justify-between">
-                  <Badge variant={getStatusBadgeVariant(task.status)} className="text-xs">
-                    {task.priority}
-                  </Badge>
-                  {task.dueDate && (
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(task.dueDate).toLocaleDateString()}
-                    </span>
-                  )}
-                </div>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {Object.entries(tasksByStatus).map(([status, tasks]) => (
+          <Droppable key={status} droppableId={status}>
+            {(provided, snapshot) => (
+              <Card 
+                className={`h-fit transition-colors ${
+                  snapshot.isDraggingOver ? 'bg-blue-50 border-blue-200' : ''
+                }`}
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium capitalize flex items-center justify-between">
+                    {status.replace('-', ' ')}
+                    <Badge variant="outline">{tasks.length}</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent 
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="space-y-2 min-h-[200px]"
+                >
+                  {tasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {(provided, snapshot) => (
+                        <Card 
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className={`p-3 hover:shadow-sm transition-all cursor-move ${
+                            snapshot.isDragging ? 'shadow-lg rotate-3 scale-105' : ''
+                          }`}
+                        >
+                          <h4 className="font-medium text-sm mb-1">{task.title}</h4>
+                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{task.description}</p>
+                          <div className="flex items-center justify-between">
+                            <Badge variant={getStatusBadgeVariant(task.status)} className="text-xs">
+                              {task.priority}
+                            </Badge>
+                            {task.dueDate && (
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(task.dueDate).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                        </Card>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </CardContent>
               </Card>
-            ))}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+            )}
+          </Droppable>
+        ))}
+      </div>
+    </DragDropContext>
   );
 
   const AgileBoard = () => (
