@@ -44,6 +44,12 @@ interface RequirementsContextType {
 
 const RequirementsContext = createContext<RequirementsContextType | undefined>(undefined);
 
+// Helper function to validate UUID format
+const isValidUUID = (str: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+};
+
 export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
   const [folders, setFolders] = useState<RequirementFolder[]>([]);
@@ -51,15 +57,31 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const loadProjectRequirements = async (projectId: string) => {
+    // Validate project ID format
+    if (!projectId || !isValidUUID(projectId)) {
+      console.error('Invalid project ID format:', projectId);
+      toast({
+        title: "Error",
+        description: "Invalid project ID format. Please select a valid project.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
+      console.log('Loading requirements for project:', projectId);
+      
       // Load requirements for the project
       const { data: requirementsData, error: reqError } = await supabase
         .from('requirements')
         .select('*')
         .eq('project_id', projectId);
 
-      if (reqError) throw reqError;
+      if (reqError) {
+        console.error('Requirements query error:', reqError);
+        throw reqError;
+      }
 
       // Load folders for the project
       const { data: foldersData, error: folderError } = await supabase
@@ -67,7 +89,10 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         .select('*')
         .eq('project_id', projectId);
 
-      if (folderError) throw folderError;
+      if (folderError) {
+        console.error('Folders query error:', folderError);
+        throw folderError;
+      }
 
       // Type assertion to ensure the data matches our interfaces
       const typedRequirements: Requirement[] = (requirementsData || []).map(req => ({
@@ -77,6 +102,9 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }));
 
       const typedFolders: RequirementFolder[] = foldersData || [];
+
+      console.log('Loaded requirements:', typedRequirements.length);
+      console.log('Loaded folders:', typedFolders.length);
 
       setRequirements(typedRequirements);
       setFolders(typedFolders);
@@ -93,15 +121,31 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const createRequirement = async (req: Omit<Requirement, 'id' | 'created_at' | 'updated_at'>) => {
+    // Validate project ID format
+    if (!req.project_id || !isValidUUID(req.project_id)) {
+      console.error('Invalid project ID for requirement creation:', req.project_id);
+      toast({
+        title: "Error",
+        description: "Invalid project ID. Please select a valid project.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
+      console.log('Creating requirement with data:', req);
+      
       const { data, error } = await supabase
         .from('requirements')
         .insert([req])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Create requirement error:', error);
+        throw error;
+      }
 
       // Type assertion for the returned data
       const typedRequirement: Requirement = {
