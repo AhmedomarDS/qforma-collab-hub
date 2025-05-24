@@ -45,9 +45,8 @@ import {
   Shield,
   ClipboardList,
   GitBranch,
-  Building,
-  Users,
-  ChevronRight
+  ChevronRight,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -63,15 +62,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const mainMenuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
-    { title: 'Admin Dashboard', icon: Settings, path: '/admin' },
-    { title: 'Company Settings', icon: Building, path: '/company-settings' },
+    { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
   ];
 
   const projectsSubItems = [
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
-    { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
+    { title: 'Test Cases Library', icon: CheckSquare, path: '/test-cases' },
   ];
 
   const testPlansSubItems = [

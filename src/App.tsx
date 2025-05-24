@@ -33,6 +33,7 @@ import BrowserCompatibility from "./pages/BrowserCompatibility";
 import MobileCompatibility from "./pages/MobileCompatibility";
 import SecurityTesting from "./pages/SecurityTesting";
 import PlanSelection from "./pages/PlanSelection";
+import PlanAndBilling from "./pages/PlanAndBilling";
 
 const queryClient = new QueryClient();
 
@@ -73,15 +74,23 @@ const App = () => (
                     
                     <Route path="/" element={<Navigate to="/landing" replace />} />
                     
+                    {/* QForma Admin Route - separate from customer space */}
                     <Route path="/admin" element={
                       <ProtectedRoute>
                         <AdminDashboard />
                       </ProtectedRoute>
                     } />
                     
+                    {/* Customer Space Routes */}
                     <Route path="/dashboard" element={
                       <ProtectedRoute>
                         <Dashboard />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/plan-billing" element={
+                      <ProtectedRoute>
+                        <PlanAndBilling />
                       </ProtectedRoute>
                     } />
                     
