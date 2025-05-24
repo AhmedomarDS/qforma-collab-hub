@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ContactForm } from "@/components/ui/contact-form";
 import { 
   Card, 
   CardContent, 
@@ -139,13 +140,23 @@ const Landing = () => {
   
   return (
     <div className={`min-h-screen bg-gradient-to-b from-background to-muted ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Language switcher in header */}
-      <header className={`fixed top-0 ${isRTL ? 'left-0' : 'right-0'} z-10 p-4`}>
+      {/* Top Header Bar */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-card/95 backdrop-blur-sm border-b flex items-center justify-between px-4">
+        <div className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
+            Q
+          </div>
+          <div>
+            <span className="text-lg font-bold text-foreground">{t('app.title')}</span>
+            <p className="text-xs text-muted-foreground">{t('app.subtitle')}</p>
+          </div>
+        </div>
+        
         <LanguageSwitcher />
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 mt-14">
         <div className="container mx-auto max-w-6xl">
           <div className={`flex flex-col md:flex-row items-center gap-8 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
             <div className="flex-1">
@@ -429,13 +440,15 @@ const Landing = () => {
             >
               {t('landing.cta.signIn')}
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
-            >
-              {t('landing.cta.requestDemo')}
-            </Button>
+            <ContactForm>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
+              >
+                {t('landing.cta.requestDemo')}
+              </Button>
+            </ContactForm>
           </div>
         </div>
       </section>

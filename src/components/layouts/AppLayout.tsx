@@ -82,7 +82,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r">
+        {/* Top Header Bar */}
+        <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-card border-b flex items-center justify-between px-4">
+          <Link to="/dashboard" className="flex items-center space-x-2">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
+              Q
+            </div>
+            <div>
+              <span className="text-lg font-bold text-foreground">{t('app.title')}</span>
+              <p className="text-xs text-muted-foreground">{t('app.subtitle')}</p>
+            </div>
+          </Link>
+          
+          <LanguageSwitcher />
+        </div>
+
+        <Sidebar className="border-r mt-14">
           <SidebarHeader className="p-4">
             <div className="text-center">
               <span className="text-lg font-bold text-sidebar-foreground">Menu</span>
@@ -140,19 +155,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </SidebarFooter>
         </Sidebar>
         
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col mt-14">
           <header className="h-16 border-b flex items-center px-4 bg-card">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
-                Q
-              </div>
-              <div>
-                <span className="text-lg font-bold text-foreground">{t('app.title')}</span>
-                <p className="text-xs text-muted-foreground">{t('app.subtitle')}</p>
-              </div>
-            </Link>
-            
-            <div className="flex items-center space-x-4 ml-6">
+            <div className="flex items-center space-x-4">
               <SidebarTrigger>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
@@ -161,7 +166,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
             
             <div className="flex-1"></div>
-            <LanguageSwitcher />
           </header>
           
           <main className="flex-1 overflow-auto p-6">
