@@ -61,30 +61,33 @@ const TeamManagement = () => {
 
       if (!profile?.current_company_id) return;
 
-      // Fetch team members with corrected join syntax
-      const { data: members } = await supabase
+      // Fetch team members using separate queries to avoid join issues
+      const { data: userRoles } = await supabase
         .from('user_roles')
-        .select(`
-          id,
-          role,
-          created_at,
-          profiles (
-            id,
-            name,
-            email
-          )
-        `)
+        .select('id, role, created_at, user_id')
         .eq('company_id', profile.current_company_id);
 
-      if (members) {
-        const formattedMembers = members.map(member => ({
-          id: member.id,
-          name: member.profiles?.name || 'Unknown',
-          email: member.profiles?.email || '',
-          role: member.role,
-          joined_at: member.created_at
-        }));
-        setTeamMembers(formattedMembers);
+      if (userRoles) {
+        // Get user profiles for each user role
+        const userIds = userRoles.map(role => role.user_id);
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, name, email')
+          .in('id', userIds);
+
+        if (profiles) {
+          const formattedMembers = userRoles.map(userRole => {
+            const userProfile = profiles.find(profile => profile.id === userRole.user_id);
+            return {
+              id: userRole.id,
+              name: userProfile?.name || 'Unknown',
+              email: userProfile?.email || '',
+              role: userRole.role,
+              joined_at: userRole.created_at
+            };
+          });
+          setTeamMembers(formattedMembers);
+        }
       }
 
       // Fetch pending invitations
