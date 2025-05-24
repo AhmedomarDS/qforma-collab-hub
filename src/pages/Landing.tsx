@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -491,7 +492,15 @@ const Landing = () => {
                   {t('landing.footer.copyright', { year: new Date().getFullYear() })}
                 </p>
                 <p className="text-muted-foreground text-xs mt-1">
-                  Owned by SPLabs, Ally Subsidiary by www.Shlenpower.com
+                  Owned by SPLabs, Ally Subsidiary by{' '}
+                  <a 
+                    href="https://www.shlenpower.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-qforma-blue hover:text-qforma-blue/80 underline"
+                  >
+                    www.Shlenpower.com
+                  </a>
                 </p>
               </div>
               <div className={`flex space-x-4 mt-4 md:mt-0 ${isRTL ? 'space-x-reverse' : ''}`}>
