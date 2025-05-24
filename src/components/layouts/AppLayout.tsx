@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -96,7 +97,7 @@ const SidebarMenuItems = () => {
     { title: t('navigation.chat'), icon: MessageSquare, path: '/chat' },
     { title: t('navigation.defects'), icon: Bug, path: '/defects' },
     { title: t('navigation.reports'), icon: BarChart, path: '/reports' },
-    { title: t('navigation.settings'), icon: Settings, path: '/settings' },
+    { title: 'Profile Settings', icon: Settings, path: '/settings' },
   ];
 
   const handleMainMenuClick = () => {
@@ -123,6 +124,33 @@ const SidebarMenuItems = () => {
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
+
+      {/* Company Settings with sub-items - moved to second position */}
+      <Collapsible>
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton className="flex items-center w-full">
+              <Building className="mr-3 h-5 w-5" />
+              <span>Company Settings</span>
+              <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarMenuSub>
+              {companySettingsSubItems.map((subItem) => (
+                <SidebarMenuSubItem key={subItem.title}>
+                  <SidebarMenuSubButton asChild>
+                    <Link to={subItem.path} className="flex items-center" onClick={handleSubMenuClick}>
+                      <subItem.icon className="mr-2 h-4 w-4" />
+                      <span>{subItem.title}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </SidebarMenuItem>
+      </Collapsible>
 
       {/* Projects with sub-items */}
       <Collapsible>
@@ -164,33 +192,6 @@ const SidebarMenuItems = () => {
           <CollapsibleContent>
             <SidebarMenuSub>
               {testPlansSubItems.map((subItem) => (
-                <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton asChild>
-                    <Link to={subItem.path} className="flex items-center" onClick={handleSubMenuClick}>
-                      <subItem.icon className="mr-2 h-4 w-4" />
-                      <span>{subItem.title}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
-            </SidebarMenuSub>
-          </CollapsibleContent>
-        </SidebarMenuItem>
-      </Collapsible>
-
-      {/* Company Settings with sub-items */}
-      <Collapsible>
-        <SidebarMenuItem>
-          <CollapsibleTrigger asChild>
-            <SidebarMenuButton className="flex items-center w-full">
-              <Building className="mr-3 h-5 w-5" />
-              <span>Company Settings</span>
-              <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
-            </SidebarMenuButton>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <SidebarMenuSub>
-              {companySettingsSubItems.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.title}>
                   <SidebarMenuSubButton asChild>
                     <Link to={subItem.path} className="flex items-center" onClick={handleSubMenuClick}>
