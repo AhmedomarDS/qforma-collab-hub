@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -42,38 +43,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useProject, Project } from '@/contexts/ProjectContext';
+import { useProjects } from '@/hooks/useProjects';
 import { useRequirements } from '@/contexts/RequirementsContext';
 import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const ProjectExecution = () => {
   const navigate = useNavigate();
-  const { projects, createProject, updateProject, deleteProject } = useProject();
+  const { user } = useAuth();
+  const { projects, loading, refetch } = useProjects();
   const { requirements } = useRequirements();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    status: 'active' as 'active' | 'completed' | 'archived',
-    startDate: '',
-    endDate: '',
-    members: [] as string[]
+    status: 'active' as 'active' | 'completed' | 'archived'
   });
 
   const resetForm = () => {
     setFormData({
       name: '',
       description: '',
-      status: 'active',
-      startDate: '',
-      endDate: '',
-      members: []
+      status: 'active'
     });
     setEditingProject(null);
   };
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (!formData.name.trim()) {
       toast({
         title: "Error",
@@ -83,51 +82,120 @@ const ProjectExecution = () => {
       return;
     }
 
-    createProject(formData);
-    setIsCreateDialogOpen(false);
-    resetForm();
-    toast({
-      title: "Success",
-      description: "Project created successfully.",
-    });
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a project.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .insert([{
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          created_by: user.id
+        }]);
+
+      if (error) throw error;
+
+      setIsCreateDialogOpen(false);
+      resetForm();
+      refetch();
+      toast({
+        title: "Success",
+        description: "Project created successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error creating project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create project. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleEditProject = (project: Project) => {
+  const handleEditProject = (project: any) => {
     setEditingProject(project);
     setFormData({
       name: project.name,
       description: project.description || '',
-      status: project.status,
-      startDate: project.startDate.split('T')[0],
-      endDate: project.endDate ? project.endDate.split('T')[0] : '',
-      members: project.members
+      status: project.status
     });
     setIsCreateDialogOpen(true);
   };
 
-  const handleUpdateProject = () => {
+  const handleUpdateProject = async () => {
     if (!editingProject || !formData.name.trim()) return;
 
-    updateProject(editingProject.id, {
-      ...formData,
-      startDate: formData.startDate + 'T00:00:00Z',
-      endDate: formData.endDate ? formData.endDate + 'T00:00:00Z' : undefined
-    });
-    setIsCreateDialogOpen(false);
-    resetForm();
-    toast({
-      title: "Success",
-      description: "Project updated successfully.",
-    });
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          name: formData.name,
+          description: formData.description,
+          status: formData.status
+        })
+        .eq('id', editingProject.id);
+
+      if (error) throw error;
+
+      setIsCreateDialogOpen(false);
+      resetForm();
+      refetch();
+      toast({
+        title: "Success",
+        description: "Project updated successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error updating project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update project. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      deleteProject(projectId);
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectId);
+
+      if (error) throw error;
+
+      refetch();
       toast({
         title: "Success",
         description: "Project deleted successfully.",
       });
+    } catch (error: any) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete project. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,6 +215,16 @@ const ProjectExecution = () => {
         return 'default';
     }
   };
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading projects...</div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -191,26 +269,6 @@ const ProjectExecution = () => {
                     placeholder="Enter project description"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="endDate">End Date</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={formData.endDate}
-                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    />
-                  </div>
-                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => {
@@ -219,8 +277,11 @@ const ProjectExecution = () => {
                 }}>
                   Cancel
                 </Button>
-                <Button onClick={editingProject ? handleUpdateProject : handleCreateProject}>
-                  {editingProject ? 'Update Project' : 'Create Project'}
+                <Button 
+                  onClick={editingProject ? handleUpdateProject : handleCreateProject}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : (editingProject ? 'Update Project' : 'Create Project')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -263,30 +324,21 @@ const ProjectExecution = () => {
                     </DropdownMenu>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge variant={getStatusBadgeVariant(project.status)}>
-                      {project.status}
+                    <Badge variant={getStatusBadgeVariant(project.status || 'active')}>
+                      {project.status || 'active'}
                     </Badge>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Users className="mr-1 h-3 w-3" />
-                      {project.members.length}
-                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <div className="space-y-3">
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Calendar className="mr-2 h-4 w-4" />
-                      {new Date(project.startDate).toLocaleDateString()} - 
-                      {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'Ongoing'}
+                      Created: {new Date(project.created_at).toLocaleDateString()}
                     </div>
                     
                     <div className="text-sm">
                       <span className="font-medium">Linked Requirements: </span>
                       <span className="text-muted-foreground">{projectReqs.length}</span>
-                    </div>
-                    
-                    <div className="text-xs text-muted-foreground">
-                      Created: {new Date(project.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </CardContent>
