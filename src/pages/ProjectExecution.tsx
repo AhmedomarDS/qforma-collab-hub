@@ -56,7 +56,7 @@ const ProjectExecution = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    status: 'active' as const,
+    status: 'active' as 'active' | 'completed' | 'archived',
     startDate: '',
     endDate: '',
     members: [] as string[]
