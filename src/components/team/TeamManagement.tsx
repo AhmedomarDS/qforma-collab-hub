@@ -16,14 +16,14 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
   joined_at: string;
 }
 
 interface Invitation {
   id: string;
   email: string;
-  role: string;
+  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
   status: string;
   created_at: string;
   expires_at: string;
@@ -33,18 +33,18 @@ const TeamManagement = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('tester');
+  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'tester' | 'developer'>('tester');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { user } = useAuth();
   const { toast } = useToast();
 
   const roles = [
-    { value: 'owner', label: 'Owner', description: 'Full access to everything' },
-    { value: 'admin', label: 'Admin', description: 'Manage team and settings' },
-    { value: 'manager', label: 'Manager', description: 'Manage projects and assignments' },
-    { value: 'tester', label: 'Tester', description: 'Execute tests and report defects' },
-    { value: 'developer', label: 'Developer', description: 'View and fix defects' },
+    { value: 'owner' as const, label: 'Owner', description: 'Full access to everything' },
+    { value: 'admin' as const, label: 'Admin', description: 'Manage team and settings' },
+    { value: 'manager' as const, label: 'Manager', description: 'Manage projects and assignments' },
+    { value: 'tester' as const, label: 'Tester', description: 'Execute tests and report defects' },
+    { value: 'developer' as const, label: 'Developer', description: 'View and fix defects' },
   ];
 
   useEffect(() => {
@@ -62,14 +62,14 @@ const TeamManagement = () => {
 
       if (!profile?.current_company_id) return;
 
-      // Fetch team members
+      // Fetch team members with proper join
       const { data: members } = await supabase
         .from('user_roles')
         .select(`
           id,
           role,
           created_at,
-          profiles:user_id (
+          profiles!user_roles_user_id_fkey (
             id,
             name,
             email
@@ -125,14 +125,14 @@ const TeamManagement = () => {
         throw new Error('No company found');
       }
 
-      // Create invitation
+      // Create invitation with proper typing
       const { error: inviteError } = await supabase
         .from('invitations')
         .insert({
           email: inviteEmail,
           company_id: profile.current_company_id,
           role: inviteRole,
-          invited_by: user?.id
+          invited_by: user?.id || ''
         });
 
       if (inviteError) throw inviteError;
@@ -152,7 +152,7 @@ const TeamManagement = () => {
     }
   };
 
-  const handleRoleChange = async (memberId: string, newRole: string) => {
+  const handleRoleChange = async (memberId: string, newRole: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => {
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -266,7 +266,7 @@ const TeamManagement = () => {
               </div>
               <div>
                 <Label htmlFor="invite-role">Role</Label>
-                <Select value={inviteRole} onValueChange={setInviteRole}>
+                <Select value={inviteRole} onValueChange={(value: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => setInviteRole(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
@@ -362,7 +362,7 @@ const TeamManagement = () => {
                 <div className="flex items-center gap-3">
                   <Select
                     value={member.role}
-                    onValueChange={(newRole) => handleRoleChange(member.id, newRole)}
+                    onValueChange={(newRole: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => handleRoleChange(member.id, newRole)}
                   >
                     <SelectTrigger className="w-32">
                       <SelectValue />
