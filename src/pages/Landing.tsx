@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +76,7 @@ const Landing = () => {
     setSubdomain(value);
   };
   
-  const handleRegister = (plan: string) => {
+  const handleInitialRegistration = () => {
     if (!companyName || !subdomain || !email) {
       toast({
         title: t('common.error') || "Missing information",
@@ -87,10 +86,52 @@ const Landing = () => {
       return;
     }
     
-    console.log(`Registering company: ${companyName}, subdomain: ${subdomain}, plan: ${plan}`);
+    console.log(`Creating subdomain: ${subdomain}.qforma.app for company: ${companyName}`);
+    
+    // Store registration data for later use
+    localStorage.setItem('registration-data', JSON.stringify({
+      companyName,
+      subdomain,
+      email,
+      registrationDate: new Date().toISOString()
+    }));
+    
+    toast({
+      title: t('landing.domain.subdomainCreated') || "Subdomain Created",
+      description: t('landing.domain.subdomainSuccess', { subdomain }) || `Your subdomain ${subdomain}.qforma.app has been created successfully!`,
+    });
+    
+    // Redirect to plan selection
+    navigate("/plan-selection");
+  };
+  
+  const handleRegister = (plan: string) => {
+    const registrationData = localStorage.getItem('registration-data');
+    if (!registrationData) {
+      toast({
+        title: t('common.error') || "Error",
+        description: "Registration data not found. Please start the registration process again.",
+        variant: "destructive"
+      });
+      navigate("/landing");
+      return;
+    }
+    
+    const { subdomain } = JSON.parse(registrationData);
+    
+    console.log(`Registering with plan: ${plan} for subdomain: ${subdomain}`);
+    
+    // Store selected plan
+    localStorage.setItem('selected-plan', plan);
+    
+    // Set trial period (1 week from now)
+    const trialEndDate = new Date();
+    trialEndDate.setDate(trialEndDate.getDate() + 7);
+    localStorage.setItem('trial-end-date', trialEndDate.toISOString());
+    
     toast({
       title: t('landing.domain.registrationStarted') || "Registration Started",
-      description: t('landing.domain.settingUp', { plan, subdomain }) || `We're setting up your ${plan} account at ${subdomain}.qforma.app`,
+      description: t('landing.domain.settingUp', { plan, subdomain }) || `Starting your ${plan} trial at ${subdomain}.qforma.app`,
     });
     
     navigate("/auth");
@@ -179,13 +220,13 @@ const Landing = () => {
                     />
                   </div>
                   <Button 
-                    onClick={() => handleRegister('Pro')} 
+                    onClick={handleInitialRegistration} 
                     className="w-full bg-qforma-blue hover:bg-qforma-blue/90"
                   >
-                    {t('landing.domain.buttonText')}
+                    {t('landing.domain.createSubdomain') || "Create Subdomain"}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    {t('landing.domain.noCreditCard')}
+                    {t('landing.domain.freeTrialInfo') || "Start with a 7-day free trial of all features"}
                   </p>
                 </div>
               </div>

@@ -1,30 +1,48 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   BarChart, CheckSquare, XCircle, AlertTriangle, 
-  Clock, FileText, CheckCircle, Folder
+  Clock, FileText, CheckCircle, Folder, Crown
 } from 'lucide-react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { useDashboard } from '@/contexts/DashboardContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const Dashboard = () => {
   const { dashboardData, refreshData, isLoading } = useDashboard();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [registrationData, setRegistrationData] = useState<any>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [trialEndDate, setTrialEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     refreshData();
+    
+    // Load registration and trial data
+    const regData = localStorage.getItem('registration-data');
+    const plan = localStorage.getItem('selected-plan');
+    const trialEnd = localStorage.getItem('trial-end-date');
+    
+    if (regData) {
+      setRegistrationData(JSON.parse(regData));
+    }
+    if (plan) {
+      setSelectedPlan(plan);
+    }
+    if (trialEnd) {
+      setTrialEndDate(new Date(trialEnd));
+    }
   }, [refreshData]);
 
   if (!user) {
-    navigate('/login');
+    navigate('/auth');
     return null;
   }
 
@@ -38,6 +56,16 @@ const Dashboard = () => {
   const testPassRate = Math.round(
     (testingProgress.passedTests / testingProgress.totalTestCases) * 100
   );
+
+  const getDaysLeft = () => {
+    if (!trialEndDate) return 0;
+    const now = new Date();
+    const diffTime = trialEndDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
+  const daysLeft = getDaysLeft();
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -62,10 +90,37 @@ const Dashboard = () => {
   return (
     <AppLayout>
       <div className="animate-fadeIn">
+        {/* Subdomain and Trial Info Header */}
+        {registrationData && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-qforma-blue/10 to-qforma-teal/10 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-qforma-blue">
+                  {registrationData.subdomain}.qforma.app
+                </h2>
+                <p className="text-muted-foreground">
+                  Welcome to your QForma platform, {registrationData.companyName}
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center gap-2 mb-1">
+                  <Crown className="h-4 w-4 text-qforma-teal" />
+                  <Badge variant="secondary" className="bg-qforma-teal/10 text-qforma-teal">
+                    {selectedPlan} Trial
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {daysLeft > 0 ? `${daysLeft} days left` : 'Trial expired'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user.name}</p>
+            <p className="text-muted-foreground">Welcome back, {user.user_metadata?.name || user.email}</p>
           </div>
           <Button 
             onClick={() => refreshData()}

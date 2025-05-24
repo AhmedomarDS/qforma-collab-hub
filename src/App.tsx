@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +30,7 @@ import PerformanceTesting from "./pages/PerformanceTesting";
 import BrowserCompatibility from "./pages/BrowserCompatibility";
 import MobileCompatibility from "./pages/MobileCompatibility";
 import SecurityTesting from "./pages/SecurityTesting";
+import PlanSelection from "./pages/PlanSelection";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +67,7 @@ const App = () => (
                   <Routes>
                     <Route path="/landing" element={<Landing />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/plan-selection" element={<PlanSelection />} />
                     
                     <Route path="/" element={<Navigate to="/landing" replace />} />
                     
