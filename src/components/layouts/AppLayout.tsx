@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -49,7 +48,8 @@ import {
   CreditCard,
   Building,
   Users,
-  UserPlus
+  UserPlus,
+  Workflow
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -71,6 +71,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
+    { title: 'Project Functionalities', icon: Workflow, path: '/project-functionalities' },
     { title: 'Test Cases Library', icon: CheckSquare, path: '/test-cases' },
   ];
 
