@@ -227,6 +227,14 @@ const Requirements = () => {
         folder_id: selectedFolderId && selectedFolderId !== 'unorganized' ? selectedFolderId : null,
         created_by: 'AI Assistant',
       });
+      
+      toast({
+        title: "Success",
+        description: "AI generated requirement has been created successfully.",
+      });
+      
+      // Close the AI chat after successful creation
+      setIsAiChatOpen(false);
     } catch (error) {
       console.error('Failed to create AI requirement:', error);
       toast({
@@ -275,8 +283,17 @@ const Requirements = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => setIsAiChatOpen(true)}
-              disabled={!selectedProjectId}
+              onClick={() => {
+                if (!selectedProjectId) {
+                  toast({
+                    title: "Error",
+                    description: "Please select a project first.",
+                    variant: "destructive"
+                  });
+                  return;
+                }
+                setIsAiChatOpen(true);
+              }}
             >
               <Bot className="h-4 w-4" />
               Generate with AI
