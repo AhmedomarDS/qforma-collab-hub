@@ -70,6 +70,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const projectsSubItems = [
     { title: 'Project Execution', icon: Play, path: '/project-execution' },
+    { title: 'Project Dashboard', icon: LayoutDashboard, path: '/project-dashboard' },
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
