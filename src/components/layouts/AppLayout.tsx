@@ -46,7 +46,10 @@ import {
   ClipboardList,
   GitBranch,
   ChevronRight,
-  CreditCard
+  CreditCard,
+  Building,
+  Users,
+  UserPlus
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -62,7 +65,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const mainMenuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
-    { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
   ];
 
   const projectsSubItems = [
@@ -73,12 +75,19 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   ];
 
   const testPlansSubItems = [
+    { title: 'Test Plans', icon: ClipboardList, path: '/test-plans' },
     { title: 'Traceability Matrix', icon: GitBranch, path: '/traceability-matrix' },
     { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
     { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
     { title: 'Security Testing', icon: Shield, path: '/security-testing' },
     { title: t('navigation.browserCompatibility'), icon: Cpu, path: '/browser-compatibility' },
     { title: t('navigation.mobileCompatibility'), icon: Smartphone, path: '/mobile-compatibility' },
+  ];
+
+  const companySettingsSubItems = [
+    { title: 'Team Invitations', icon: UserPlus, path: '/company-settings/invitations' },
+    { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
+    { title: 'Company Details', icon: Building, path: '/company-settings/details' },
   ];
 
   const bottomMenuItems = [
@@ -161,13 +170,40 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton className="flex items-center w-full">
                           <ClipboardList className="mr-3 h-5 w-5" />
-                          <span>{t('navigation.testPlans')}</span>
+                          <span>Test Management</span>
                           <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <SidebarMenuSub>
                           {testPlansSubItems.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <Link to={subItem.path} className="flex items-center">
+                                  <subItem.icon className="mr-2 h-4 w-4" />
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {/* Company Settings with sub-items */}
+                  <Collapsible>
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="flex items-center w-full">
+                          <Building className="mr-3 h-5 w-5" />
+                          <span>Company Settings</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {companySettingsSubItems.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton asChild>
                                 <Link to={subItem.path} className="flex items-center">

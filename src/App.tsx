@@ -34,6 +34,8 @@ import MobileCompatibility from "./pages/MobileCompatibility";
 import SecurityTesting from "./pages/SecurityTesting";
 import PlanSelection from "./pages/PlanSelection";
 import PlanAndBilling from "./pages/PlanAndBilling";
+import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
+import CompanySettingsDetails from "./pages/CompanySettingsDetails";
 
 const queryClient = new QueryClient();
 
@@ -187,6 +189,18 @@ const App = () => (
                     <Route path="/security-testing" element={
                       <ProtectedRoute>
                         <SecurityTesting />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/company-settings/invitations" element={
+                      <ProtectedRoute>
+                        <CompanySettingsInvitations />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/company-settings/details" element={
+                      <ProtectedRoute>
+                        <CompanySettingsDetails />
                       </ProtectedRoute>
                     } />
                     
