@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { CheckCircle, ShieldCheck, Zap, Package, Cpu, Smartphone, GitBranch, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
 
 // Pricing plan data
 const pricingPlans = [
@@ -192,17 +192,8 @@ const Landing = () => {
             <div className="flex-1">
               <div className="relative">
                 <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-qforma-teal to-qforma-blue opacity-30 blur"></div>
-                <div className="relative bg-card rounded-lg border shadow-xl overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop" 
-                    alt={t('landing.hero.imageAlt')} 
-                    className="w-full h-auto"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  <div className={`absolute bottom-4 text-white ${isRTL ? 'right-4' : 'left-4'}`}>
-                    <h3 className="text-lg font-semibold mb-1">{t('landing.hero.imageTitle')}</h3>
-                    <p className="text-sm opacity-90">{t('landing.hero.imageDescription')}</p>
-                  </div>
+                <div className="relative bg-card rounded-lg border shadow-xl overflow-hidden p-4">
+                  <WorkflowDiagram />
                 </div>
               </div>
             </div>
