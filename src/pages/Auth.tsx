@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -18,8 +18,28 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [confirmationMessage, setConfirmationMessage] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Check for email confirmation
+    const checkConfirmation = async () => {
+      const token = searchParams.get('token');
+      const type = searchParams.get('type');
+      
+      if (token && type === 'signup') {
+        setConfirmationMessage('Your email has been confirmed! You can now sign in to your account.');
+        toast({
+          title: "Email Confirmed!",
+          description: "Your account has been successfully verified. Please sign in.",
+        });
+      }
+    };
+
+    checkConfirmation();
+  }, [searchParams, toast]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,18 +58,19 @@ const Auth = () => {
         options: {
           data: {
             name: name,
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
         }
       });
 
       if (error) throw error;
 
       toast({
-        title: "Account created successfully!",
-        description: "Please check your email to verify your account.",
+        title: "Registration Successful!",
+        description: "Please check your email and click the confirmation link to activate your account.",
       });
       
-      navigate('/dashboard');
+      setConfirmationMessage('Please check your email for a confirmation link to complete your registration.');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -107,6 +128,15 @@ const Auth = () => {
             </div>
           </div>
         </div>
+
+        {confirmationMessage && (
+          <Alert className="mb-6 border-green-200 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              {confirmationMessage}
+            </AlertDescription>
+          </Alert>
+        )}
 
         <Card>
           <CardHeader>
