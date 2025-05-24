@@ -85,15 +85,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <div className="min-h-screen flex w-full bg-background">
         {/* Top Header Bar */}
         <div className="fixed top-0 left-0 right-0 z-50 h-14 bg-card border-b flex items-center justify-between px-4">
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
-              Q
-            </div>
-            <div>
-              <span className="text-lg font-bold text-foreground">{t('app.title')}</span>
-              <p className="text-xs text-muted-foreground">{t('app.subtitle')}</p>
-            </div>
-          </Link>
+          <div className="flex-1"></div>
           
           <div className="flex items-center gap-4">
             <ContactForm>
