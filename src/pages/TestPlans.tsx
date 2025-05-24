@@ -25,144 +25,44 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, PlusCircle, FileText, PlayCircle, Users, CheckCircle, XCircle, Clock, List } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-
-interface TestCase {
-  id: string;
-  title: string;
-  requirement: string;
-  status: 'not-run' | 'passed' | 'failed' | 'blocked';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-}
-
-interface TestPlan {
-  id: string;
-  name: string;
-  description: string;
-  project: string;
-  status: 'draft' | 'active' | 'completed' | 'archived';
-  progress: number;
-  testCases: TestCase[];
-  startDate: string;
-  endDate: string;
-  assignedTo: string[];
-  testingScope: string;
-}
+import { Calendar, PlusCircle, FileText, Users, List } from 'lucide-react';
+import { useTestPlans } from '@/hooks/useTestPlans';
+import { useProjects } from '@/hooks/useProjects';
 
 const TestPlans = () => {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTestPlan, setSelectedTestPlan] = useState<TestPlan | null>(null);
-  const [testCases, setTestCases] = useState<TestCase[]>([
-    {
-      id: 'tc1',
-      title: 'User Login Test',
-      requirement: 'REQ-001: User Authentication',
-      status: 'not-run',
-      priority: 'high',
-    },
-    {
-      id: 'tc2',
-      title: 'Password Reset Test',
-      requirement: 'REQ-002: Password Recovery',
-      status: 'not-run',
-      priority: 'medium',
-    },
-    {
-      id: 'tc3',
-      title: 'Profile Update Test',
-      requirement: 'REQ-003: User Profile Management',
-      status: 'not-run',
-      priority: 'medium',
-    },
-  ]);
-
-  const [testPlans] = useState<TestPlan[]>([
-    {
-      id: 'tp1',
-      name: 'User Authentication Module',
-      description: 'Test plan for user authentication and authorization features',
-      project: 'E-commerce Platform',
-      status: 'active',
-      progress: 65,
-      testCases: [],
-      startDate: '2025-05-20',
-      endDate: '2025-06-15',
-      assignedTo: ['John Doe', 'Jane Smith'],
-      testingScope: 'Functional Testing - Authentication Flow',
-    },
-    {
-      id: 'tp2',
-      name: 'Payment Integration Testing',
-      description: 'Comprehensive testing of payment gateway integration',
-      project: 'E-commerce Platform',
-      status: 'draft',
-      progress: 0,
-      testCases: [],
-      startDate: '2025-06-01',
-      endDate: '2025-06-30',
-      assignedTo: ['Mike Johnson'],
-      testingScope: 'Integration Testing - Payment Systems',
-    },
-    {
-      id: 'tp3',
-      name: 'Security Testing Suite',
-      description: 'Security vulnerability testing and penetration testing',
-      project: 'E-commerce Platform',
-      status: 'draft',
-      progress: 0,
-      testCases: [],
-      startDate: '2025-06-15',
-      endDate: '2025-07-15',
-      assignedTo: ['Security Team'],
-      testingScope: 'Security Testing - Vulnerability Assessment',
-    },
-  ]);
+  const { testPlans, loading, createTestPlan } = useTestPlans();
+  const { projects } = useProjects();
 
   const [newTestPlan, setNewTestPlan] = useState({
     name: '',
     description: '',
-    project: '',
-    startDate: '',
-    endDate: '',
-    testingScope: '',
+    project_id: '',
+    start_date: '',
+    end_date: '',
+    testing_scope: '',
   });
 
-  const handleCreateTestPlan = () => {
-    console.log('Creating new test plan:', newTestPlan);
+  const handleCreateTestPlan = async () => {
+    if (!newTestPlan.name || !newTestPlan.project_id || !newTestPlan.testing_scope) {
+      return;
+    }
+
+    await createTestPlan(newTestPlan);
+    
     setNewTestPlan({
       name: '',
       description: '',
-      project: '',
-      startDate: '',
-      endDate: '',
-      testingScope: '',
+      project_id: '',
+      start_date: '',
+      end_date: '',
+      testing_scope: '',
     });
     setIsDialogOpen(false);
-    toast({
-      title: "Success",
-      description: "Test plan created successfully!",
-    });
   };
 
-  const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
-
-    const items = Array.from(testCases);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setTestCases(items);
-    toast({
-      title: "Test Cases Reordered",
-      description: "Test case execution order updated successfully!",
-    });
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | null) => {
     switch (status) {
       case 'active':
         return 'bg-blue-100 text-blue-800';
@@ -177,26 +77,24 @@ const TestPlans = () => {
     }
   };
 
-  const getTestStatusIcon = (status: string) => {
-    switch (status) {
-      case 'passed':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'failed':
-        return <XCircle className="h-4 w-4 text-red-600" />;
-      case 'blocked':
-        return <Clock className="h-4 w-4 text-yellow-600" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const getScopeColor = (scope: string) => {
-    if (scope.includes('Functional')) return 'bg-blue-100 text-blue-800';
-    if (scope.includes('Integration')) return 'bg-purple-100 text-purple-800';
-    if (scope.includes('Security')) return 'bg-red-100 text-red-800';
-    if (scope.includes('Performance')) return 'bg-yellow-100 text-yellow-800';
+  const getScopeColor = (scope: string | null) => {
+    if (!scope) return 'bg-gray-100 text-gray-800';
+    if (scope.includes('functional')) return 'bg-blue-100 text-blue-800';
+    if (scope.includes('integration')) return 'bg-purple-100 text-purple-800';
+    if (scope.includes('security')) return 'bg-red-100 text-red-800';
+    if (scope.includes('performance')) return 'bg-yellow-100 text-yellow-800';
     return 'bg-gray-100 text-gray-800';
   };
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading test plans...</div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -244,10 +142,29 @@ const TestPlans = () => {
                 </div>
                 
                 <div className="grid gap-2">
+                  <Label htmlFor="project">Project</Label>
+                  <Select 
+                    value={newTestPlan.project_id}
+                    onValueChange={(value) => setNewTestPlan({...newTestPlan, project_id: value})}
+                  >
+                    <SelectTrigger id="project">
+                      <SelectValue placeholder="Select project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="grid gap-2">
                   <Label htmlFor="testingScope">{t('testPlans.testingScope')}</Label>
                   <Select 
-                    value={newTestPlan.testingScope}
-                    onValueChange={(value) => setNewTestPlan({...newTestPlan, testingScope: value})}
+                    value={newTestPlan.testing_scope}
+                    onValueChange={(value) => setNewTestPlan({...newTestPlan, testing_scope: value})}
                   >
                     <SelectTrigger id="testingScope">
                       <SelectValue placeholder="Select testing scope" />
@@ -264,31 +181,14 @@ const TestPlans = () => {
                   </Select>
                 </div>
                 
-                <div className="grid gap-2">
-                  <Label htmlFor="project">Project</Label>
-                  <Select 
-                    value={newTestPlan.project}
-                    onValueChange={(value) => setNewTestPlan({...newTestPlan, project: value})}
-                  >
-                    <SelectTrigger id="project">
-                      <SelectValue placeholder="Select project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="project1">E-commerce Platform</SelectItem>
-                      <SelectItem value="project2">Mobile App</SelectItem>
-                      <SelectItem value="project3">API Integration</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="startDate">Start Date</Label>
                     <Input 
                       id="startDate" 
                       type="date"
-                      value={newTestPlan.startDate}
-                      onChange={(e) => setNewTestPlan({...newTestPlan, startDate: e.target.value})}
+                      value={newTestPlan.start_date}
+                      onChange={(e) => setNewTestPlan({...newTestPlan, start_date: e.target.value})}
                     />
                   </div>
                   
@@ -297,8 +197,8 @@ const TestPlans = () => {
                     <Input 
                       id="endDate" 
                       type="date"
-                      value={newTestPlan.endDate}
-                      onChange={(e) => setNewTestPlan({...newTestPlan, endDate: e.target.value})}
+                      value={newTestPlan.end_date}
+                      onChange={(e) => setNewTestPlan({...newTestPlan, end_date: e.target.value})}
                     />
                   </div>
                 </div>
@@ -310,7 +210,7 @@ const TestPlans = () => {
                 </Button>
                 <Button 
                   onClick={handleCreateTestPlan} 
-                  disabled={!newTestPlan.name || !newTestPlan.project || !newTestPlan.testingScope}
+                  disabled={!newTestPlan.name || !newTestPlan.project_id || !newTestPlan.testing_scope}
                 >
                   Create Test Plan
                 </Button>
@@ -319,20 +219,36 @@ const TestPlans = () => {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-6">
+          {testPlans.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8">
+                <List className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">No test plans yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Create your first test plan to start organizing your testing activities.
+                </p>
+                <Button onClick={() => setIsDialogOpen(true)}>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Create Test Plan
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
             <div className="space-y-4">
               {testPlans.map((plan) => (
-                <Card key={plan.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedTestPlan(plan)}>
+                <Card key={plan.id} className="cursor-pointer hover:shadow-lg transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{plan.name}</CardTitle>
                       <div className="flex gap-2">
-                        <Badge className={getScopeColor(plan.testingScope)}>
-                          {plan.testingScope}
-                        </Badge>
+                        {plan.testing_scope && (
+                          <Badge className={getScopeColor(plan.testing_scope)}>
+                            {plan.testing_scope}
+                          </Badge>
+                        )}
                         <Badge className={getStatusColor(plan.status)}>
-                          {plan.status}
+                          {plan.status || 'draft'}
                         </Badge>
                       </div>
                     </div>
@@ -343,23 +259,25 @@ const TestPlans = () => {
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Progress</span>
-                          <span>{plan.progress}%</span>
+                          <span>{plan.progress || 0}%</span>
                         </div>
-                        <Progress value={plan.progress} className="h-2" />
+                        <Progress value={plan.progress || 0} className="h-2" />
                       </div>
                       
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <div className="flex items-center">
                           <FileText className="h-4 w-4 mr-1" />
-                          {plan.project}
+                          {plan.projects?.name || 'No project'}
                         </div>
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          {plan.startDate} - {plan.endDate}
-                        </div>
+                        {plan.start_date && plan.end_date && (
+                          <div className="flex items-center">
+                            <Calendar className="h-4 w-4 mr-1" />
+                            {new Date(plan.start_date).toLocaleDateString()} - {new Date(plan.end_date).toLocaleDateString()}
+                          </div>
+                        )}
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
-                          {plan.assignedTo.length} assigned
+                          {plan.assigned_to?.length || 0} assigned
                         </div>
                       </div>
                     </div>
@@ -367,58 +285,7 @@ const TestPlans = () => {
                 </Card>
               ))}
             </div>
-          </div>
-          
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <List className="h-5 w-5 mr-2" />
-                  {t('testPlans.testCasesPool')}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  {t('testPlans.dragAndDrop')}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId="testCases">
-                    {(provided) => (
-                      <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
-                        {testCases.map((testCase, index) => (
-                          <Draggable key={testCase.id} draggableId={testCase.id} index={index}>
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="p-3 border rounded-lg bg-white hover:shadow-sm transition-shadow"
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="font-medium text-sm">{testCase.title}</span>
-                                  {getTestStatusIcon(testCase.status)}
-                                </div>
-                                <p className="text-xs text-muted-foreground mb-2">{testCase.requirement}</p>
-                                <Badge variant={testCase.priority === 'high' ? 'destructive' : 'secondary'} className="text-xs">
-                                  {testCase.priority}
-                                </Badge>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-                
-                <Button className="w-full mt-4" variant="outline">
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  {t('testPlans.assignTestCases')}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          )}
         </div>
       </div>
     </AppLayout>

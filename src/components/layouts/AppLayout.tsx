@@ -39,7 +39,7 @@ import {
   Shield,
   ClipboardList
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -70,9 +70,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: t('navigation.settings'), icon: Settings, path: '/settings' },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    await logout();
+    navigate('/auth');
   };
 
   return (
@@ -116,12 +116,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               <div className="flex flex-col space-y-4">
                 <div className="flex items-center space-x-3">
                   <Avatar>
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="bg-primary/10 text-primary">{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {user.user_metadata?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="font-medium text-sidebar-foreground">{user.name}</span>
-                    <span className="text-xs text-sidebar-foreground/70">{user.role}</span>
+                    <span className="font-medium text-sidebar-foreground">
+                      {user.user_metadata?.name || user.email}
+                    </span>
+                    <span className="text-xs text-sidebar-foreground/70">Tester</span>
                   </div>
                 </div>
                 <Separator />

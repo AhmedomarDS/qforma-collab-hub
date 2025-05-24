@@ -5,14 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { DashboardProvider } from "./contexts/DashboardContext";
 import { RequirementsProvider } from "./contexts/RequirementsContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ProjectProvider } from "./contexts/ProjectContext";
 
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Requirements from "./pages/Requirements";
 import TestCases from "./pages/TestCases";
@@ -36,14 +36,18 @@ const queryClient = new QueryClient();
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   
-  if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
   }
   
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/auth" replace />;
   }
   
   return <>{children}</>;
@@ -62,7 +66,7 @@ const App = () => (
                 <BrowserRouter>
                   <Routes>
                     <Route path="/landing" element={<Landing />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/auth" element={<Auth />} />
                     
                     <Route path="/" element={<Navigate to="/landing" replace />} />
                     
