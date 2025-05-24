@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -92,7 +93,7 @@ const Landing = () => {
       description: t('landing.domain.settingUp', { plan, subdomain }) || `We're setting up your ${plan} account at ${subdomain}.qforma.app`,
     });
     
-    navigate("/login");
+    navigate("/auth");
   };
   
   return (
@@ -189,7 +190,7 @@ const Landing = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 max-w-md">
               <div className="relative">
                 <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-qforma-teal to-qforma-blue opacity-30 blur"></div>
                 <div className="relative bg-card rounded-lg border shadow-xl overflow-hidden p-4">
@@ -383,7 +384,7 @@ const Landing = () => {
             <Button 
               variant="secondary" 
               size="lg"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/auth')}
             >
               {t('landing.cta.signIn')}
             </Button>
