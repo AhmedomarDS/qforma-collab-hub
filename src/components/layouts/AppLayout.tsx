@@ -14,13 +14,17 @@ import {
   SidebarHeader, 
   SidebarProvider, 
   SidebarTrigger, 
-  SidebarFooter 
+  SidebarFooter,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { ContactForm } from '@/components/ui/contact-form';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -42,7 +46,8 @@ import {
   ClipboardList,
   GitBranch,
   Building,
-  Users
+  Users,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -56,22 +61,29 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const menuItems = [
+  const mainMenuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
     { title: 'Admin Dashboard', icon: Settings, path: '/admin' },
     { title: 'Company Settings', icon: Building, path: '/company-settings' },
-    { title: t('navigation.projects'), icon: FolderPlus, path: '/projects' },
+  ];
+
+  const projectsSubItems = [
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
     { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
-    { title: t('navigation.testPlans'), icon: ClipboardList, path: '/test-plans' },
+  ];
+
+  const testPlansSubItems = [
     { title: 'Traceability Matrix', icon: GitBranch, path: '/traceability-matrix' },
     { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
     { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
     { title: 'Security Testing', icon: Shield, path: '/security-testing' },
     { title: t('navigation.browserCompatibility'), icon: Cpu, path: '/browser-compatibility' },
     { title: t('navigation.mobileCompatibility'), icon: Smartphone, path: '/mobile-compatibility' },
+  ];
+
+  const bottomMenuItems = [
     { title: t('navigation.chat'), icon: MessageSquare, path: '/chat' },
     { title: t('navigation.defects'), icon: Bug, path: '/defects' },
     { title: t('navigation.reports'), icon: BarChart, path: '/reports' },
@@ -106,7 +118,74 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {menuItems.map((item) => (
+                  {/* Main menu items */}
+                  {mainMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <Link to={item.path} className="flex items-center">
+                          <item.icon className="mr-3 h-5 w-5" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {/* Projects with sub-items */}
+                  <Collapsible>
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="flex items-center w-full">
+                          <FolderPlus className="mr-3 h-5 w-5" />
+                          <span>{t('navigation.projects')}</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {projectsSubItems.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <Link to={subItem.path} className="flex items-center">
+                                  <subItem.icon className="mr-2 h-4 w-4" />
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {/* Test Plans with sub-items */}
+                  <Collapsible>
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="flex items-center w-full">
+                          <ClipboardList className="mr-3 h-5 w-5" />
+                          <span>{t('navigation.testPlans')}</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {testPlansSubItems.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <Link to={subItem.path} className="flex items-center">
+                                  <subItem.icon className="mr-2 h-4 w-4" />
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  {/* Bottom menu items */}
+                  {bottomMenuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <Link to={item.path} className="flex items-center">
