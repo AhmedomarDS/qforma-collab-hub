@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "Cargando...",
@@ -96,10 +97,7 @@
     "hero": {
       "title": "Gestión Completa del Ciclo de Vida de Desarrollo de Software con IA",
       "subtitle": "La Mejor Plataforma para Equipos de Desarrollo de Software",
-      "description": "Gestiona, Diseña, Requisitos, Pruebas, Defectos, KPIs, Trazabilidad y Automatiza el Diseño de Requisitos, Casos de Prueba con tu Asistente de IA. También se incluyen Automatización, Rendimiento y Pruebas de Compatibilidad.",
-      "imageAlt": "Panel QForma - Plataforma de gestión de desarrollo de software",
-      "imageTitle": "Gestión SDLC Completa",
-      "imageDescription": "Optimiza tu proceso de desarrollo"
+      "description": "Gestiona, Diseña, Requisitos, Pruebas, Defectos, KPIs, Trazabilidad y Automatiza el Diseño de Requisitos, Casos de Prueba con tu Asistente de IA. También se incluyen Automatización, Rendimiento y Pruebas de Compatibilidad."
     },
     "domain": {
       "title": "Crea tu dominio QForma",
@@ -107,113 +105,14 @@
       "subdomainPlaceholder": "subdominio",
       "emailPlaceholder": "Tu dirección de correo electrónico",
       "buttonText": "Comenzar Gratis",
-      "noCreditCard": "No se requiere tarjeta de crédito para el plan gratuito",
-      "missingFields": "Por favor, completa todos los campos para continuar",
-      "registrationStarted": "Registro Iniciado",
-      "settingUp": "Estamos configurando tu cuenta {{plan}} en {{subdomain}}.qforma.app"
+      "noCreditCard": "No se requiere tarjeta de crédito para el plan gratuito"
     },
     "pricing": {
       "title": "Planes de Precios",
-      "description": "Elige el plan adecuado para las necesidades de QA de tu equipo. Todos los planes incluyen nuestras características principales de gestión de QA.",
-      "popular": "Popular",
-      "customSolution": "¿Necesitas una solución personalizada?",
-      "contactSales": "Contacta a nuestro equipo de ventas",
-      "plans": {
-        "free": {
-          "name": "Gratuito",
-          "description": "Características básicas, 1 usuario",
-          "period": "mes",
-          "buttonText": "Comenzar",
-          "features": {
-            "0": "1 cuenta de usuario",
-            "1": "Seguimiento QA básico",
-            "2": "Requisitos limitados",
-            "3": "Casos de prueba manuales"
-          }
-        },
-        "pro": {
-          "name": "Pro",
-          "description": "Todos los módulos QA, 10 proyectos",
-          "period": "usuario/mes",
-          "buttonText": "Suscribirse Ahora",
-          "features": {
-            "0": "Hasta 10 usuarios",
-            "1": "Proyectos ilimitados",
-            "2": "Gestión completa de pruebas",
-            "3": "Seguimiento de defectos",
-            "4": "Informes básicos"
-          }
-        },
-        "premium": {
-          "name": "Premium",
-          "description": "IA + Matriz de Trazabilidad",
-          "period": "usuario/mes",
-          "buttonText": "Elegir Premium",
-          "features": {
-            "0": "Usuarios ilimitados",
-            "1": "Generación de pruebas IA",
-            "2": "Matriz de trazabilidad",
-            "3": "Análisis avanzados",
-            "4": "Soporte prioritario"
-          }
-        },
-        "enterprise": {
-          "name": "Empresarial",
-          "description": "Local, SSO, integraciones",
-          "period": "25K€+/año",
-          "buttonText": "Contactar Ventas",
-          "features": {
-            "0": "Implementación local",
-            "1": "Inicio de sesión único",
-            "2": "Integraciones personalizadas",
-            "3": "Soporte dedicado",
-            "4": "Garantías SLA"
-          }
-        }
-      }
+      "description": "Elige el plan adecuado para las necesidades de QA de tu equipo. Todos los planes incluyen nuestras características principales de gestión de QA."
     },
     "features": {
-      "title": "Plataforma QA Todo-en-Uno",
-      "requirements": {
-        "title": "Gestión de Requisitos",
-        "description": "Captura, organiza y rastrea requisitos con trazabilidad completa a casos de prueba."
-      },
-      "testCases": {
-        "title": "Gestión de Casos de Prueba",
-        "description": "Crea, ejecuta y rastrea casos de prueba con informes detallados e historial."
-      },
-      "defects": {
-        "title": "Seguimiento de Defectos",
-        "description": "Reporta, asigna y resuelve defectos con gestión integral del ciclo de vida."
-      },
-      "ai": {
-        "title": "Asistencia Impulsada por IA",
-        "description": "Genera casos de prueba y requisitos automáticamente con nuestras herramientas de IA avanzadas."
-      },
-      "performance": {
-        "title": "Pruebas de Rendimiento",
-        "description": "Registra y ejecuta escenarios de pruebas de rendimiento con análisis detallados."
-      },
-      "design": {
-        "title": "Gestión de Diseño",
-        "description": "Crea y gestiona documentos de diseño de alto y bajo nivel con flujos de trabajo de aprobación."
-      },
-      "browser": {
-        "title": "Pruebas de Compatibilidad del Navegador",
-        "description": "Prueba tus aplicaciones en diferentes navegadores y versiones para asegurar una experiencia de usuario consistente."
-      },
-      "mobile": {
-        "title": "Pruebas de Compatibilidad Móvil",
-        "description": "Asegura que tus aplicaciones móviles funcionen perfectamente en diferentes dispositivos y sistemas operativos."
-      },
-      "security": {
-        "title": "Pruebas de Seguridad",
-        "description": "Evaluaciones integrales de vulnerabilidades de seguridad para identificar y mitigar amenazas potenciales y asegurar la seguridad de la aplicación."
-      },
-      "integration": {
-        "title": "Integración de Plataforma IA",
-        "description": "Integra sin problemas con plataformas de IA para generación automática de pruebas y análisis inteligente."
-      }
+      "title": "Plataforma QA Todo-en-Uno"
     },
     "cta": {
       "title": "¿Listo para transformar tu proceso de QA?",

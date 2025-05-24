@@ -208,10 +208,6 @@
         "title": "Tests de Compatibilité Mobile",
         "description": "Assurez-vous que vos applications mobiles fonctionnent parfaitement sur différents appareils et systèmes d'exploitation."
       },
-      "security": {
-        "title": "Tests de Sécurité",
-        "description": "Évaluations complètes des vulnérabilités de sécurité pour identifier et atténuer les menaces potentielles et assurer la sécurité des applications."
-      },
       "integration": {
         "title": "Intégration Plateforme IA",
         "description": "Intégrez de manière transparente avec les plateformes IA pour la génération automatique de tests et l'analyse intelligente."
