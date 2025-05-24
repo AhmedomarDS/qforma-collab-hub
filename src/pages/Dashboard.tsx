@@ -23,6 +23,11 @@ const Dashboard = () => {
   const [trialEndDate, setTrialEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/auth?tab=signin');
+      return;
+    }
+    
     refreshData();
     
     // Load registration and trial data
@@ -39,10 +44,9 @@ const Dashboard = () => {
     if (trialEnd) {
       setTrialEndDate(new Date(trialEnd));
     }
-  }, [refreshData]);
+  }, [refreshData, user, navigate]);
 
   if (!user) {
-    navigate('/auth');
     return null;
   }
 
@@ -99,7 +103,7 @@ const Dashboard = () => {
                   {registrationData.subdomain}.qforma.app
                 </h2>
                 <p className="text-muted-foreground">
-                  Welcome to your QForma platform, {registrationData.companyName}
+                  Welcome to your QForma SDLC Platform, {registrationData.companyName}
                 </p>
               </div>
               <div className="text-right">
@@ -119,7 +123,7 @@ const Dashboard = () => {
 
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">SDLC Dashboard</h1>
             <p className="text-muted-foreground">Welcome back, {user.user_metadata?.name || user.email}</p>
           </div>
           <Button 

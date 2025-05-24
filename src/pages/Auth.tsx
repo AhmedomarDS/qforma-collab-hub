@@ -11,6 +11,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, ArrowLeft, CheckCircle, Building, Mail } from 'lucide-react';
 
+declare global {
+  interface Window {
+    grecaptcha: any;
+  }
+}
+
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,11 +29,19 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'email-sent', 'set-password'
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    // Load Google reCAPTCHA
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
     // Check for email confirmation token
     const token = searchParams.get('token');
     const type = searchParams.get('type');
@@ -35,7 +49,31 @@ const Auth = () => {
     if (token && type === 'signup') {
       setCurrentStep('set-password');
     }
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
   }, [searchParams]);
+
+  const executeRecaptcha = (): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (window.grecaptcha) {
+        window.grecaptcha.ready(() => {
+          window.grecaptcha.execute('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', { action: 'submit' })
+            .then((token: string) => {
+              resolve(token);
+            })
+            .catch((error: any) => {
+              reject(error);
+            });
+        });
+      } else {
+        reject(new Error('reCAPTCHA not loaded'));
+      }
+    });
+  };
 
   const handlePasswordCreation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +122,7 @@ const Auth = () => {
 
         // Redirect to sign in
         setCurrentStep('auth');
-        navigate('/auth');
+        navigate('/auth?tab=signin');
       }
     } catch (error: any) {
       setError(error.message);
@@ -104,6 +142,9 @@ const Auth = () => {
     setError('');
 
     try {
+      // Execute reCAPTCHA
+      const recaptchaToken = await executeRecaptcha();
+      
       // Sign up user - this will send confirmation email
       const { error } = await supabase.auth.signUp({
         email,
@@ -114,7 +155,8 @@ const Auth = () => {
             company_name: companyName,
             subdomain: subdomain
           },
-          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
+          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`,
+          captchaToken: recaptchaToken
         }
       });
 
@@ -140,9 +182,15 @@ const Auth = () => {
     setError('');
 
     try {
+      // Execute reCAPTCHA
+      const recaptchaToken = await executeRecaptcha();
+      
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          captchaToken: recaptchaToken
+        }
       });
 
       if (error) throw error;
@@ -208,7 +256,7 @@ const Auth = () => {
               <div className="mx-auto mb-4 bg-green-100 rounded-full p-3 w-fit">
                 <Mail className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle>Check Your Inbox</CardTitle>
+              <CardTitle>Registration Confirmation</CardTitle>
               <CardDescription>
                 We've sent a confirmation email to <strong>{registeredEmail}</strong>
               </CardDescription>
@@ -219,8 +267,8 @@ const Auth = () => {
                 <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
                   <li>Check your email inbox (and spam folder)</li>
                   <li>Click the confirmation link in the email</li>
-                  <li>Create your password</li>
-                  <li>Start using QForma</li>
+                  <li>Create your password on the next screen</li>
+                  <li>Sign in with your new credentials</li>
                 </ol>
               </div>
 
@@ -245,7 +293,7 @@ const Auth = () => {
                   variant="ghost" 
                   className="w-full"
                 >
-                  Back to Sign In
+                  Back to Registration
                 </Button>
               </div>
             </CardContent>
@@ -348,6 +396,9 @@ const Auth = () => {
     );
   }
 
+  // Get the tab from URL params
+  const activeTab = searchParams.get('tab') || 'signup';
+
   // Main auth page (sign in / sign up)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -364,23 +415,26 @@ const Auth = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold">QForma</h1>
-              <p className="text-sm text-muted-foreground">Quality Assurance Platform</p>
+              <p className="text-sm text-muted-foreground">SDLC Platform</p>
             </div>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Welcome</CardTitle>
+            <CardTitle>Welcome to QForma</CardTitle>
             <CardDescription>
-              Sign in to your account or create a new company account
+              {activeTab === 'signin' 
+                ? 'Sign in to your SDLC Platform account' 
+                : 'Create your company account to get started'
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs value={activeTab} onValueChange={(value) => navigate(`/auth?tab=${value}`)} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signup">Create Account</TabsTrigger>
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Create Company</TabsTrigger>
               </TabsList>
               
               <TabsContent value="signin">
@@ -420,6 +474,14 @@ const Auth = () => {
                     </div>
                   </div>
 
+                  <div className="mb-4">
+                    <div 
+                      className="g-recaptcha" 
+                      data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                      data-size="invisible"
+                    ></div>
+                  </div>
+
                   {error && (
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
@@ -427,7 +489,7 @@ const Auth = () => {
                   )}
 
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Signing in...' : 'Sign In'}
+                    {loading ? 'Signing in...' : 'Sign In to SDLC Platform'}
                   </Button>
                 </form>
               </TabsContent>
@@ -487,6 +549,14 @@ const Auth = () => {
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">This will be your team's unique URL</p>
+                  </div>
+
+                  <div className="mb-4">
+                    <div 
+                      className="g-recaptcha" 
+                      data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                      data-size="invisible"
+                    ></div>
                   </div>
 
                   {error && (
