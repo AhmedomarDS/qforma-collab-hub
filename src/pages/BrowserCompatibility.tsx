@@ -8,11 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Monitor, 
   Chrome, 
-  Firefox, 
-  Safari, 
-  Edge,
-  Smartphone,
   Globe,
+  Smartphone,
   AlertCircle,
   CheckCircle,
   Clock,
