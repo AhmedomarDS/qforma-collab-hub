@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, ArrowLeft, CheckCircle, Building } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, CheckCircle, Building, Mail } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -21,28 +21,19 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [confirmationMessage, setConfirmationMessage] = useState('');
-  const [confirmationStep, setConfirmationStep] = useState(false);
-  const [invitationToken, setInvitationToken] = useState('');
+  const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'email-sent', 'set-password'
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Check for email confirmation or invitation
+    // Check for email confirmation token
     const token = searchParams.get('token');
     const type = searchParams.get('type');
-    const inviteToken = searchParams.get('invitation');
     
     if (token && type === 'signup') {
-      setConfirmationStep(true);
-      setConfirmationMessage('Please create your password to complete account setup.');
-    }
-    
-    if (inviteToken) {
-      setInvitationToken(inviteToken);
-      setConfirmationStep(true);
-      setConfirmationMessage('Complete your account setup to join the team.');
+      setCurrentStep('set-password');
     }
   }, [searchParams]);
 
@@ -86,27 +77,14 @@ const Auth = () => {
 
         if (updateError) throw updateError;
 
-        // Handle invitation if present
-        if (invitationToken) {
-          const { data, error: inviteError } = await supabase.rpc('accept_invitation', {
-            invitation_token: invitationToken,
-            user_password: password
-          });
+        toast({
+          title: "Account Created Successfully!",
+          description: "Your password has been set. You can now sign in.",
+        });
 
-          if (inviteError) throw inviteError;
-          
-          toast({
-            title: "Welcome to the team!",
-            description: "Your account has been created and you've joined the company.",
-          });
-        } else {
-          toast({
-            title: "Account Created!",
-            description: "Your account has been successfully created.",
-          });
-        }
-
-        navigate('/dashboard');
+        // Redirect to sign in
+        setCurrentStep('auth');
+        navigate('/auth');
       }
     } catch (error: any) {
       setError(error.message);
@@ -126,28 +104,15 @@ const Auth = () => {
     setError('');
 
     try {
-      // Create company first
-      const { data: company, error: companyError } = await supabase
-        .from('companies')
-        .insert({
-          company_name: companyName,
-          subdomain: subdomain,
-          email: email,
-          created_by: email // Temporary, will be updated after user creation
-        })
-        .select()
-        .single();
-
-      if (companyError) throw companyError;
-
-      // Sign up user
+      // Sign up user - this will send confirmation email
       const { error } = await supabase.auth.signUp({
         email,
-        password: 'temp-password', // Will be set during confirmation
+        password: 'temporary-password', // Will be set during confirmation
         options: {
           data: {
             name: name,
-            company_id: company.id
+            company_name: companyName,
+            subdomain: subdomain
           },
           emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
         }
@@ -155,12 +120,8 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Registration Successful!",
-        description: "Please check your email and click the confirmation link to set your password.",
-      });
-      
-      setConfirmationMessage('Please check your email for a confirmation link to complete your registration and set your password.');
+      setRegisteredEmail(email);
+      setCurrentStep('email-sent');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -199,7 +160,103 @@ const Auth = () => {
     }
   };
 
-  if (confirmationStep) {
+  const handleResendEmail = async () => {
+    if (!registeredEmail) return;
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: registeredEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Email Resent",
+        description: "Please check your inbox for the confirmation email.",
+      });
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Email confirmation sent page
+  if (currentStep === 'email-sent') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-12 w-12 flex items-center justify-center font-bold text-2xl mr-3">
+                Q
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold">QForma</h1>
+                <p className="text-sm text-muted-foreground">Check Your Email</p>
+              </div>
+            </div>
+          </div>
+
+          <Card>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 bg-green-100 rounded-full p-3 w-fit">
+                <Mail className="h-6 w-6 text-green-600" />
+              </div>
+              <CardTitle>Check Your Inbox</CardTitle>
+              <CardDescription>
+                We've sent a confirmation email to <strong>{registeredEmail}</strong>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-900 mb-2">Next Steps:</h3>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
+                  <li>Check your email inbox (and spam folder)</li>
+                  <li>Click the confirmation link in the email</li>
+                  <li>Create your password</li>
+                  <li>Start using QForma</li>
+                </ol>
+              </div>
+
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleResendEmail} 
+                  variant="outline" 
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? 'Resending...' : 'Resend Confirmation Email'}
+                </Button>
+                
+                <Button 
+                  onClick={() => setCurrentStep('auth')} 
+                  variant="ghost" 
+                  className="w-full"
+                >
+                  Back to Sign In
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Password creation page
+  if (currentStep === 'set-password') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
@@ -217,8 +274,11 @@ const Auth = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Set Your Password</CardTitle>
-              <CardDescription>{confirmationMessage}</CardDescription>
+              <div className="mx-auto mb-4 bg-green-100 rounded-full p-3 w-fit">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+              </div>
+              <CardTitle>Email Confirmed!</CardTitle>
+              <CardDescription>Create your password to complete your account setup</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordCreation} className="space-y-4">
@@ -235,7 +295,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Create Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -278,7 +338,7 @@ const Auth = () => {
                 )}
 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Setting up account...' : 'Complete Setup'}
+                  {loading ? 'Creating Account...' : 'Complete Setup'}
                 </Button>
               </form>
             </CardContent>
@@ -288,6 +348,7 @@ const Auth = () => {
     );
   }
 
+  // Main auth page (sign in / sign up)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -307,15 +368,6 @@ const Auth = () => {
             </div>
           </div>
         </div>
-
-        {confirmationMessage && (
-          <Alert className="mb-6 border-green-200 bg-green-50">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">
-              {confirmationMessage}
-            </AlertDescription>
-          </Alert>
-        )}
 
         <Card>
           <CardHeader>
