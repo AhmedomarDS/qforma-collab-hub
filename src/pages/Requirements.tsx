@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FileText, PlusCircle, Bot, Upload, Filter, FolderOpen } from 'lucide-react';
+import { FileText, PlusCircle, Bot, Upload, Filter, FolderOpen, Download } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { useRequirements, Requirement } from '@/contexts/RequirementsContext';
 import { useProject } from '@/contexts/ProjectContext';
@@ -34,6 +34,7 @@ const Requirements = () => {
   const { projects } = useProject();
   const { 
     requirements, 
+    folders,
     isLoading, 
     selectedProjectId, 
     setSelectedProjectId, 
@@ -42,12 +43,10 @@ const Requirements = () => {
   } = useRequirements();
   
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCsvUploadOpen, setIsCsvUploadOpen] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    status: [] as string[],
-    priority: [] as string[],
-  });
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   
   const [newRequirement, setNewRequirement] = useState({
     title: '',
@@ -65,7 +64,14 @@ const Requirements = () => {
   }, [selectedProjectId, loadProjectRequirements]);
 
   const handleCreateRequirement = async () => {
-    if (!newRequirement.title || !newRequirement.description || !selectedProjectId) return;
+    if (!newRequirement.title || !newRequirement.description || !selectedProjectId) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields and select a project.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     try {
       await createRequirement({
@@ -82,6 +88,8 @@ const Requirements = () => {
         priority: 'medium',
         folder_id: null,
       });
+      
+      setIsCreateDialogOpen(false);
     } catch (error) {
       console.error('Failed to create requirement:', error);
       toast({
@@ -90,6 +98,106 @@ const Requirements = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleCsvUpload = async () => {
+    if (!csvFile || !selectedProjectId) {
+      toast({
+        title: "Error",
+        description: "Please select a CSV file and a project.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const text = await csvFile.text();
+      const lines = text.split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      
+      // Validate CSV format
+      const requiredFields = ['title', 'description', 'status', 'priority'];
+      const missingFields = requiredFields.filter(field => !headers.includes(field));
+      
+      if (missingFields.length > 0) {
+        toast({
+          title: "Invalid CSV Format",
+          description: `Missing required fields: ${missingFields.join(', ')}`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Process CSV rows
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',').map(cell => cell.trim());
+        if (row.length === headers.length && row[0]) {
+          const requirement: any = {};
+          
+          headers.forEach((header, index) => {
+            requirement[header] = row[index];
+          });
+
+          // Map folder name to folder ID if provided
+          let folderId = null;
+          if (requirement.folder && folders.length > 0) {
+            const folder = folders.find(f => f.name.toLowerCase() === requirement.folder.toLowerCase());
+            folderId = folder?.id || null;
+          }
+
+          await createRequirement({
+            title: requirement.title,
+            description: requirement.description || '',
+            status: requirement.status as Requirement['status'] || 'draft',
+            priority: requirement.priority as Requirement['priority'] || 'medium',
+            project_id: selectedProjectId,
+            folder_id: folderId,
+            created_by: 'CSV Import',
+          });
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Requirements imported successfully from CSV.",
+      });
+      
+      setIsCsvUploadOpen(false);
+      setCsvFile(null);
+    } catch (error) {
+      console.error('CSV upload error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process CSV file. Please check the format.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const downloadCsvTemplate = () => {
+    const headers = ['title', 'description', 'status', 'priority', 'folder'];
+    const exampleRow = [
+      'User Authentication',
+      'Implement secure user login and registration system',
+      'draft',
+      'high',
+      'Authentication'
+    ];
+    
+    const csvContent = [
+      headers.join(','),
+      exampleRow.join(','),
+      'Password Reset,Allow users to reset forgotten passwords,review,medium,Authentication',
+      'Dashboard Overview,Create main dashboard with key metrics,development,high,Dashboard'
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'requirements_template.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
   };
   
   const handleSaveAiContent = async (content: string) => {
@@ -145,18 +253,15 @@ const Requirements = () => {
       filtered = filtered.filter(req => req.folder_id === selectedFolderId);
     }
 
-    // Filter by status and priority
-    if (filters.status.length > 0) {
-      filtered = filtered.filter(req => filters.status.includes(req.status));
-    }
-    if (filters.priority.length > 0) {
-      filtered = filtered.filter(req => filters.priority.includes(req.priority));
-    }
-
     return filtered;
   };
 
   const filteredRequirements = getFilteredRequirements();
+
+  // Get available folders for the create form
+  const getAvailableFolders = () => {
+    return folders.filter(folder => folder.project_id === selectedProjectId);
+  };
 
   return (
     <AppLayout>
@@ -176,7 +281,75 @@ const Requirements = () => {
               <Bot className="h-4 w-4" />
               Generate with AI
             </Button>
-            <Dialog>
+            <Dialog open={isCsvUploadOpen} onOpenChange={setIsCsvUploadOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline"
+                  disabled={!selectedProjectId}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import CSV
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[550px]">
+                <DialogHeader>
+                  <DialogTitle>Import Requirements from CSV</DialogTitle>
+                  <DialogDescription>
+                    Upload a CSV file to bulk import requirements. Make sure your CSV includes the required fields.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="csv-file">CSV File</Label>
+                    <Input 
+                      id="csv-file" 
+                      type="file"
+                      accept=".csv"
+                      onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+                    />
+                  </div>
+                  
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">Required CSV Format:</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Your CSV must include these columns: <strong>title, description, status, priority</strong>
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Optional: <strong>folder</strong> (folder name - will be matched to existing folders)
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Status options: draft, review, approved, development, testing, complete
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Priority options: low, medium, high, critical
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={downloadCsvTemplate}
+                      className="w-full"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Template
+                    </Button>
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCsvUploadOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleCsvUpload} 
+                    disabled={!csvFile || isLoading}
+                  >
+                    Import Requirements
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
                   className="bg-primary hover:bg-primary/90"
@@ -196,7 +369,7 @@ const Requirements = () => {
                 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">Title *</Label>
                     <Input 
                       id="title" 
                       value={newRequirement.title}
@@ -206,7 +379,7 @@ const Requirements = () => {
                   </div>
                   
                   <div className="grid gap-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">Description *</Label>
                     <Textarea 
                       id="description"
                       value={newRequirement.description}
@@ -214,6 +387,26 @@ const Requirements = () => {
                       placeholder="Describe the requirement in detail..."
                       rows={4}
                     />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="folder">Folder (Optional)</Label>
+                    <Select 
+                      value={newRequirement.folder_id || "none"}
+                      onValueChange={(value) => setNewRequirement({...newRequirement, folder_id: value === "none" ? null : value})}
+                    >
+                      <SelectTrigger id="folder">
+                        <SelectValue placeholder="Select folder" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Folder</SelectItem>
+                        {getAvailableFolders().map(folder => (
+                          <SelectItem key={folder.id} value={folder.id}>
+                            {folder.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
@@ -255,10 +448,23 @@ const Requirements = () => {
                       </Select>
                     </div>
                   </div>
+
+                  {selectedProjectId && (
+                    <div className="bg-muted p-3 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Project:</strong> {projects.find(p => p.id === selectedProjectId)?.name}
+                      </p>
+                      {newRequirement.folder_id && (
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Folder:</strong> {folders.find(f => f.id === newRequirement.folder_id)?.name}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <DialogFooter>
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                     Cancel
                   </Button>
                   <Button 
@@ -352,6 +558,11 @@ const Requirements = () => {
                                   <Badge variant="outline" className="capitalize">
                                     {requirement.status}
                                   </Badge>
+                                  {requirement.folder_id && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      {folders.find(f => f.id === requirement.folder_id)?.name}
+                                    </Badge>
+                                  )}
                                 </div>
                                 <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-2">
                                   {requirement.description}
@@ -387,7 +598,10 @@ const Requirements = () => {
                           ? "No requirements found in this folder. Create a new requirement or move existing ones here."
                           : "Start by creating your first requirement to define what needs to be built."}
                       </p>
-                      <Button disabled={!selectedProjectId}>
+                      <Button 
+                        disabled={!selectedProjectId}
+                        onClick={() => setIsCreateDialogOpen(true)}
+                      >
                         <PlusCircle className="h-4 w-4 mr-2" />
                         Create Requirement
                       </Button>
