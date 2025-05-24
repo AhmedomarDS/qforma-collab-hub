@@ -57,15 +57,21 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const loadProjectRequirements = async (projectId: string) => {
-    // Validate project ID format
-    if (!projectId || !isValidUUID(projectId)) {
-      console.error('Invalid project ID format:', projectId);
+    // Basic validation - just check if projectId exists and is not empty
+    if (!projectId || projectId.trim() === '') {
+      console.error('Empty or invalid project ID:', projectId);
       toast({
         title: "Error",
-        description: "Invalid project ID format. Please select a valid project.",
+        description: "Please select a valid project.",
         variant: "destructive"
       });
       return;
+    }
+
+    // Skip UUID validation for now since projects might not have UUID IDs
+    // If the project ID is not a UUID, we'll handle it gracefully
+    if (!isValidUUID(projectId)) {
+      console.warn('Project ID is not a UUID format, this might cause database issues:', projectId);
     }
 
     setIsLoading(true);
@@ -80,6 +86,15 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (reqError) {
         console.error('Requirements query error:', reqError);
+        // If it's a UUID format error, show a more helpful message
+        if (reqError.message?.includes('invalid input syntax for type uuid')) {
+          toast({
+            title: "Database Error",
+            description: "This project was created with an incompatible ID format. Please contact support or create a new project.",
+            variant: "destructive"
+          });
+          return;
+        }
         throw reqError;
       }
 
@@ -91,7 +106,13 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (folderError) {
         console.error('Folders query error:', folderError);
-        throw folderError;
+        // Handle UUID error gracefully for folders too
+        if (folderError.message?.includes('invalid input syntax for type uuid')) {
+          console.warn('Skipping folders due to project ID format incompatibility');
+          // Continue without folders rather than failing completely
+        } else {
+          throw folderError;
+        }
       }
 
       // Type assertion to ensure the data matches our interfaces
@@ -121,12 +142,23 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const createRequirement = async (req: Omit<Requirement, 'id' | 'created_at' | 'updated_at'>) => {
-    // Validate project ID format
-    if (!req.project_id || !isValidUUID(req.project_id)) {
-      console.error('Invalid project ID for requirement creation:', req.project_id);
+    // Basic validation
+    if (!req.project_id || req.project_id.trim() === '') {
+      console.error('Empty project ID for requirement creation:', req.project_id);
       toast({
         title: "Error",
-        description: "Invalid project ID. Please select a valid project.",
+        description: "Please select a valid project.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if project ID is UUID format
+    if (!isValidUUID(req.project_id)) {
+      console.error('Project ID is not UUID format, cannot create requirement:', req.project_id);
+      toast({
+        title: "Error",
+        description: "This project was created with an incompatible ID format. Please create a new project with proper UUID format.",
         variant: "destructive"
       });
       return;
