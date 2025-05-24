@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,6 @@ import {
   Tablet,
   Monitor,
   Apple,
-  Android,
   Globe,
   AlertCircle,
   CheckCircle,
@@ -34,7 +34,7 @@ interface MobileTest {
   platforms: string[];
   devices: string[];
   status: 'scheduled' | 'running' | 'passed' | 'failed' | 'blocked';
-  results: { [device: string]: 'passed' | 'failed' | 'blocked' };
+  results: { [device: string]: 'passed' | 'failed' | 'blocked' | 'running' };
   lastRun: Date | null;
   issuesFound: number;
   createdAt: Date;

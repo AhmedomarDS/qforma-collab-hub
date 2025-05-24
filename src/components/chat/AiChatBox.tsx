@@ -21,6 +21,7 @@ interface AiChatBoxProps {
   isOpen: boolean;
   onClose: () => void;
   contentType?: 'test-case' | 'requirement' | 'design' | 'automation-test' | 'performance-script' | 'security-test' | 'compatibility-test';
+  isGenerating?: boolean;
 }
 
 const AiChatBox: React.FC<AiChatBoxProps> = ({
@@ -30,7 +31,8 @@ const AiChatBox: React.FC<AiChatBoxProps> = ({
   generatePrompt,
   isOpen,
   onClose,
-  contentType = 'test-case'
+  contentType = 'test-case',
+  isGenerating = false
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -173,22 +175,22 @@ const AiChatBox: React.FC<AiChatBoxProps> = ({
                 handleSendMessage();
               }
             }}
-            disabled={isLoading}
+            disabled={isLoading || isGenerating}
           />
           <div className="flex flex-col gap-2">
             <Button 
               size="icon" 
               onClick={handleSendMessage}
-              disabled={isLoading || !inputValue.trim()}
+              disabled={isLoading || isGenerating || !inputValue.trim()}
             >
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {isLoading || isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
             
             <Button 
               size="icon"
               variant="outline"
               onClick={handleSaveContent}
-              disabled={!messages.some(m => m.role === 'assistant')}
+              disabled={!messages.some(m => m.role === 'assistant') || isGenerating}
               title="Save generated content"
             >
               <SaveAll className="h-4 w-4" />
