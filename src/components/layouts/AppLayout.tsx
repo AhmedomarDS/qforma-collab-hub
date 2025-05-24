@@ -84,20 +84,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <div className="min-h-screen flex w-full bg-background">
         <Sidebar className="border-r">
           <SidebarHeader className="p-4">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
-                Q
-              </div>
-              <div>
-                <span className="text-lg font-bold text-sidebar-foreground">{t('app.title')}</span>
-                <p className="text-xs text-sidebar-foreground/70">{t('app.subtitle')}</p>
-              </div>
-            </Link>
+            <div className="text-center">
+              <span className="text-lg font-bold text-sidebar-foreground">Menu</span>
+            </div>
           </SidebarHeader>
           
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Menu</SidebarGroupLabel>
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {menuItems.map((item) => (
@@ -148,12 +142,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         
         <div className="flex-1 flex flex-col">
           <header className="h-16 border-b flex items-center px-4 bg-card">
-            <SidebarTrigger>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SidebarTrigger>
-            <div className="ml-4 font-medium">{t('app.platformName')}</div>
+            <div className="flex items-center space-x-4">
+              <SidebarTrigger>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SidebarTrigger>
+              
+              <Link to="/dashboard" className="flex items-center space-x-2">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-10 w-10 flex items-center justify-center font-bold text-2xl">
+                  Q
+                </div>
+                <div>
+                  <span className="text-lg font-bold text-foreground">{t('app.title')}</span>
+                  <p className="text-xs text-muted-foreground">{t('app.subtitle')}</p>
+                </div>
+              </Link>
+            </div>
+            
             <div className="flex-1"></div>
             <LanguageSwitcher />
           </header>
