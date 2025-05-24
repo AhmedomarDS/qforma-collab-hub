@@ -106,12 +106,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         <Sidebar className="border-r mt-14">
-          <SidebarHeader className="p-4">
-            <div className="text-center">
-              <span className="text-lg font-bold text-sidebar-foreground">Menu</span>
-            </div>
-          </SidebarHeader>
-          
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
