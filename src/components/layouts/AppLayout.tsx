@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +38,8 @@ import {
   Cpu,
   Smartphone,
   Shield,
-  ClipboardList
+  ClipboardList,
+  GitBranch
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -59,6 +61,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
     { title: t('navigation.testCases'), icon: CheckSquare, path: '/test-cases' },
     { title: t('navigation.testPlans'), icon: ClipboardList, path: '/test-plans' },
+    { title: 'Traceability Matrix', icon: GitBranch, path: '/traceability-matrix' },
     { title: t('navigation.automationTesting'), icon: TestTube, path: '/automation-testing' },
     { title: t('navigation.performanceTesting'), icon: ChartLine, path: '/performance-testing' },
     { title: 'Security Testing', icon: Shield, path: '/security-testing' },

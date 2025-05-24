@@ -1,236 +1,348 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Chrome, Globe, Monitor, Smartphone, Zap, AlertCircle, Bot } from "lucide-react";
-import AppLayout from "@/components/layouts/AppLayout";
-import { toast } from "@/components/ui/use-toast";
-import { aiPlatformService } from "@/services/aiPlatformService";
-import AiChatBox from "@/components/chat/AiChatBox";
+import AppLayout from '@/components/layouts/AppLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Monitor, 
+  Chrome, 
+  Firefox, 
+  Safari, 
+  Edge,
+  Smartphone,
+  Globe,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Play,
+  Download,
+  Plus
+} from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { aiPlatformService } from '@/services/aiPlatformService';
+import AiChatBox from '@/components/chat/AiChatBox';
+
+interface CompatibilityTest {
+  id: string;
+  name: string;
+  description: string;
+  browsers: string[];
+  versions: string[];
+  status: 'passed' | 'failed' | 'pending' | 'scheduled';
+  results: { [browser: string]: 'passed' | 'failed' | 'pending' };
+  lastRun: Date | null;
+  issuesFound: number;
+  createdAt: Date;
+  priority: 'high' | 'medium' | 'low';
+}
+
+const mockCompatibilityTests: CompatibilityTest[] = [
+  {
+    id: '1',
+    name: 'Basic Rendering Test',
+    description: 'Checks if the basic layout and styles are rendered correctly across different browsers.',
+    browsers: ['chrome', 'firefox', 'safari'],
+    versions: ['latest'],
+    status: 'passed',
+    results: {
+      chrome: 'passed',
+      firefox: 'passed',
+      safari: 'passed',
+    },
+    lastRun: new Date(),
+    issuesFound: 0,
+    createdAt: new Date(),
+    priority: 'high',
+  },
+  {
+    id: '2',
+    name: 'JavaScript Execution Test',
+    description: 'Verifies JavaScript code executes without errors on various browsers.',
+    browsers: ['chrome', 'firefox', 'edge'],
+    versions: ['latest'],
+    status: 'failed',
+    results: {
+      chrome: 'passed',
+      firefox: 'failed',
+      edge: 'passed',
+    },
+    lastRun: new Date(),
+    issuesFound: 2,
+    createdAt: new Date(),
+    priority: 'medium',
+  },
+  {
+    id: '3',
+    name: 'Responsive Design Test',
+    description: 'Ensures the website adapts correctly to different screen sizes on mobile browsers.',
+    browsers: ['chrome', 'safari'],
+    versions: ['latest'],
+    status: 'pending',
+    results: {
+      chrome: 'pending',
+      safari: 'pending',
+    },
+    lastRun: null,
+    issuesFound: 0,
+    createdAt: new Date(),
+    priority: 'low',
+  },
+];
 
 const BrowserCompatibility = () => {
-  const { t } = useTranslation();
-  const [testName, setTestName] = useState("");
-  const [testDescription, setTestDescription] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedTest, setSelectedTest] = useState<string | null>(null);
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [compatibilityTests, setCompatibilityTests] = useState<CompatibilityTest[]>(mockCompatibilityTests);
 
-  const browsers = [
-    { name: 'Chrome', icon: Chrome, versions: ['Latest', '120', '119', '118'] },
-    { name: 'Firefox', icon: Globe, versions: ['Latest', '120', '119', '118'] },
-    { name: 'Safari', icon: Monitor, versions: ['Latest', '17', '16', '15'] },
-    { name: 'Edge', icon: Smartphone, versions: ['Latest', '120', '119', '118'] }
-  ];
+  const handleTestSelect = (testId: string) => {
+    setSelectedTest(testId);
+  };
 
-  const handleGenerateAITest = async () => {
-    if (!testDescription.trim()) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide a test description",
-        variant: "destructive"
-      });
-      return;
+  const handleRunTest = (testId: string) => {
+    toast({
+      title: "Test Run Initiated",
+      description: `Running compatibility test ${testId}...`,
+    });
+    // Implement test execution logic here
+  };
+
+  const handleScheduleTest = (testId: string) => {
+    toast({
+      title: "Test Scheduled",
+      description: `Compatibility test ${testId} scheduled for future execution.`,
+    });
+    // Implement test scheduling logic here
+  };
+
+  const handleDownloadReport = (testId: string) => {
+    toast({
+      title: "Report Download",
+      description: `Downloading report for compatibility test ${testId}...`,
+    });
+    // Implement report download logic here
+  };
+
+  const getStatusColor = (status: CompatibilityTest['status']) => {
+    switch (status) {
+      case 'passed':
+        return 'bg-green-100 text-green-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'scheduled':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
+  };
 
-    if (!aiPlatformService.isConfigured() && !apiKey.trim()) {
+  const handleGenerateWithAi = async (prompt: string) => {
+    if (!prompt.trim()) {
       toast({
-        title: "API Key Required",
-        description: "Please enter your AI Platform API key",
-        variant: "destructive"
+        title: "Error",
+        description: "Please provide a description for the compatibility test",
+        variant: "destructive",
       });
       return;
     }
 
     setIsGenerating(true);
-    
     try {
-      if (apiKey.trim()) {
-        aiPlatformService.setApiKey(apiKey);
-      }
-
-      const response = await aiPlatformService.generateCompatibilityTest(
-        'browser',
-        `Test Name: ${testName}\nDescription: ${testDescription}`
-      );
-
-      toast({
-        title: "AI Test Generated",
-        description: "Browser compatibility test has been generated successfully",
-      });
-
-      console.log('Generated test:', response);
+      const response = await aiPlatformService.generateCompatibilityTest('browser', prompt);
       
+      // Parse the AI response and create a new test
+      const newTest: CompatibilityTest = {
+        id: Math.random().toString(36).substring(7),
+        name: `AI Generated: ${prompt.split(' ').slice(0, 3).join(' ')}`,
+        description: response.content,
+        browsers: ['chrome', 'firefox', 'safari', 'edge'],
+        versions: ['latest'],
+        status: 'scheduled',
+        results: {},
+        lastRun: null,
+        issuesFound: 0,
+        createdAt: new Date(),
+        priority: 'medium'
+      };
+      
+      setCompatibilityTests(prev => [newTest, ...prev]);
+      setIsAiChatOpen(false);
+      
+      toast({
+        title: "Success",
+        description: "Browser compatibility test generated successfully!",
+      });
     } catch (error) {
-      console.error('Failed to generate AI test:', error);
+      console.error('Error generating test:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate browser compatibility test. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleSaveAiContent = (content: string) => {
-    console.log('Saving AI generated compatibility test:', content);
-    toast({
-      title: "Test Saved",
-      description: "AI-generated compatibility test has been saved",
-    });
-  };
-
-  const generatePrompt = (userPrompt: string) => {
-    return `Generate browser compatibility tests for: ${userPrompt}`;
-  };
-
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Browser Compatibility Testing</h1>
-          <p className="text-muted-foreground mt-2">
-            Test your applications across different browsers and versions to ensure consistent user experience.
-          </p>
+      <div className="animate-fadeIn">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Browser Compatibility Testing</h1>
+            <p className="text-muted-foreground">Ensure your website works seamlessly across all browsers</p>
+          </div>
+          <Button onClick={() => setIsAiChatOpen(true)} disabled={isGenerating}>
+            <Plus className="h-4 w-4 mr-2" />
+            Generate with AI
+          </Button>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="w-full sm:w-auto">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="create-test">Create Test</TabsTrigger>
-            <TabsTrigger value="results">Test Results</TabsTrigger>
+            <TabsTrigger value="tests">Tests</TabsTrigger>
+            <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
+          <TabsContent value="overview" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Total Tests</CardTitle>
+                  <CardDescription>Number of compatibility tests defined</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{compatibilityTests.length}</div>
+                </CardContent>
+              </Card>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {browsers.map((browser) => (
-                <Card key={browser.name}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center space-x-2">
-                      <browser.icon className="h-6 w-6" />
-                      <CardTitle className="text-lg">{browser.name}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {browser.versions.map((version) => (
-                        <Badge key={version} variant="outline" className="mr-1">
-                          {version}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <AlertCircle className="h-5 w-5" />
-                  <span>Recent Test Results</span>
-                </CardTitle>
-                <CardDescription>
-                  Latest browser compatibility test results
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No test results available. Create your first browser compatibility test to see results here.
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="create-test" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Browser Compatibility Test</CardTitle>
-                <CardDescription>
-                  Set up a new compatibility test for multiple browsers
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Test Name</label>
-                  <Input
-                    placeholder="Enter test name"
-                    value={testName}
-                    onChange={(e) => setTestName(e.target.value)}
-                  />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Test Description</label>
-                  <Textarea
-                    placeholder="Describe what you want to test across browsers..."
-                    value={testDescription}
-                    onChange={(e) => setTestDescription(e.target.value)}
-                    rows={4}
-                  />
-                </div>
-
-                {!aiPlatformService.isConfigured() && (
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">AI Platform API Key</label>
-                    <Input
-                      type="password"
-                      placeholder="Enter your AI platform API key"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Required for AI-powered test generation
-                    </p>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tests Passed</CardTitle>
+                  <CardDescription>Number of tests that passed successfully</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-green-600">
+                    {compatibilityTests.filter(test => test.status === 'passed').length}
                   </div>
-                )}
+                </CardContent>
+              </Card>
 
-                <div className="flex space-x-2">
-                  <Button onClick={handleGenerateAITest} disabled={isGenerating}>
-                    <Zap className="h-4 w-4 mr-2" />
-                    {isGenerating ? 'Generating...' : 'Generate AI Test'}
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={() => setIsAiChatOpen(true)}
-                  >
-                    <Bot className="h-4 w-4 mr-2" />
-                    AI Chat Assistant
-                  </Button>
-                  <Button variant="outline">
-                    Create Manual Test
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tests Failed</CardTitle>
+                  <CardDescription>Number of tests that resulted in failure</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600">
+                    {compatibilityTests.filter(test => test.status === 'failed').length}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
-
-          <TabsContent value="results" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Test Results</CardTitle>
-                <CardDescription>
-                  View and analyze browser compatibility test results
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No test results available. Run some tests to see results here.
+          <TabsContent value="tests" className="mt-6">
+            <div className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Compatibility Tests</h2>
+                <Input placeholder="Search tests..." className="max-w-sm" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {compatibilityTests.map((test) => (
+                  <Card key={test.id} className={selectedTest === test.id ? "border-2 border-primary" : ""}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        {test.name}
+                        <Badge className={getStatusColor(test.status)}>{test.status}</Badge>
+                      </CardTitle>
+                      <CardDescription>
+                        <div className="flex items-center space-x-2">
+                          <Globe className="h-4 w-4" />
+                          <span>{test.browsers.join(', ')}</span>
+                        </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{test.description}</p>
+                      <div className="mt-4 flex items-center space-x-3">
+                        {test.status === 'failed' && (
+                          <div className="flex items-center text-red-600">
+                            <AlertCircle className="h-4 w-4 mr-1" />
+                            {test.issuesFound} issues
+                          </div>
+                        )}
+                        {test.status === 'passed' && (
+                          <div className="flex items-center text-green-600">
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Passed
+                          </div>
+                        )}
+                        {test.lastRun && (
+                          <div className="flex items-center text-muted-foreground">
+                            <Clock className="h-4 w-4 mr-1" />
+                            {test.lastRun.toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                    <div className="flex justify-between p-4">
+                      <Button variant="outline" size="sm" onClick={() => handleTestSelect(test.id)}>
+                        View Details
+                      </Button>
+                      <div>
+                        <Button variant="secondary" size="sm" onClick={() => handleRunTest(test.id)}>
+                          <Play className="h-4 w-4 mr-2" />
+                          Run Test
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="reports" className="mt-6">
+            <div className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Reports</h2>
+              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Compatibility Test Report</CardTitle>
+                  <CardDescription>Download detailed reports for each test run</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Download comprehensive reports to analyze test results and identify compatibility issues.
+                  </p>
+                </CardContent>
+                <div className="p-4">
+                  <Button onClick={() => handleDownloadReport('all')}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Download All Reports
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
+      
       </div>
-
+      
       <AiChatBox
         title="Browser Compatibility Test Generator"
         placeholder="Describe the browser compatibility test you need..."
-        onSaveContent={handleSaveAiContent}
-        generatePrompt={generatePrompt}
         isOpen={isAiChatOpen}
         onClose={() => setIsAiChatOpen(false)}
+        onSaveContent={handleGenerateWithAi}
+        generatePrompt={(prompt) => `Generate a comprehensive browser compatibility test for: ${prompt}`}
         contentType="compatibility-test"
+        isGenerating={isGenerating}
       />
     </AppLayout>
   );
