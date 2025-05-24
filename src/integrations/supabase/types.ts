@@ -584,11 +584,60 @@ export type Database = {
           },
         ]
       }
+      requirement_folders: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          parent_folder_id: string | null
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          parent_folder_id?: string | null
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          parent_folder_id?: string | null
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirement_folders_parent_folder_id_fkey"
+            columns: ["parent_folder_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_folders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       requirements: {
         Row: {
           created_at: string
           created_by: string
           description: string | null
+          folder_id: string | null
           id: string
           priority: string | null
           project_id: string
@@ -600,6 +649,7 @@ export type Database = {
           created_at?: string
           created_by: string
           description?: string | null
+          folder_id?: string | null
           id?: string
           priority?: string | null
           project_id: string
@@ -611,6 +661,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           description?: string | null
+          folder_id?: string | null
           id?: string
           priority?: string | null
           project_id?: string
@@ -624,6 +675,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirements_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_folders"
             referencedColumns: ["id"]
           },
           {

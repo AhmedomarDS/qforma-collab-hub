@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface Requirement {
   id: string;
@@ -8,108 +9,103 @@ export interface Requirement {
   description: string;
   status: 'draft' | 'review' | 'approved' | 'development' | 'testing' | 'complete';
   priority: 'low' | 'medium' | 'high' | 'critical';
-  tags: string[];
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-  assignedTo?: string;
+  project_id: string;
+  folder_id?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RequirementFolder {
+  id: string;
+  name: string;
+  description?: string;
+  project_id: string;
+  parent_folder_id?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface RequirementsContextType {
   requirements: Requirement[];
+  folders: RequirementFolder[];
   isLoading: boolean;
-  createRequirement: (req: Omit<Requirement, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  selectedProjectId: string | null;
+  createRequirement: (req: Omit<Requirement, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
   updateRequirement: (id: string, updates: Partial<Requirement>) => Promise<void>;
   deleteRequirement: (id: string) => Promise<void>;
+  createFolder: (folder: Omit<RequirementFolder, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  updateFolder: (id: string, updates: Partial<RequirementFolder>) => Promise<void>;
+  deleteFolder: (id: string) => Promise<void>;
+  setSelectedProjectId: (projectId: string | null) => void;
+  loadProjectRequirements: (projectId: string) => Promise<void>;
   getRequirementById: (id: string) => Requirement | undefined;
 }
-
-// Mock data
-const MOCK_REQUIREMENTS: Requirement[] = [
-  {
-    id: 'req-001',
-    title: 'User Registration Flow',
-    description: 'Users should be able to register with email, password, and basic details.',
-    status: 'approved',
-    priority: 'high',
-    tags: ['authentication', 'user-management', 'onboarding'],
-    createdBy: 'Sarah QA Lead',
-    createdAt: '2025-05-10T14:30:00Z',
-    updatedAt: '2025-05-12T09:15:00Z',
-    assignedTo: 'John Developer',
-  },
-  {
-    id: 'req-002',
-    title: 'Password Reset Functionality',
-    description: 'Users should be able to reset their passwords via email recovery.',
-    status: 'development',
-    priority: 'medium',
-    tags: ['authentication', 'email', 'security'],
-    createdBy: 'Mike Manager',
-    createdAt: '2025-05-11T10:20:00Z',
-    updatedAt: '2025-05-13T11:45:00Z',
-    assignedTo: 'John Developer',
-  },
-  {
-    id: 'req-003',
-    title: 'User Profile Management',
-    description: 'Users should be able to view and edit their profile information.',
-    status: 'testing',
-    priority: 'medium',
-    tags: ['user-management', 'profile', 'settings'],
-    createdBy: 'Sarah QA Lead',
-    createdAt: '2025-05-12T15:40:00Z',
-    updatedAt: '2025-05-15T14:20:00Z',
-    assignedTo: 'Sarah QA Lead',
-  },
-  {
-    id: 'req-004',
-    title: 'Project Dashboard Overview',
-    description: 'Dashboard should display key metrics and recent activity.',
-    status: 'review',
-    priority: 'high',
-    tags: ['dashboard', 'UI', 'reporting'],
-    createdBy: 'Mike Manager',
-    createdAt: '2025-05-14T09:10:00Z',
-    updatedAt: '2025-05-14T09:10:00Z',
-  },
-  {
-    id: 'req-005',
-    title: 'Test Case Management',
-    description: 'QA engineers should be able to create, edit, and execute test cases.',
-    status: 'draft',
-    priority: 'critical',
-    tags: ['testing', 'QA', 'automation'],
-    createdBy: 'Sarah QA Lead',
-    createdAt: '2025-05-15T11:25:00Z',
-    updatedAt: '2025-05-15T11:25:00Z',
-  },
-];
 
 const RequirementsContext = createContext<RequirementsContextType | undefined>(undefined);
 
 export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [requirements, setRequirements] = useState<Requirement[]>(MOCK_REQUIREMENTS);
+  const [requirements, setRequirements] = useState<Requirement[]>([]);
+  const [folders, setFolders] = useState<RequirementFolder[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-  const createRequirement = async (req: Omit<Requirement, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const loadProjectRequirements = async (projectId: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const now = new Date().toISOString();
-      const newRequirement: Requirement = {
-        ...req,
-        id: `req-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-        createdAt: now,
-        updatedAt: now,
-      };
-      
-      setRequirements(prev => [...prev, newRequirement]);
+      // Load requirements for the project
+      const { data: requirementsData, error: reqError } = await supabase
+        .from('requirements')
+        .select('*')
+        .eq('project_id', projectId);
+
+      if (reqError) throw reqError;
+
+      // Load folders for the project
+      const { data: foldersData, error: folderError } = await supabase
+        .from('requirement_folders')
+        .select('*')
+        .eq('project_id', projectId);
+
+      if (folderError) throw folderError;
+
+      setRequirements(requirementsData || []);
+      setFolders(foldersData || []);
+    } catch (error) {
+      console.error('Error loading project requirements:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load requirements. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createRequirement = async (req: Omit<Requirement, 'id' | 'created_at' | 'updated_at'>) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('requirements')
+        .insert([req])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setRequirements(prev => [...prev, data]);
       toast({
         title: "Requirement created",
-        description: `${newRequirement.title} has been created successfully.`,
+        description: `${data.title} has been created successfully.`,
+      });
+    } catch (error) {
+      console.error('Error creating requirement:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create requirement. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -119,19 +115,29 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const updateRequirement = async (id: string, updates: Partial<Requirement>) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      setRequirements(prev => 
-        prev.map(req => 
-          req.id === id 
-            ? { ...req, ...updates, updatedAt: new Date().toISOString() } 
-            : req
-        )
+      const { data, error } = await supabase
+        .from('requirements')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setRequirements(prev =>
+        prev.map(req => req.id === id ? data : req)
       );
-      
+
       toast({
         title: "Requirement updated",
-        description: `The requirement has been updated successfully.`,
+        description: "The requirement has been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error updating requirement:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update requirement. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -141,13 +147,113 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const deleteRequirement = async (id: string) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
+      const { error } = await supabase
+        .from('requirements')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
       setRequirements(prev => prev.filter(req => req.id !== id));
-      
+
       toast({
         title: "Requirement deleted",
-        description: `The requirement has been deleted successfully.`,
+        description: "The requirement has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting requirement:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete requirement. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createFolder = async (folder: Omit<RequirementFolder, 'id' | 'created_at' | 'updated_at'>) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('requirement_folders')
+        .insert([folder])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setFolders(prev => [...prev, data]);
+      toast({
+        title: "Folder created",
+        description: `${data.name} folder has been created successfully.`,
+      });
+    } catch (error) {
+      console.error('Error creating folder:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create folder. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateFolder = async (id: string, updates: Partial<RequirementFolder>) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('requirement_folders')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setFolders(prev =>
+        prev.map(folder => folder.id === id ? data : folder)
+      );
+
+      toast({
+        title: "Folder updated",
+        description: "The folder has been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error updating folder:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update folder. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteFolder = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('requirement_folders')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setFolders(prev => prev.filter(folder => folder.id !== id));
+
+      toast({
+        title: "Folder deleted",
+        description: "The folder has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete folder. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -159,12 +265,19 @@ export const RequirementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   return (
-    <RequirementsContext.Provider value={{ 
-      requirements, 
-      isLoading, 
-      createRequirement, 
-      updateRequirement, 
-      deleteRequirement, 
+    <RequirementsContext.Provider value={{
+      requirements,
+      folders,
+      isLoading,
+      selectedProjectId,
+      createRequirement,
+      updateRequirement,
+      deleteRequirement,
+      createFolder,
+      updateFolder,
+      deleteFolder,
+      setSelectedProjectId,
+      loadProjectRequirements,
       getRequirementById,
     }}>
       {children}
