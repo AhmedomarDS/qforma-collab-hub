@@ -1,10 +1,11 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./hooks/useAuth";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { DashboardProvider } from "./contexts/DashboardContext";
 import { RequirementsProvider } from "./contexts/RequirementsContext";
 import { ChatProvider } from "./contexts/ChatContext";
@@ -36,9 +37,9 @@ const queryClient = new QueryClient();
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
