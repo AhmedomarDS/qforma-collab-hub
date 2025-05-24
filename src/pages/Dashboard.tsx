@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { useDashboard } from '@/contexts/DashboardContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -125,7 +125,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">SDLC Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user.name || user.email}</p>
+            <p className="text-muted-foreground">Welcome back, {user.user_metadata?.name || user.email}</p>
           </div>
           <Button 
             onClick={() => refreshData()}
