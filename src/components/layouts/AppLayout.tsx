@@ -240,14 +240,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className="flex items-center space-x-3">
                   <Avatar>
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      {user.user_metadata?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
                     <span className="font-medium text-sidebar-foreground">
-                      {user.name || user.email}
+                      {user.user_metadata?.name || user.email}
                     </span>
-                    <span className="text-xs text-sidebar-foreground/70">{user.role || 'Tester'}</span>
+                    <span className="text-xs text-sidebar-foreground/70">Tester</span>
                   </div>
                 </div>
                 <Separator />
