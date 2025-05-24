@@ -29,6 +29,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useProject } from '@/contexts/ProjectContext';
+import DashboardSettings from '@/components/project/DashboardSettings';
 
 type DashboardType = 'kanban' | 'agile' | 'cmmi';
 
@@ -38,6 +39,7 @@ const ProjectDashboard = () => {
   const { projects, tasks, getProjectTasks, updateTask } = useProject();
   const [selectedProject, setSelectedProject] = useState(projectId || '');
   const [dashboardType, setDashboardType] = useState<DashboardType>('kanban');
+  const [dashboardConfig, setDashboardConfig] = useState<any>(null);
 
   const project = projects.find(p => p.id === selectedProject);
   const projectTasks = selectedProject ? getProjectTasks(selectedProject) : [];
@@ -86,6 +88,11 @@ const ProjectDashboard = () => {
       case 'low': return 'text-green-600';
       default: return 'text-gray-600';
     }
+  };
+
+  const handleDashboardConfigSave = (config: any) => {
+    setDashboardConfig(config);
+    console.log('Dashboard config saved:', config);
   };
 
   const KanbanBoard = () => (
@@ -308,6 +315,7 @@ const ProjectDashboard = () => {
               <p className="text-muted-foreground">Monitor and manage your project progress</p>
             </div>
           </div>
+          <DashboardSettings onSave={handleDashboardConfigSave} />
         </div>
 
         <div className="flex items-center gap-4">
