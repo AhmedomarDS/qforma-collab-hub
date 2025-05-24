@@ -105,9 +105,9 @@ const SidebarMenuItems = () => {
     }
   };
 
-  // Don't close sidebar for sub-menu items - only for main menu items
+  // Keep sidebar open for sub-menu navigation - don't close on mobile
   const handleSubMenuClick = () => {
-    // Keep sidebar open for sub-menu navigation
+    // Intentionally empty - we want to keep the sidebar open for sub-menu items
   };
 
   return (
