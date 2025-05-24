@@ -1,71 +1,48 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import AppLayout from '@/components/layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CompanyOverviewCards } from '@/components/admin/CompanyOverviewCards';
+import { CompanyList } from '@/components/admin/CompanyList';
+import { CompanyAnalyticsChart } from '@/components/admin/CompanyAnalyticsChart';
+import { UserManagement } from '@/components/admin/UserManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Building2, 
   Users, 
-  TrendingUp, 
-  Activity, 
-  Search, 
-  Filter,
-  Calendar,
-  DollarSign,
-  AlertTriangle
+  BarChart3, 
+  Settings,
+  DollarSign
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { CompanyOverviewCards } from '@/components/admin/CompanyOverviewCards';
-import { CompanyAnalyticsChart } from '@/components/admin/CompanyAnalyticsChart';
-import { CompanyList } from '@/components/admin/CompanyList';
-import { UserManagement } from '@/components/admin/UserManagement';
 
 const AdminDashboard = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-
-  // Fetch companies data
-  const { data: companies, isLoading: companiesLoading } = useQuery({
-    queryKey: ['companies'],
+  const { data: companies } = useQuery({
+    queryKey: ['admin-companies'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('companies')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
       
       if (error) throw error;
       return data;
     }
   });
 
-  // Fetch analytics data
   const { data: analytics } = useQuery({
-    queryKey: ['company-analytics'],
+    queryKey: ['admin-analytics'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('company_analytics')
-        .select(`
-          *,
-          companies (
-            company_name,
-            subdomain
-          )
-        `)
-        .order('date_recorded', { ascending: false });
+        .select('*');
       
       if (error) throw error;
       return data;
     }
   });
 
-  // Fetch total users count
   const { data: totalUsers } = useQuery({
-    queryKey: ['total-users'],
+    queryKey: ['admin-total-users'],
     queryFn: async () => {
       const { count, error } = await supabase
         .from('profiles')
@@ -76,103 +53,85 @@ const AdminDashboard = () => {
     }
   });
 
-  const filteredCompanies = companies?.filter(company => {
-    const matchesSearch = company.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         company.subdomain.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || company.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">QForma Admin Dashboard</h1>
-            <p className="text-gray-600 mt-1">Monitor and manage all companies on the platform</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-2" />
-              Export Report
-            </Button>
+    <div className="min-h-screen bg-gray-50">
+      <div className="border-b bg-white">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">QForma Admin Dashboard</h1>
+              <p className="text-gray-600 mt-2">Monitor and manage all companies and users on the platform</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl h-12 w-12 flex items-center justify-center font-bold text-2xl">
+                Q
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="container mx-auto px-6 py-8">
         {/* Overview Cards */}
-        <CompanyOverviewCards 
-          companies={companies} 
-          totalUsers={totalUsers}
-          analytics={analytics}
-        />
+        <div className="mb-8">
+          <CompanyOverviewCards 
+            companies={companies || []}
+            totalUsers={totalUsers || 0}
+            analytics={analytics || []}
+          />
+        </div>
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="companies" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="companies">Companies</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="billing">Billing</TabsTrigger>
+            <TabsTrigger value="companies" className="flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Companies
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="billing" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Billing
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="companies" className="space-y-6">
-            {/* Search and Filter */}
-            <div className="flex items-center space-x-4">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search companies..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Status</option>
-                <option value="trial">Trial</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            <CompanyList companies={filteredCompanies} isLoading={companiesLoading} />
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
-            <CompanyAnalyticsChart analytics={analytics} />
+            <CompanyList />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
             <UserManagement />
           </TabsContent>
 
+          <TabsContent value="analytics" className="space-y-6">
+            <CompanyAnalyticsChart analytics={analytics || []} />
+          </TabsContent>
+
           <TabsContent value="billing" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
                   Billing Overview
                 </CardTitle>
-                <CardDescription>
-                  Monitor subscription plans and revenue
-                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  Billing management coming soon...
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Billing management coming soon...</p>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

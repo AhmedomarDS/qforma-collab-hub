@@ -1,17 +1,20 @@
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { 
-  ExternalLink, 
-  Users, 
-  Calendar,
-  MoreHorizontal,
-  AlertTriangle
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
+import { 
+  Building2, 
+  Users, 
+  Calendar, 
+  DollarSign, 
+  MoreHorizontal,
+  ExternalLink
+} from 'lucide-react';
 
 interface Company {
   id: string;
@@ -25,18 +28,26 @@ interface Company {
   created_at: string;
 }
 
-interface CompanyListProps {
-  companies?: Company[];
-  isLoading: boolean;
-}
+export const CompanyList: React.FC = () => {
+  const { data: companies, isLoading } = useQuery({
+    queryKey: ['companies'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Company[];
+    }
+  });
 
-export const CompanyList: React.FC<CompanyListProps> = ({ companies = [], isLoading }) => {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: { color: 'bg-green-100 text-green-800', label: 'Active' },
-      trial: { color: 'bg-yellow-100 text-yellow-800', label: 'Trial' },
+      trial: { color: 'bg-blue-100 text-blue-800', label: 'Trial' },
       expired: { color: 'bg-red-100 text-red-800', label: 'Expired' },
-      cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled' }
+      suspended: { color: 'bg-gray-100 text-gray-800', label: 'Suspended' }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.trial;
@@ -51,14 +62,7 @@ export const CompanyList: React.FC<CompanyListProps> = ({ companies = [], isLoad
     };
     
     const config = planConfig[plan as keyof typeof planConfig] || planConfig.free;
-    return <Badge variant="outline" className={config.color}>{config.label}</Badge>;
-  };
-
-  const isTrialExpiringSoon = (trialEndDate: string) => {
-    const endDate = new Date(trialEndDate);
-    const now = new Date();
-    const daysUntilExpiry = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return daysUntilExpiry <= 3 && daysUntilExpiry > 0;
+    return <Badge className={config.color}>{config.label}</Badge>;
   };
 
   if (isLoading) {
@@ -74,12 +78,9 @@ export const CompanyList: React.FC<CompanyListProps> = ({ companies = [], isLoad
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Companies ({companies.length})</span>
-          <Button variant="outline" size="sm">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Export List
-          </Button>
+        <CardTitle className="flex items-center gap-2">
+          <Building2 className="h-5 w-5" />
+          Companies ({companies?.length || 0})
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -88,48 +89,37 @@ export const CompanyList: React.FC<CompanyListProps> = ({ companies = [], isLoad
             <TableHeader>
               <TableRow>
                 <TableHead>Company</TableHead>
-                <TableHead>Subdomain</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Trial Period</TableHead>
                 <TableHead>Created</TableHead>
+                <TableHead>Trial Ends</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {companies.map((company) => (
+              {companies?.map((company) => (
                 <TableRow key={company.id}>
                   <TableCell>
-                    <div>
+                    <div className="space-y-1">
                       <div className="font-medium">{company.company_name}</div>
-                      <div className="text-sm text-gray-500">{company.email}</div>
+                      <div className="text-sm text-gray-500 flex items-center gap-1">
+                        <ExternalLink className="h-3 w-3" />
+                        {company.subdomain}.qforma.com
+                      </div>
+                      <div className="text-xs text-gray-400">{company.email}</div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                      {company.subdomain}.qforma.com
-                    </code>
                   </TableCell>
                   <TableCell>{getPlanBadge(company.selected_plan)}</TableCell>
+                  <TableCell>{getStatusBadge(company.status)}</TableCell>
                   <TableCell>
-                    <div className="flex items-center space-x-2">
-                      {getStatusBadge(company.status)}
-                      {isTrialExpiringSoon(company.trial_end_date) && (
-                        <AlertTriangle className="h-4 w-4 text-orange-500" title="Trial expiring soon" />
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{new Date(company.trial_start_date).toLocaleDateString()}</div>
-                      <div className="text-gray-500">
-                        to {new Date(company.trial_end_date).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
+                    <div className="flex items-center gap-1 text-sm">
+                      <Calendar className="h-3 w-3" />
                       {formatDistanceToNow(new Date(company.created_at), { addSuffix: true })}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      {formatDistanceToNow(new Date(company.trial_end_date), { addSuffix: true })}
                     </div>
                   </TableCell>
                   <TableCell>
