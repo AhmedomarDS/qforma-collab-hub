@@ -69,6 +69,112 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          selected_plan: string
+          status: string
+          subdomain: string
+          trial_end_date: string
+          trial_start_date: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          email: string
+          id?: string
+          selected_plan?: string
+          status?: string
+          subdomain: string
+          trial_end_date?: string
+          trial_start_date?: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          selected_plan?: string
+          status?: string
+          subdomain?: string
+          trial_end_date?: string
+          trial_start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_analytics: {
+        Row: {
+          company_id: string
+          created_at: string
+          date_recorded: string
+          id: string
+          metric_name: string
+          metric_value: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          date_recorded?: string
+          id?: string
+          metric_name: string
+          metric_value?: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          date_recorded?: string
+          id?: string
+          metric_name?: string
+          metric_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_analytics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_users: {
+        Row: {
+          company_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_users_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_tests: {
         Row: {
           created_at: string

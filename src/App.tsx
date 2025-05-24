@@ -14,6 +14,7 @@ import { ProjectProvider } from "./contexts/ProjectContext";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Requirements from "./pages/Requirements";
 import TestCases from "./pages/TestCases";
 import TestPlans from "./pages/TestPlans";
@@ -71,6 +72,12 @@ const App = () => (
                     <Route path="/plan-selection" element={<PlanSelection />} />
                     
                     <Route path="/" element={<Navigate to="/landing" replace />} />
+                    
+                    <Route path="/admin" element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    } />
                     
                     <Route path="/dashboard" element={
                       <ProtectedRoute>

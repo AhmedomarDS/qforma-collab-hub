@@ -55,6 +55,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const menuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    { title: 'Admin Dashboard', icon: Settings, path: '/admin' },
     { title: t('navigation.projects'), icon: FolderPlus, path: '/projects' },
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
