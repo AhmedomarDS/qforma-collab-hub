@@ -72,7 +72,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { title: 'Project Execution', icon: Play, path: '/project-execution' },
     { title: 'Project Dashboard', icon: LayoutDashboard, path: '/project-dashboard' },
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
-    { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
+    { title: 'Requirements Library', icon: FileText, path: '/requirements' },
     { title: t('navigation.designManagement'), icon: Layers3, path: '/design-management' },
     { title: 'Test Cases Library', icon: CheckSquare, path: '/test-cases' },
   ];
