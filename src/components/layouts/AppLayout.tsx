@@ -40,7 +40,9 @@ import {
   Smartphone,
   Shield,
   ClipboardList,
-  GitBranch
+  GitBranch,
+  Building,
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -57,6 +59,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const menuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
     { title: 'Admin Dashboard', icon: Settings, path: '/admin' },
+    { title: 'Company Settings', icon: Building, path: '/company-settings' },
     { title: t('navigation.projects'), icon: FolderPlus, path: '/projects' },
     { title: t('navigation.tasks'), icon: ListCheck, path: '/tasks' },
     { title: t('navigation.requirements'), icon: FileText, path: '/requirements' },
