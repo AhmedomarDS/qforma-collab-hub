@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -293,18 +292,18 @@ const ProjectExecution = () => {
             const projectReqs = getProjectRequirements(project.id);
             
             return (
-              <Card key={project.id} className="flex flex-col">
-                <CardHeader>
+              <Card key={project.id} className="flex flex-col h-full">
+                <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{project.name}</CardTitle>
-                      <CardDescription className="mt-1">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-lg truncate">{project.name}</CardTitle>
+                      <CardDescription className="mt-1 text-sm">
                         {project.description || 'No description provided'}
                       </CardDescription>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -323,53 +322,58 @@ const ProjectExecution = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-2 mt-3">
                     <Badge variant={getStatusBadgeVariant(project.status || 'active')}>
                       {project.status || 'active'}
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1">
+                
+                <CardContent className="flex-1 pb-4">
                   <div className="space-y-3">
                     <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Created: {new Date(project.created_at).toLocaleDateString()}
+                      <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
                     </div>
                     
-                    <div className="text-sm">
-                      <span className="font-medium">Linked Requirements: </span>
-                      <span className="text-muted-foreground">{projectReqs.length}</span>
+                    <div className="flex items-center text-sm">
+                      <span className="font-medium">Linked Requirements:</span>
+                      <span className="ml-2 text-muted-foreground">{projectReqs.length}</span>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t pt-4">
-                  <div className="flex w-full gap-2">
+                
+                <CardFooter className="pt-0">
+                  <div className="grid grid-cols-3 gap-2 w-full">
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex-1"
+                      className="flex items-center justify-center text-xs px-2"
                       onClick={() => navigate('/requirements')}
                     >
                       <FileText className="mr-1 h-3 w-3" />
-                      Requirements
+                      <span className="hidden sm:inline">Requirements</span>
+                      <span className="sm:hidden">Req</span>
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex-1"
+                      className="flex items-center justify-center text-xs px-2"
                       onClick={() => navigate('/design-management')}
                     >
                       <Layers3 className="mr-1 h-3 w-3" />
-                      Design
+                      <span className="hidden sm:inline">Design</span>
+                      <span className="sm:hidden">Des</span>
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="flex-1"
+                      className="flex items-center justify-center text-xs px-2"
                       onClick={() => navigate('/test-cases')}
                     >
                       <CheckSquare className="mr-1 h-3 w-3" />
-                      Tests
+                      <span className="hidden sm:inline">Tests</span>
+                      <span className="sm:hidden">Test</span>
                     </Button>
                   </div>
                 </CardFooter>
