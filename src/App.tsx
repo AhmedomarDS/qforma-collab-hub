@@ -36,6 +36,7 @@ import PlanSelection from "./pages/PlanSelection";
 import PlanAndBilling from "./pages/PlanAndBilling";
 import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
 import CompanySettingsDetails from "./pages/CompanySettingsDetails";
+import ProjectExecution from "./pages/ProjectExecution";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,12 @@ const App = () => (
                     <Route path="/plan-billing" element={
                       <ProtectedRoute>
                         <PlanAndBilling />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/project-execution" element={
+                      <ProtectedRoute>
+                        <ProjectExecution />
                       </ProtectedRoute>
                     } />
                     
