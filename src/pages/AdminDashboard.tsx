@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,6 +6,7 @@ import { CompanyOverviewCards } from '@/components/admin/CompanyOverviewCards';
 import { CompanyList } from '@/components/admin/CompanyList';
 import { CompanyAnalyticsChart } from '@/components/admin/CompanyAnalyticsChart';
 import { UserManagement } from '@/components/admin/UserManagement';
+import { SupportTicketManagement } from '@/components/admin/SupportTicketManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { 

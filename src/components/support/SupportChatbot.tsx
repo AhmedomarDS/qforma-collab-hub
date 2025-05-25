@@ -13,7 +13,8 @@ import {
   LifeBuoy,
   ExternalLink,
   Minimize2,
-  Maximize2
+  Maximize2,
+  X
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,9 +30,17 @@ interface Message {
 
 interface SupportChatbotProps {
   onCreateTicket?: (subject: string, description: string) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  isFloating?: boolean;
 }
 
-export const SupportChatbot: React.FC<SupportChatbotProps> = ({ onCreateTicket }) => {
+export const SupportChatbot: React.FC<SupportChatbotProps> = ({ 
+  onCreateTicket, 
+  isOpen = true, 
+  onClose,
+  isFloating = false 
+}) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -145,7 +154,8 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({ onCreateTicket }
     }
   };
 
-  if (isMinimized) {
+  // For floating version when minimized
+  if (isFloating && isMinimized) {
     return (
       <div className="fixed bottom-4 right-4 z-50">
         <Button
@@ -158,29 +168,129 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({ onCreateTicket }
     );
   }
 
+  // Floating version
+  if (isFloating) {
+    return (
+      <Card className="w-full h-full flex flex-col shadow-lg">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Bot className="h-5 w-5 text-primary" />
+              QForma Support
+              <Badge variant="secondary" className="text-xs">AI Assistant</Badge>
+            </CardTitle>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMinimized(true)}
+                className="h-6 w-6"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </Button>
+              {onClose && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="h-6 w-6"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="flex-1 flex flex-col p-0">
+          <ScrollArea className="flex-1 px-4">
+            <div className="space-y-4 pb-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      message.isBot
+                        ? 'bg-muted text-muted-foreground'
+                        : 'bg-primary text-primary-foreground'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {message.isBot ? (
+                        <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <User className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      )}
+                      <div className="space-y-2">
+                        <p className="text-sm">{message.content}</p>
+                        {message.showCreateTicket && (
+                          <Button
+                            size="sm"
+                            variant={message.isBot ? "default" : "secondary"}
+                            onClick={handleCreateTicket}
+                            className="w-full"
+                          >
+                            <LifeBuoy className="h-3 w-3 mr-2" />
+                            Create Support Ticket
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-xs opacity-70 mt-1">
+                      {message.timestamp.toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-muted text-muted-foreground rounded-lg p-3 max-w-[80%]">
+                    <div className="flex items-center gap-2">
+                      <Bot className="h-4 w-4" />
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div ref={messagesEndRef} />
+          </ScrollArea>
+          
+          <div className="border-t p-4">
+            <div className="flex gap-2">
+              <Input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Type your message..."
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                disabled={isLoading}
+              />
+              <Button 
+                onClick={handleSendMessage} 
+                disabled={isLoading || !inputMessage.trim()}
+                size="icon"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Embedded version (for support page)
   return (
-    <Card className="fixed bottom-4 right-4 w-96 h-[500px] z-50 flex flex-col shadow-lg">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Bot className="h-5 w-5 text-primary" />
-            QForma Support
-            <Badge variant="secondary" className="text-xs">AI Assistant</Badge>
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMinimized(true)}
-            className="h-6 w-6"
-          >
-            <Minimize2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-4">
-          <div className="space-y-4 pb-4">
+    <div className="space-y-4">
+      <div className="h-96 border rounded-lg overflow-hidden">
+        <ScrollArea className="h-full p-4">
+          <div className="space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -232,31 +342,29 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({ onCreateTicket }
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <div ref={messagesEndRef} />
         </ScrollArea>
-        
-        <div className="border-t p-4">
-          <div className="flex gap-2">
-            <Input
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Type your message..."
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              disabled={isLoading}
-            />
-            <Button 
-              onClick={handleSendMessage} 
-              disabled={isLoading || !inputMessage.trim()}
-              size="icon"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <div className="flex gap-2">
+        <Input
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          placeholder="Type your message..."
+          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+          disabled={isLoading}
+        />
+        <Button 
+          onClick={handleSendMessage} 
+          disabled={isLoading || !inputMessage.trim()}
+          size="icon"
+        >
+          <Send className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 };

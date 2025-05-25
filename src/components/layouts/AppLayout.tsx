@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { ContactForm } from '@/components/ui/contact-form';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { FloatingSupportChatbot } from '@/components/support/FloatingSupportChatbot';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -307,6 +309,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {children}
           </main>
         </div>
+
+        {/* Floating Support Chatbot */}
+        <FloatingSupportChatbot />
       </div>
     </SidebarProvider>
   );

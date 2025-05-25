@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,7 @@ import Chat from "./pages/Chat";
 import Defects from "./pages/Defects";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 import Projects from "./pages/Projects";
 import Tasks from "./pages/Tasks";
@@ -166,6 +168,12 @@ const App = () => (
                     <Route path="/settings" element={
                       <ProtectedRoute>
                         <Settings />
+                      </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/support" element={
+                      <ProtectedRoute>
+                        <Support />
                       </ProtectedRoute>
                     } />
                     
