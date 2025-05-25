@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, Users, Edit3, Save, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Shield, Users, Edit3, Save, X, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import RolePermissionsMatrix from './RolePermissionsMatrix';
 
 type UserRoleType = 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
 
@@ -190,110 +192,108 @@ const AccessManagement = () => {
         </Alert>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            User Roles ({userRoles.length})
-          </CardTitle>
-          <CardDescription>Manage roles and permissions for team members</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {userRoles.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">No team members found</p>
-          ) : (
-            <div className="space-y-4">
-              {userRoles.map((userRole) => (
-                <div key={userRole.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                      {userRole.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-medium">{userRole.name}</p>
-                      <p className="text-sm text-muted-foreground">{userRole.email}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Joined {new Date(userRole.joined_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    {editingUser === userRole.id ? (
-                      <div className="flex items-center gap-2">
-                        <Select value={newRole || undefined} onValueChange={handleRoleChange}>
-                          <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Select role" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {roles.map((role) => (
-                              <SelectItem key={role.value} value={role.value}>
-                                <div>
-                                  <div className="font-medium">{role.label}</div>
-                                  <div className="text-xs text-muted-foreground">{role.description}</div>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button 
-                          size="sm" 
-                          onClick={() => isValidRole(newRole) && handleUpdateRole(userRole.id, newRole)}
-                          disabled={!isValidRole(newRole) || newRole === userRole.role}
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={cancelEditing}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <Badge className={getRoleBadgeColor(userRole.role)}>
-                          {roles.find(r => r.value === userRole.role)?.label || userRole.role}
-                        </Badge>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => startEditing(userRole.id, userRole.role)}
-                          disabled={userRole.user_id === user?.id} // Prevent self-editing
-                        >
-                          <Edit3 className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="users" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="users" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            User Roles
+          </TabsTrigger>
+          <TabsTrigger value="permissions" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            Role Matrix & Management
+          </TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Role Permissions</CardTitle>
-          <CardDescription>Overview of permissions for each role</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {roles.map((role) => (
-              <div key={role.value} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Badge className={getRoleBadgeColor(role.value)}>
-                    {role.label}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">{role.description}</span>
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                User Roles ({userRoles.length})
+              </CardTitle>
+              <CardDescription>Manage roles and permissions for team members</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {userRoles.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">No team members found</p>
+              ) : (
+                <div className="space-y-4">
+                  {userRoles.map((userRole) => (
+                    <div key={userRole.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                          {userRole.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-medium">{userRole.name}</p>
+                          <p className="text-sm text-muted-foreground">{userRole.email}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Joined {new Date(userRole.joined_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4">
+                        {editingUser === userRole.id ? (
+                          <div className="flex items-center gap-2">
+                            <Select value={newRole || undefined} onValueChange={handleRoleChange}>
+                              <SelectTrigger className="w-48">
+                                <SelectValue placeholder="Select role" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {roles.map((role) => (
+                                  <SelectItem key={role.value} value={role.value}>
+                                    <div>
+                                      <div className="font-medium">{role.label}</div>
+                                      <div className="text-xs text-muted-foreground">{role.description}</div>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button 
+                              size="sm" 
+                              onClick={() => isValidRole(newRole) && handleUpdateRole(userRole.id, newRole)}
+                              disabled={!isValidRole(newRole) || newRole === userRole.role}
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              onClick={cancelEditing}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <Badge className={getRoleBadgeColor(userRole.role)}>
+                              {roles.find(r => r.value === userRole.role)?.label || userRole.role}
+                            </Badge>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => startEditing(userRole.id, userRole.role)}
+                              disabled={userRole.user_id === user?.id}
+                            >
+                              <Edit3 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="permissions">
+          <RolePermissionsMatrix />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
