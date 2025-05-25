@@ -1,18 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -22,7 +14,6 @@ import {
   MessageSquare,
   Clock,
   User,
-  Calendar,
   AlertTriangle,
   CheckCircle,
   Eye,
@@ -56,139 +47,92 @@ interface TicketComment {
 
 export const SupportTicketManagement = () => {
   const { user } = useAuth();
-  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const queryClient = useQueryClient();
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
-  const [comments, setComments] = useState<TicketComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isInternal, setIsInternal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const fetchTickets = async () => {
-    try {
+  const { data: tickets = [], isLoading } = useQuery({
+    queryKey: ['admin-support-tickets'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('support_tickets')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTickets(data || []);
-    } catch (error: any) {
-      console.error('Error fetching tickets:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load support tickets.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
+      return data as SupportTicket[];
     }
-  };
+  });
 
-  const fetchComments = async (ticketId: string) => {
-    try {
+  const { data: comments = [] } = useQuery({
+    queryKey: ['support-ticket-comments', selectedTicket?.id],
+    queryFn: async () => {
+      if (!selectedTicket) return [];
+      
       const { data, error } = await supabase
         .from('support_ticket_comments')
         .select('*')
-        .eq('ticket_id', ticketId)
+        .eq('ticket_id', selectedTicket.id)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setComments(data || []);
-    } catch (error: any) {
-      console.error('Error fetching comments:', error);
-    }
-  };
+      return data as TicketComment[];
+    },
+    enabled: !!selectedTicket
+  });
 
-  useEffect(() => {
-    fetchTickets();
-  }, []);
-
-  useEffect(() => {
-    if (selectedTicket) {
-      fetchComments(selectedTicket.id);
-    }
-  }, [selectedTicket]);
-
-  const handleUpdateTicketStatus = async (ticketId: string, newStatus: string) => {
-    try {
+  const updateTicketMutation = useMutation({
+    mutationFn: async ({ ticketId, updates }: { ticketId: string, updates: Partial<SupportTicket> }) => {
       const { error } = await supabase
         .from('support_tickets')
-        .update({ status: newStatus })
+        .update(updates)
         .eq('id', ticketId);
 
       if (error) throw error;
-
-      fetchTickets();
-      if (selectedTicket?.id === ticketId) {
-        setSelectedTicket({ ...selectedTicket, status: newStatus });
-      }
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-support-tickets'] });
       toast({
         title: "Success",
-        description: "Ticket status updated successfully.",
+        description: "Ticket updated successfully.",
       });
-    } catch (error: any) {
+    },
+    onError: (error) => {
       console.error('Error updating ticket:', error);
       toast({
         title: "Error",
-        description: "Failed to update ticket status.",
+        description: "Failed to update ticket.",
         variant: "destructive"
       });
     }
-  };
+  });
 
-  const handleAssignTicket = async (ticketId: string, assigneeId: string) => {
-    try {
-      const { error } = await supabase
-        .from('support_tickets')
-        .update({ assigned_to: assigneeId })
-        .eq('id', ticketId);
-
-      if (error) throw error;
-
-      fetchTickets();
-      if (selectedTicket?.id === ticketId) {
-        setSelectedTicket({ ...selectedTicket, assigned_to: assigneeId });
-      }
-
-      toast({
-        title: "Success",
-        description: "Ticket assigned successfully.",
-      });
-    } catch (error: any) {
-      console.error('Error assigning ticket:', error);
-      toast({
-        title: "Error",
-        description: "Failed to assign ticket.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleAddComment = async () => {
-    if (!selectedTicket || !newComment.trim() || !user) return;
-
-    try {
+  const addCommentMutation = useMutation({
+    mutationFn: async ({ ticketId, comment, isInternal }: { ticketId: string, comment: string, isInternal: boolean }) => {
+      if (!user) throw new Error('User not authenticated');
+      
       const { error } = await supabase
         .from('support_ticket_comments')
-        .insert([{
-          ticket_id: selectedTicket.id,
+        .insert({
+          ticket_id: ticketId,
           user_id: user.id,
-          comment: newComment,
+          comment,
           is_internal: isInternal
-        }]);
+        });
 
       if (error) throw error;
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['support-ticket-comments', selectedTicket?.id] });
       setNewComment('');
-      fetchComments(selectedTicket.id);
-
       toast({
         title: "Success",
         description: "Comment added successfully.",
       });
-    } catch (error: any) {
+    },
+    onError: (error) => {
       console.error('Error adding comment:', error);
       toast({
         title: "Error",
@@ -196,6 +140,22 @@ export const SupportTicketManagement = () => {
         variant: "destructive"
       });
     }
+  });
+
+  const handleUpdateTicketStatus = (ticketId: string, newStatus: string) => {
+    updateTicketMutation.mutate({ ticketId, updates: { status: newStatus } });
+    if (selectedTicket?.id === ticketId) {
+      setSelectedTicket({ ...selectedTicket, status: newStatus });
+    }
+  };
+
+  const handleAddComment = () => {
+    if (!selectedTicket || !newComment.trim()) return;
+    addCommentMutation.mutate({
+      ticketId: selectedTicket.id,
+      comment: newComment,
+      isInternal
+    });
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -305,7 +265,7 @@ export const SupportTicketManagement = () => {
         </Select>
       </div>
 
-      {/* Tickets List */}
+      {/* Tickets List and Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -445,7 +405,10 @@ export const SupportTicketManagement = () => {
                       placeholder="Add a comment..."
                       rows={3}
                     />
-                    <Button onClick={handleAddComment} disabled={!newComment.trim()}>
+                    <Button 
+                      onClick={handleAddComment} 
+                      disabled={!newComment.trim() || addCommentMutation.isPending}
+                    >
                       <Send className="mr-2 h-4 w-4" />
                       Add Comment
                     </Button>
