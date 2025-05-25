@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { SupportButton } from '@/components/ui/support-button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FloatingSupportChatbot } from '@/components/support/FloatingSupportChatbot';
 import { 
@@ -240,6 +242,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <div className="flex-1"></div>
           
           <div className="flex items-center gap-4">
+            <SupportButton variant="outline" size="sm" />
             <LanguageSwitcher />
           </div>
         </div>

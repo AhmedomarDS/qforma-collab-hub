@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ContactForm } from "@/components/ui/contact-form";
+import { SupportButton } from "@/components/ui/support-button";
 import { 
   Card, 
   CardContent, 
@@ -152,7 +153,10 @@ const Landing = () => {
           </div>
         </div>
         
-        <LanguageSwitcher />
+        <div className="flex items-center gap-4">
+          <SupportButton variant="outline" size="sm" />
+          <LanguageSwitcher />
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -240,6 +244,12 @@ const Landing = () => {
                     {t('landing.domain.freeTrialInfo') || "Start with a 7-day free trial of all features"}
                   </p>
                 </div>
+              </div>
+
+              {/* Support CTA in Hero Section */}
+              <div className="mt-6 text-center">
+                <p className="text-sm text-muted-foreground mb-2">Need help getting started?</p>
+                <SupportButton variant="outline" />
               </div>
             </div>
             <div className="flex-1 max-w-md">
@@ -448,6 +458,13 @@ const Landing = () => {
             >
               Contact Sales
             </Button>
+            <SupportButton 
+              variant="outline" 
+              size="lg"
+              className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
+            >
+              Get Support
+            </SupportButton>
           </div>
         </div>
       </section>
@@ -485,6 +502,11 @@ const Landing = () => {
                   </Button>
                 </div>
               </div>
+
+              {/* Support Button in Footer */}
+              <div className="mt-4">
+                <SupportButton variant="outline" size="sm" />
+              </div>
             </div>
             
             <div className={`grid grid-cols-2 md:grid-cols-4 gap-8 ${isRTL ? 'text-right' : ''}`}>
@@ -504,7 +526,7 @@ const Landing = () => {
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.resources.documentation')}</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.resources.blog')}</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.resources.community')}</Button></li>
-                  <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.resources.support')}</Button></li>
+                  <li><SupportButton variant="link" className="p-0 h-auto !justify-start">{t('landing.footer.resources.support')}</SupportButton></li>
                 </ul>
               </div>
               
