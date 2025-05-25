@@ -27,6 +27,7 @@ import Settings from "./pages/Settings";
 import CompanySettings from "./pages/CompanySettings";
 import CompanySettingsDetails from "./pages/CompanySettingsDetails";
 import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
+import CompanySettingsAccess from "./pages/CompanySettingsAccess";
 import PlanAndBilling from "./pages/PlanAndBilling";
 import PlanSelection from "./pages/PlanSelection";
 import Tasks from "./pages/Tasks";
@@ -77,6 +78,7 @@ function App() {
                       <Route path="/company-settings" element={<CompanySettings />} />
                       <Route path="/company-settings/details" element={<CompanySettingsDetails />} />
                       <Route path="/company-settings/invitations" element={<CompanySettingsInvitations />} />
+                      <Route path="/company-settings/access" element={<CompanySettingsAccess />} />
                       <Route path="/plan-billing" element={<PlanAndBilling />} />
                       <Route path="/plan-selection" element={<PlanSelection />} />
                       <Route path="/tasks" element={<Tasks />} />
