@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 interface Invitation {
   id: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
+  role: string;
   status: string;
   created_at: string;
   expires_at: string;
@@ -28,7 +27,7 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
+  role: string;
   joined_at: string;
 }
 
@@ -36,7 +35,7 @@ const CompanySettingsInvitations = () => {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'tester' | 'developer'>('tester');
+  const [inviteRole, setInviteRole] = useState('tester');
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,11 +44,16 @@ const CompanySettingsInvitations = () => {
   const { toast } = useToast();
 
   const roles = [
-    { value: 'owner' as const, label: 'Owner', description: 'Full access to everything' },
-    { value: 'admin' as const, label: 'Admin', description: 'Manage team and settings' },
-    { value: 'manager' as const, label: 'Manager', description: 'Manage projects and assignments' },
-    { value: 'tester' as const, label: 'Tester', description: 'Execute tests and report defects' },
-    { value: 'developer' as const, label: 'Developer', description: 'View and fix defects' },
+    { value: 'owner', label: 'Owner', description: 'Full access to everything' },
+    { value: 'admin', label: 'Admin', description: 'Manage team and settings' },
+    { value: 'manager', label: 'Manager', description: 'Manage projects and assignments' },
+    { value: 'technical_lead', label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
+    { value: 'business_analyst', label: 'Business Analyst', description: 'Analyze business requirements and processes' },
+    { value: 'tester', label: 'Tester', description: 'Execute tests and report defects' },
+    { value: 'automation_tester', label: 'Automation Tester', description: 'Create and maintain automated tests' },
+    { value: 'performance_tester', label: 'Performance Tester', description: 'Execute performance and load testing' },
+    { value: 'security_tester', label: 'Security Tester', description: 'Execute security testing and assessments' },
+    { value: 'developer', label: 'Developer', description: 'View and fix defects' },
   ];
 
   useEffect(() => {
@@ -192,13 +196,12 @@ const CompanySettingsInvitations = () => {
             company_name: companyData?.company_name || 'Your Company',
             invited_by_name: inviterData?.name || 'A team member',
             role: inviteRole,
-            invitation_token: 'temp-token', // This would be generated in the database
+            invitation_token: 'temp-token',
             invitation_url: `${window.location.origin}/accept-invitation?token=temp-token`
           }
         });
       } catch (emailError) {
         console.error('Error sending invitation email:', emailError);
-        // Don't fail the invitation creation if email sending fails
       }
 
       toast({
@@ -208,7 +211,7 @@ const CompanySettingsInvitations = () => {
 
       setInviteEmail('');
       setInviteRole('tester');
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error: any) {
       console.error('Error sending invitation:', error);
       setError(error.message || 'Failed to send invitation');
@@ -219,12 +222,11 @@ const CompanySettingsInvitations = () => {
 
   const handleResendInvitation = async (invitationId: string, email: string) => {
     try {
-      // Update the invitation's created_at to reset the expiry
       const { error } = await supabase
         .from('invitations')
         .update({ 
           created_at: new Date().toISOString(),
-          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         })
         .eq('id', invitationId);
 
@@ -235,7 +237,7 @@ const CompanySettingsInvitations = () => {
         description: `Invitation resent to ${email}`,
       });
 
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error: any) {
       console.error('Error resending invitation:', error);
       toast({
@@ -262,7 +264,7 @@ const CompanySettingsInvitations = () => {
         description: `Invitation to ${email} has been cancelled`,
       });
 
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error: any) {
       console.error('Error cancelling invitation:', error);
       toast({
@@ -278,7 +280,12 @@ const CompanySettingsInvitations = () => {
       case 'owner': return 'bg-purple-100 text-purple-800';
       case 'admin': return 'bg-red-100 text-red-800';
       case 'manager': return 'bg-blue-100 text-blue-800';
+      case 'technical_lead': return 'bg-indigo-100 text-indigo-800';
+      case 'business_analyst': return 'bg-cyan-100 text-cyan-800';
       case 'tester': return 'bg-green-100 text-green-800';
+      case 'automation_tester': return 'bg-emerald-100 text-emerald-800';
+      case 'performance_tester': return 'bg-lime-100 text-lime-800';
+      case 'security_tester': return 'bg-rose-100 text-rose-800';
       case 'developer': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -333,7 +340,7 @@ const CompanySettingsInvitations = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Select value={inviteRole} onValueChange={(value: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => setInviteRole(value)}>
+                    <Select value={inviteRole} onValueChange={(value) => setInviteRole(value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
@@ -392,7 +399,7 @@ const CompanySettingsInvitations = () => {
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge className={getRoleBadgeColor(invitation.role)}>
-                          {invitation.role}
+                          {roles.find(r => r.value === invitation.role)?.label || invitation.role}
                         </Badge>
                         <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
                           {invitation.status}
@@ -446,7 +453,7 @@ const CompanySettingsInvitations = () => {
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge className={getRoleBadgeColor(member.role)}>
-                          {member.role}
+                          {roles.find(r => r.value === member.role)?.label || member.role}
                         </Badge>
                         <span className="text-sm text-muted-foreground">
                           Joined {new Date(member.joined_at).toLocaleDateString()}

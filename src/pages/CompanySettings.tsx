@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TeamManagement from '@/components/team/TeamManagement';
-import { Building, Users, Settings, Shield } from 'lucide-react';
+import AccessManagement from '@/components/company/AccessManagement';
+import { Building, Users, Settings, Shield, UserPlus } from 'lucide-react';
 
 const CompanySettings = () => {
   return (
@@ -22,6 +23,14 @@ const CompanySettings = () => {
             <Users className="h-4 w-4" />
             Team Management
           </TabsTrigger>
+          <TabsTrigger value="invitations" className="flex items-center gap-2">
+            <UserPlus className="h-4 w-4" />
+            Team Invitations
+          </TabsTrigger>
+          <TabsTrigger value="access" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Access Management
+          </TabsTrigger>
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="h-4 w-4" />
             Company Details
@@ -34,6 +43,24 @@ const CompanySettings = () => {
 
         <TabsContent value="team">
           <TeamManagement />
+        </TabsContent>
+
+        <TabsContent value="invitations">
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Invitations</CardTitle>
+              <CardDescription>Invite new team members and manage pending invitations</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Use the dedicated <a href="/company-settings/invitations" className="text-primary hover:underline">Team Invitations page</a> to manage invitations.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="access">
+          <AccessManagement />
         </TabsContent>
 
         <TabsContent value="company">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -72,6 +71,7 @@ const SidebarMenuItems = () => {
 
   const companySettingsSubItems = [
     { title: 'Team Invitations', icon: UserPlus, path: '/company-settings/invitations' },
+    { title: 'Access Management', icon: Shield, path: '/company-settings/access' },
     { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
     { title: 'Company Details', icon: Building, path: '/company-settings/details' },
   ];
@@ -109,7 +109,6 @@ const SidebarMenuItems = () => {
     }
   };
 
-  // Keep sidebar open for sub-menu navigation - don't close on mobile
   const handleSubMenuClick = () => {
     // Intentionally empty - we want to keep the sidebar open for sub-menu items
   };
