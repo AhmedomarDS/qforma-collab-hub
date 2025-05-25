@@ -440,15 +440,14 @@ const Landing = () => {
             >
               {t('landing.cta.signIn')}
             </Button>
-            <ContactForm>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
-              >
-                {t('landing.cta.requestDemo')}
-              </Button>
-            </ContactForm>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
+              onClick={() => navigate('/admin')}
+            >
+              Contact Sales
+            </Button>
           </div>
         </div>
       </section>
@@ -514,7 +513,7 @@ const Landing = () => {
                 <ul className="space-y-2">
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.about')}</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.careers')}</Button></li>
-                  <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.contact')}</Button></li>
+                  <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/admin')}>Contact Sales</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.partners')}</Button></li>
                 </ul>
               </div>

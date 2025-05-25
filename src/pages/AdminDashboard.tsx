@@ -7,6 +7,7 @@ import { CompanyList } from '@/components/admin/CompanyList';
 import { CompanyAnalyticsChart } from '@/components/admin/CompanyAnalyticsChart';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { SupportTicketManagement } from '@/components/admin/SupportTicketManagement';
+import { ContactSubmissionsManagement } from '@/components/admin/ContactSubmissionsManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -15,7 +16,8 @@ import {
   BarChart3, 
   Settings,
   DollarSign,
-  LifeBuoy
+  LifeBuoy,
+  MessageSquare
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -85,7 +87,7 @@ const AdminDashboard = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="companies" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="companies" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               Companies
@@ -97,6 +99,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="support" className="flex items-center gap-2">
               <LifeBuoy className="h-4 w-4" />
               Support
+            </TabsTrigger>
+            <TabsTrigger value="contact" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Contact Sales
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -118,6 +124,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="support" className="space-y-6">
             <SupportTicketManagement />
+          </TabsContent>
+
+          <TabsContent value="contact" className="space-y-6">
+            <ContactSubmissionsManagement />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">

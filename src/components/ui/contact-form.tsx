@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { Send } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ContactFormProps {
   children: React.ReactNode;
@@ -43,10 +44,17 @@ export const ContactForm: React.FC<ContactFormProps> = ({ children }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('Demo request submitted:', formData);
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          phone: formData.phone,
+          message: formData.message
+        }]);
+
+      if (error) throw error;
       
       toast({
         title: "Demo Request Sent",
@@ -63,6 +71,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ children }) => {
       });
       setIsOpen(false);
     } catch (error) {
+      console.error('Error submitting contact form:', error);
       toast({
         title: "Error",
         description: "Failed to send demo request. Please try again.",
