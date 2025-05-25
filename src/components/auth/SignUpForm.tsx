@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -42,7 +41,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
     try {
       // Get the current origin to build the redirect URL
       const origin = window.location.origin;
-      const redirectTo = `${origin}/auth`;
+      const redirectTo = `${origin}/create-password`;
 
       const { error } = await supabase.auth.signUp({
         email,

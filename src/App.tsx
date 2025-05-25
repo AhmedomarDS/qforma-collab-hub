@@ -43,6 +43,7 @@ import ReleaseManagement from "./pages/ReleaseManagement";
 import Chat from "./pages/Chat";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import PasswordCreationPage from "./components/auth/PasswordCreationPage";
 
 import "./App.css";
 
@@ -65,6 +66,7 @@ function App() {
                       <Route path="/contact-sales" element={<ContactSales />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/login" element={<Login />} />
+                      <Route path="/create-password" element={<PasswordCreationPage />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/projects" element={<Projects />} />
                       <Route path="/projects/:id" element={<ProjectDashboard />} />
