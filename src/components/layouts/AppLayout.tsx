@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +51,8 @@ import {
   Users,
   UserPlus,
   Workflow,
-  Play
+  Play,
+  LifeBuoy
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -66,6 +66,12 @@ const SidebarMenuItems = () => {
 
   const mainMenuItems = [
     { title: t('navigation.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+  ];
+
+  const companySettingsSubItems = [
+    { title: 'Team Invitations', icon: UserPlus, path: '/company-settings/invitations' },
+    { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
+    { title: 'Company Details', icon: Building, path: '/company-settings/details' },
   ];
 
   const projectsSubItems = [
@@ -87,13 +93,8 @@ const SidebarMenuItems = () => {
     { title: t('navigation.mobileCompatibility'), icon: Smartphone, path: '/mobile-compatibility' },
   ];
 
-  const companySettingsSubItems = [
-    { title: 'Team Invitations', icon: UserPlus, path: '/company-settings/invitations' },
-    { title: 'Plan and Billing', icon: CreditCard, path: '/plan-billing' },
-    { title: 'Company Details', icon: Building, path: '/company-settings/details' },
-  ];
-
   const bottomMenuItems = [
+    { title: 'Support', icon: LifeBuoy, path: '/support' },
     { title: t('navigation.chat'), icon: MessageSquare, path: '/chat' },
     { title: t('navigation.defects'), icon: Bug, path: '/defects' },
     { title: t('navigation.reports'), icon: BarChart, path: '/reports' },

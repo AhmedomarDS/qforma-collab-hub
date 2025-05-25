@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +12,8 @@ import {
   Users, 
   BarChart3, 
   Settings,
-  DollarSign
+  DollarSign,
+  LifeBuoy
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="companies" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="companies" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               Companies
@@ -91,6 +91,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
+            </TabsTrigger>
+            <TabsTrigger value="support" className="flex items-center gap-2">
+              <LifeBuoy className="h-4 w-4" />
+              Support
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -108,6 +112,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="users" className="space-y-6">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="support" className="space-y-6">
+            <SupportTicketManagement />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
