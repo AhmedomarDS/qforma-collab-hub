@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,10 +12,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
+type UserRoleType = 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
+
 interface Invitation {
   id: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
+  role: UserRoleType;
   status: string;
   created_at: string;
   expires_at: string;
@@ -28,7 +29,7 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
+  role: UserRoleType;
   joined_at: string;
 }
 
@@ -36,7 +37,7 @@ const CompanySettingsInvitations = () => {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer'>('tester');
+  const [inviteRole, setInviteRole] = useState<UserRoleType>('tester');
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,16 +46,16 @@ const CompanySettingsInvitations = () => {
   const { toast } = useToast();
 
   const roles = [
-    { value: 'owner', label: 'Owner', description: 'Full access to everything' },
-    { value: 'admin', label: 'Admin', description: 'Manage team and settings' },
-    { value: 'manager', label: 'Manager', description: 'Manage projects and assignments' },
-    { value: 'technical_lead', label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
-    { value: 'business_analyst', label: 'Business Analyst', description: 'Analyze business requirements and processes' },
-    { value: 'tester', label: 'Tester', description: 'Execute tests and report defects' },
-    { value: 'automation_tester', label: 'Automation Tester', description: 'Create and maintain automated tests' },
-    { value: 'performance_tester', label: 'Performance Tester', description: 'Execute performance and load testing' },
-    { value: 'security_tester', label: 'Security Tester', description: 'Execute security testing and assessments' },
-    { value: 'developer', label: 'Developer', description: 'View and fix defects' },
+    { value: 'owner' as const, label: 'Owner', description: 'Full access to everything' },
+    { value: 'admin' as const, label: 'Admin', description: 'Manage team and settings' },
+    { value: 'manager' as const, label: 'Manager', description: 'Manage projects and assignments' },
+    { value: 'technical_lead' as const, label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
+    { value: 'business_analyst' as const, label: 'Business Analyst', description: 'Analyze business requirements and processes' },
+    { value: 'tester' as const, label: 'Tester', description: 'Execute tests and report defects' },
+    { value: 'automation_tester' as const, label: 'Automation Tester', description: 'Create and maintain automated tests' },
+    { value: 'performance_tester' as const, label: 'Performance Tester', description: 'Execute performance and load testing' },
+    { value: 'security_tester' as const, label: 'Security Tester', description: 'Execute security testing and assessments' },
+    { value: 'developer' as const, label: 'Developer', description: 'View and fix defects' },
   ];
 
   useEffect(() => {
@@ -113,7 +114,7 @@ const CompanySettingsInvitations = () => {
               id: userRole.id,
               name: userProfile?.name || 'Unknown',
               email: userProfile?.email || '',
-              role: userRole.role,
+              role: userRole.role as UserRoleType,
               joined_at: userRole.created_at
             };
           });
@@ -171,7 +172,7 @@ const CompanySettingsInvitations = () => {
         .insert({
           email: inviteEmail,
           company_id: profile.current_company_id,
-          role: inviteRole as any, // Type assertion to handle the enum
+          role: inviteRole,
           invited_by: user?.id || ''
         });
 
@@ -292,6 +293,10 @@ const CompanySettingsInvitations = () => {
     }
   };
 
+  const handleRoleChange = (value: string) => {
+    setInviteRole(value as UserRoleType);
+  };
+
   if (fetchLoading) {
     return (
       <AppLayout>
@@ -341,7 +346,7 @@ const CompanySettingsInvitations = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Select value={inviteRole} onValueChange={(value) => setInviteRole(value)}>
+                    <Select value={inviteRole} onValueChange={handleRoleChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>

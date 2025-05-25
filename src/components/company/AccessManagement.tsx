@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
+type UserRoleType = 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
+
 interface UserRole {
   id: string;
   user_id: string;
-  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
+  role: UserRoleType;
   name: string;
   email: string;
   joined_at: string;
@@ -22,23 +25,23 @@ const AccessManagement = () => {
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState<string | null>(null);
-  const [newRole, setNewRole] = useState<'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer' | ''>('');
+  const [newRole, setNewRole] = useState<UserRoleType | ''>('');
   const [error, setError] = useState('');
   
   const { user } = useAuth();
   const { toast } = useToast();
 
   const roles = [
-    { value: 'owner', label: 'Owner', description: 'Full access to everything' },
-    { value: 'admin', label: 'Admin', description: 'Manage team and settings' },
-    { value: 'manager', label: 'Manager', description: 'Manage projects and assignments' },
-    { value: 'technical_lead', label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
-    { value: 'business_analyst', label: 'Business Analyst', description: 'Analyze business requirements and processes' },
-    { value: 'tester', label: 'Tester', description: 'Execute tests and report defects' },
-    { value: 'automation_tester', label: 'Automation Tester', description: 'Create and maintain automated tests' },
-    { value: 'performance_tester', label: 'Performance Tester', description: 'Execute performance and load testing' },
-    { value: 'security_tester', label: 'Security Tester', description: 'Execute security testing and assessments' },
-    { value: 'developer', label: 'Developer', description: 'View and fix defects' },
+    { value: 'owner' as const, label: 'Owner', description: 'Full access to everything' },
+    { value: 'admin' as const, label: 'Admin', description: 'Manage team and settings' },
+    { value: 'manager' as const, label: 'Manager', description: 'Manage projects and assignments' },
+    { value: 'technical_lead' as const, label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
+    { value: 'business_analyst' as const, label: 'Business Analyst', description: 'Analyze business requirements and processes' },
+    { value: 'tester' as const, label: 'Tester', description: 'Execute tests and report defects' },
+    { value: 'automation_tester' as const, label: 'Automation Tester', description: 'Create and maintain automated tests' },
+    { value: 'performance_tester' as const, label: 'Performance Tester', description: 'Execute performance and load testing' },
+    { value: 'security_tester' as const, label: 'Security Tester', description: 'Execute security testing and assessments' },
+    { value: 'developer' as const, label: 'Developer', description: 'View and fix defects' },
   ];
 
   useEffect(() => {
@@ -87,7 +90,7 @@ const AccessManagement = () => {
       const formattedRoles = roles?.map(roleItem => ({
         id: roleItem.id,
         user_id: roleItem.user_id,
-        role: roleItem.role,
+        role: roleItem.role as UserRoleType,
         name: (roleItem.profiles as any)?.name || 'Unknown',
         email: (roleItem.profiles as any)?.email || '',
         joined_at: roleItem.created_at
@@ -102,7 +105,7 @@ const AccessManagement = () => {
     }
   };
 
-  const handleUpdateRole = async (userRoleId: string, newRoleValue: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => {
+  const handleUpdateRole = async (userRoleId: string, newRoleValue: UserRoleType) => {
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -145,7 +148,7 @@ const AccessManagement = () => {
     }
   };
 
-  const startEditing = (userRoleId: string, currentRole: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => {
+  const startEditing = (userRoleId: string, currentRole: UserRoleType) => {
     setEditingUser(userRoleId);
     setNewRole(currentRole);
   };
@@ -153,6 +156,10 @@ const AccessManagement = () => {
   const cancelEditing = () => {
     setEditingUser(null);
     setNewRole('');
+  };
+
+  const handleRoleChange = (value: string) => {
+    setNewRole(value as UserRoleType);
   };
 
   if (loading) {
@@ -210,7 +217,7 @@ const AccessManagement = () => {
                   <div className="flex items-center gap-4">
                     {editingUser === userRole.id ? (
                       <div className="flex items-center gap-2">
-                        <Select value={newRole} onValueChange={setNewRole}>
+                        <Select value={newRole} onValueChange={handleRoleChange}>
                           <SelectTrigger className="w-48">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
@@ -227,8 +234,8 @@ const AccessManagement = () => {
                         </Select>
                         <Button 
                           size="sm" 
-                          onClick={() => handleUpdateRole(userRole.id, newRole)}
-                          disabled={!newRole || newRole === userRole.role}
+                          onClick={() => newRole && newRole !== '' && handleUpdateRole(userRole.id, newRole as UserRoleType)}
+                          disabled={!newRole || newRole === '' || newRole === userRole.role}
                         >
                           <Save className="h-4 w-4" />
                         </Button>
