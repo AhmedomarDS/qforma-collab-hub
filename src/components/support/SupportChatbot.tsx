@@ -73,7 +73,7 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({
     'team': 'Team management features allow you to invite team members, assign roles, and manage permissions within your company workspace.',
     'billing': 'For billing and subscription questions, visit Plan and Billing in Company Settings. You can upgrade plans, view usage, and manage payment methods.',
     'login': "If you're having trouble logging in, ensure you're using the correct email and password. Check if email confirmation is required for your account.",
-    'password': 'To reset your password, use the "Forgot Password" link on the login page. You\'ll receive an email with reset instructions.'
+    'password': 'To reset your password, use the "Forgot Password" link on the login page. You will receive an email with reset instructions.'
   };
 
   const getBotResponse = (userMessage: string): string => {
