@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,7 @@ const AccessManagement = () => {
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState<string | null>(null);
-  const [newRole, setNewRole] = useState<UserRoleType | ''>('');
+  const [newRole, setNewRole] = useState<UserRoleType | null>(null);
   const [error, setError] = useState('');
   
   const { user } = useAuth();
@@ -120,7 +119,7 @@ const AccessManagement = () => {
       });
 
       setEditingUser(null);
-      setNewRole('');
+      setNewRole(null);
       fetchUserRoles();
     } catch (error: any) {
       console.error('Error updating role:', error);
@@ -155,11 +154,16 @@ const AccessManagement = () => {
 
   const cancelEditing = () => {
     setEditingUser(null);
-    setNewRole('');
+    setNewRole(null);
   };
 
   const handleRoleChange = (value: string) => {
-    setNewRole(value as UserRoleType);
+    const roleValue = value as UserRoleType;
+    setNewRole(roleValue);
+  };
+
+  const isValidRole = (role: UserRoleType | null): role is UserRoleType => {
+    return role !== null && roles.some(r => r.value === role);
   };
 
   if (loading) {
@@ -217,7 +221,7 @@ const AccessManagement = () => {
                   <div className="flex items-center gap-4">
                     {editingUser === userRole.id ? (
                       <div className="flex items-center gap-2">
-                        <Select value={newRole} onValueChange={handleRoleChange}>
+                        <Select value={newRole || undefined} onValueChange={handleRoleChange}>
                           <SelectTrigger className="w-48">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
@@ -234,8 +238,8 @@ const AccessManagement = () => {
                         </Select>
                         <Button 
                           size="sm" 
-                          onClick={() => newRole && newRole !== '' && handleUpdateRole(userRole.id, newRole as UserRoleType)}
-                          disabled={!newRole || newRole === '' || newRole === userRole.role}
+                          onClick={() => isValidRole(newRole) && handleUpdateRole(userRole.id, newRole)}
+                          disabled={!isValidRole(newRole) || newRole === userRole.role}
                         >
                           <Save className="h-4 w-4" />
                         </Button>
