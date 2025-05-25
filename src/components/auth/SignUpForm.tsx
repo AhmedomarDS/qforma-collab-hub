@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Building } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface SignUpFormProps {
   onEmailSent: (email: string) => void;
@@ -13,15 +13,25 @@ interface SignUpFormProps {
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [name, setName] = useState('');
   const [subdomain, setSubdomain] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { toast } = useToast();
+
+  const generateSubdomain = (company: string) => {
+    return company.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20);
+  };
+
+  const handleCompanyNameChange = (value: string) => {
+    setCompanyName(value);
+    setSubdomain(generateSubdomain(value));
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !name || !companyName || !subdomain) {
+    if (!email || !companyName || !name || !subdomain) {
       setError('Please fill in all fields');
       return;
     }
@@ -30,28 +40,29 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
     setError('');
 
     try {
+      // Get the current origin to build the redirect URL
+      const origin = window.location.origin;
+      const redirectTo = `${origin}/auth`;
+
       const { error } = await supabase.auth.signUp({
         email,
-        password: 'temporary-password', // Will be changed when user sets their password
+        password: 'temporary_password', // This will be changed in password creation step
         options: {
           data: {
-            name: name,
+            name,
             company_name: companyName,
             subdomain: subdomain
           },
-          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
+          emailRedirectTo: redirectTo
         }
       });
 
       if (error) throw error;
 
-      // Store registration data for later use
-      localStorage.setItem('registration-data', JSON.stringify({
-        email,
-        name,
-        companyName,
-        subdomain
-      }));
+      toast({
+        title: "Registration Started!",
+        description: "Please check your email to confirm your account.",
+      });
 
       onEmailSent(email);
     } catch (error: any) {
@@ -64,23 +75,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
   return (
     <form onSubmit={handleSignUp} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="signup-name">Your Full Name</Label>
+        <Label htmlFor="email">Work Email</Label>
         <Input
-          id="signup-name"
-          type="text"
-          placeholder="Enter your full name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="signup-email">Work Email</Label>
-        <Input
-          id="signup-email"
+          id="email"
           type="email"
-          placeholder="Enter your work email"
+          placeholder="you@company.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -88,34 +87,46 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="company-name">Company Name</Label>
+        <Label htmlFor="name">Full Name</Label>
         <Input
-          id="company-name"
+          id="name"
           type="text"
-          placeholder="Enter your company name"
+          placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="companyName">Company Name</Label>
+        <Input
+          id="companyName"
+          type="text"
+          placeholder="Acme Corporation"
           value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
+          onChange={(e) => handleCompanyNameChange(e.target.value)}
           required
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="subdomain">Company Subdomain</Label>
-        <div className="flex">
+        <div className="flex items-center space-x-2">
           <Input
             id="subdomain"
             type="text"
-            placeholder="mycompany"
+            placeholder="acmecorp"
             value={subdomain}
-            onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+            onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
             required
-            className="rounded-r-none"
+            className="flex-1"
           />
-          <div className="bg-muted px-3 py-2 border border-l-0 rounded-r-md text-sm text-muted-foreground">
-            .qforma.com
-          </div>
+          <span className="text-sm text-muted-foreground">.qforma.com</span>
         </div>
-        <p className="text-xs text-muted-foreground">This will be your team's unique URL</p>
+        <p className="text-xs text-muted-foreground">
+          This will be your company's unique URL
+        </p>
       </div>
 
       {error && (
@@ -125,9 +136,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
       )}
 
       <Button type="submit" className="w-full" disabled={loading}>
-        <Building className="w-4 h-4 mr-2" />
-        {loading ? 'Creating company...' : 'Create Company Account'}
+        {loading ? 'Creating Account...' : 'Create Account'}
       </Button>
+
+      <p className="text-xs text-center text-muted-foreground">
+        By creating an account, you agree to our Terms of Service and Privacy Policy
+      </p>
     </form>
   );
 };

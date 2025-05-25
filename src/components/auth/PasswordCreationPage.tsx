@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -18,9 +18,25 @@ const PasswordCreationPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Check if user is already authenticated from the email confirmation
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Current session in password creation:', session);
+      
+      if (session?.user) {
+        setUserEmail(session.user.email || '');
+        setName(session.user.user_metadata?.name || '');
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handlePasswordCreation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,18 +59,6 @@ const PasswordCreationPage: React.FC = () => {
     setError('');
 
     try {
-      const token = searchParams.get('token');
-      
-      if (token) {
-        // Handle token-based verification
-        const { error: verifyError } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: 'signup'
-        });
-
-        if (verifyError) throw verifyError;
-      }
-
       // Update user password and profile
       const { error: updateError } = await supabase.auth.updateUser({
         password: password,
@@ -65,11 +69,15 @@ const PasswordCreationPage: React.FC = () => {
 
       toast({
         title: "Account Created Successfully!",
-        description: "Your password has been set. You can now sign in.",
+        description: "Your password has been set. Redirecting to dashboard...",
       });
 
-      navigate('/auth?tab=signin');
+      // Redirect to dashboard after successful password creation
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } catch (error: any) {
+      console.error('Password creation error:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -84,7 +92,10 @@ const PasswordCreationPage: React.FC = () => {
             <CheckCircle className="h-6 w-6 text-green-600" />
           </div>
           <CardTitle>Email Confirmed!</CardTitle>
-          <CardDescription>Create your password to complete your account setup</CardDescription>
+          <CardDescription>
+            {userEmail && `Welcome ${userEmail}! `}
+            Create your password to complete your account setup
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordCreation} className="space-y-4">
