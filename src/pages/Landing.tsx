@@ -102,8 +102,8 @@ const Landing = () => {
       description: t('landing.domain.subdomainSuccess', { subdomain }) || `Your subdomain ${subdomain}.qforma.app has been created successfully!`,
     });
     
-    // Redirect to plan selection
-    navigate("/plan-selection");
+    // Redirect directly to signup page
+    navigate("/auth?tab=signup");
   };
   
   const handleRegister = (plan: string) => {
@@ -135,7 +135,7 @@ const Landing = () => {
       description: t('landing.domain.settingUp', { plan, subdomain }) || `Starting your ${plan} trial at ${subdomain}.qforma.app`,
     });
     
-    navigate("/auth");
+    navigate("/auth?tab=signup");
   };
   
   return (

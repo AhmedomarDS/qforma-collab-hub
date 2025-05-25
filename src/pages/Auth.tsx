@@ -9,12 +9,6 @@ import SignUpForm from '@/components/auth/SignUpForm';
 import EmailConfirmationPage from '@/components/auth/EmailConfirmationPage';
 import PasswordCreationPage from '@/components/auth/PasswordCreationPage';
 
-declare global {
-  interface Window {
-    grecaptcha: any;
-  }
-}
-
 const Auth = () => {
   const [currentStep, setCurrentStep] = useState('auth');
   const [registeredEmail, setRegisteredEmail] = useState('');
@@ -22,26 +16,16 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Load Google reCAPTCHA
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-
     // Check for email confirmation token
     const token = searchParams.get('token');
     const type = searchParams.get('type');
+    const confirmed = searchParams.get('confirmed');
     
     if (token && type === 'signup') {
       setCurrentStep('set-password');
+    } else if (confirmed === 'true') {
+      setCurrentStep('set-password');
     }
-
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
   }, [searchParams]);
 
   const handleEmailSent = (email: string) => {
@@ -68,8 +52,8 @@ const Auth = () => {
     return <PasswordCreationPage />;
   }
 
-  // Get the tab from URL params
-  const activeTab = searchParams.get('tab') || 'signup';
+  // Get the tab from URL params, default to signin for login page
+  const activeTab = searchParams.get('tab') || 'signin';
 
   // Main auth page (sign in / sign up)
   return (

@@ -19,24 +19,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const executeRecaptcha = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (window.grecaptcha) {
-        window.grecaptcha.ready(() => {
-          window.grecaptcha.execute('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', { action: 'submit' })
-            .then((token: string) => {
-              resolve(token);
-            })
-            .catch((error: any) => {
-              reject(error);
-            });
-        });
-      } else {
-        reject(new Error('reCAPTCHA not loaded'));
-      }
-    });
-  };
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !name || !companyName || !subdomain) {
@@ -48,19 +30,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
     setError('');
 
     try {
-      const recaptchaToken = await executeRecaptcha();
-      
       const { error } = await supabase.auth.signUp({
         email,
-        password: 'temporary-password',
+        password: 'temporary-password', // Will be changed when user sets their password
         options: {
           data: {
             name: name,
             company_name: companyName,
             subdomain: subdomain
           },
-          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`,
-          captchaToken: recaptchaToken
+          emailRedirectTo: `${window.location.origin}/auth?confirmed=true`
         }
       });
 
@@ -137,14 +116,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onEmailSent }) => {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">This will be your team's unique URL</p>
-      </div>
-
-      <div className="mb-4">
-        <div 
-          className="g-recaptcha" 
-          data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-          data-size="invisible"
-        ></div>
       </div>
 
       {error && (

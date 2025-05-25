@@ -46,27 +46,29 @@ const PasswordCreationPage: React.FC = () => {
       const token = searchParams.get('token');
       
       if (token) {
+        // Handle token-based verification
         const { error: verifyError } = await supabase.auth.verifyOtp({
           token_hash: token,
           type: 'signup'
         });
 
         if (verifyError) throw verifyError;
-
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: password,
-          data: { name: name }
-        });
-
-        if (updateError) throw updateError;
-
-        toast({
-          title: "Account Created Successfully!",
-          description: "Your password has been set. You can now sign in.",
-        });
-
-        navigate('/auth?tab=signin');
       }
+
+      // Update user password and profile
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password,
+        data: { name: name }
+      });
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Account Created Successfully!",
+        description: "Your password has been set. You can now sign in.",
+      });
+
+      navigate('/auth?tab=signin');
     } catch (error: any) {
       setError(error.message);
     } finally {

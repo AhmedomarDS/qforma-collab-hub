@@ -18,24 +18,6 @@ const SignInForm: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const executeRecaptcha = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (window.grecaptcha) {
-        window.grecaptcha.ready(() => {
-          window.grecaptcha.execute('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', { action: 'submit' })
-            .then((token: string) => {
-              resolve(token);
-            })
-            .catch((error: any) => {
-              reject(error);
-            });
-        });
-      } else {
-        reject(new Error('reCAPTCHA not loaded'));
-      }
-    });
-  };
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -47,14 +29,9 @@ const SignInForm: React.FC = () => {
     setError('');
 
     try {
-      const recaptchaToken = await executeRecaptcha();
-      
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          captchaToken: recaptchaToken
-        }
+        password
       });
 
       if (error) throw error;
@@ -107,14 +84,6 @@ const SignInForm: React.FC = () => {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
-      </div>
-
-      <div className="mb-4">
-        <div 
-          className="g-recaptcha" 
-          data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-          data-size="invisible"
-        ></div>
       </div>
 
       {error && (
