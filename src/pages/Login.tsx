@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,12 +11,21 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 
 const Login = () => {
-  const { login, isLoading, error } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,11 +39,32 @@ const Login = () => {
       return;
     }
     
+    setLoading(true);
+    setError("");
+    
     try {
-      await login(email, password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Successfully signed in!",
+      });
+      
       navigate("/dashboard");
-    } catch (err) {
-      // Error is handled by auth context
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +100,7 @@ const Login = () => {
                   placeholder="example@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
               
@@ -81,20 +112,19 @@ const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
               
-              <Button type="submit" className="w-full bg-qforma-blue hover:bg-qforma-blue/90" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign in"}
+              <Button type="submit" className="w-full bg-qforma-blue hover:bg-qforma-blue/90" disabled={loading}>
+                {loading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </CardContent>
           
           <CardFooter className="flex justify-center">
             <p className="text-sm text-muted-foreground">
-              Demo accounts: john@example.com, sarah@example.com, mike@example.com 
-              (all use password123)
+              Don't have an account? <span className="text-qforma-blue cursor-pointer" onClick={() => navigate("/auth?tab=signup")}>Sign up here</span>
             </p>
           </CardFooter>
         </Card>
