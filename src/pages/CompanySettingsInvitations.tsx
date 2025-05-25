@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/components/layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 interface Invitation {
   id: string;
   email: string;
-  role: string;
+  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
   status: string;
   created_at: string;
   expires_at: string;
@@ -27,7 +28,7 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
   joined_at: string;
 }
 
@@ -35,7 +36,7 @@ const CompanySettingsInvitations = () => {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('tester');
+  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer'>('tester');
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState('');
@@ -164,13 +165,13 @@ const CompanySettingsInvitations = () => {
         return;
       }
 
-      // Create invitation
+      // Create invitation with proper typing
       const { error: inviteError } = await supabase
         .from('invitations')
         .insert({
           email: inviteEmail,
           company_id: profile.current_company_id,
-          role: inviteRole,
+          role: inviteRole as any, // Type assertion to handle the enum
           invited_by: user?.id || ''
         });
 

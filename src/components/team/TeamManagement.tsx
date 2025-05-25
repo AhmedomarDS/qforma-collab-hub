@@ -15,14 +15,14 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
+  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
   joined_at: string;
 }
 
 interface Invitation {
   id: string;
   email: string;
-  role: 'owner' | 'admin' | 'manager' | 'tester' | 'developer';
+  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
   status: string;
   created_at: string;
   expires_at: string;
@@ -32,7 +32,7 @@ const TeamManagement = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'tester' | 'developer'>('tester');
+  const [inviteRole, setInviteRole] = useState<'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer'>('tester');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { user } = useAuth();
@@ -42,7 +42,12 @@ const TeamManagement = () => {
     { value: 'owner' as const, label: 'Owner', description: 'Full access to everything' },
     { value: 'admin' as const, label: 'Admin', description: 'Manage team and settings' },
     { value: 'manager' as const, label: 'Manager', description: 'Manage projects and assignments' },
+    { value: 'technical_lead' as const, label: 'Technical Lead', description: 'Lead technical decisions and architecture' },
+    { value: 'business_analyst' as const, label: 'Business Analyst', description: 'Analyze business requirements and processes' },
     { value: 'tester' as const, label: 'Tester', description: 'Execute tests and report defects' },
+    { value: 'automation_tester' as const, label: 'Automation Tester', description: 'Create and maintain automated tests' },
+    { value: 'performance_tester' as const, label: 'Performance Tester', description: 'Execute performance and load testing' },
+    { value: 'security_tester' as const, label: 'Security Tester', description: 'Execute security testing and assessments' },
     { value: 'developer' as const, label: 'Developer', description: 'View and fix defects' },
   ];
 
@@ -154,7 +159,7 @@ const TeamManagement = () => {
     }
   };
 
-  const handleRoleChange = async (memberId: string, newRole: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => {
+  const handleRoleChange = async (memberId: string, newRole: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => {
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -233,8 +238,13 @@ const TeamManagement = () => {
       case 'owner': return 'bg-purple-100 text-purple-800';
       case 'admin': return 'bg-red-100 text-red-800';
       case 'manager': return 'bg-blue-100 text-blue-800';
+      case 'technical_lead': return 'bg-green-100 text-green-800';
+      case 'business_analyst': return 'bg-yellow-100 text-yellow-800';
       case 'tester': return 'bg-green-100 text-green-800';
-      case 'developer': return 'bg-orange-100 text-orange-800';
+      case 'automation_tester': return 'bg-orange-100 text-orange-800';
+      case 'performance_tester': return 'bg-blue-100 text-blue-800';
+      case 'security_tester': return 'bg-red-100 text-red-800';
+      case 'developer': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -268,7 +278,7 @@ const TeamManagement = () => {
               </div>
               <div>
                 <Label htmlFor="invite-role">Role</Label>
-                <Select value={inviteRole} onValueChange={(value: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => setInviteRole(value)}>
+                <Select value={inviteRole} onValueChange={(value: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => setInviteRole(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
@@ -364,7 +374,7 @@ const TeamManagement = () => {
                 <div className="flex items-center gap-3">
                   <Select
                     value={member.role}
-                    onValueChange={(newRole: 'owner' | 'admin' | 'manager' | 'tester' | 'developer') => handleRoleChange(member.id, newRole)}
+                    onValueChange={(newRole: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => handleRoleChange(member.id, newRole)}
                   >
                     <SelectTrigger className="w-32">
                       <SelectValue />

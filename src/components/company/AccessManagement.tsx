@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 interface UserRole {
   id: string;
   user_id: string;
-  role: string;
+  role: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer';
   name: string;
   email: string;
   joined_at: string;
@@ -23,7 +22,7 @@ const AccessManagement = () => {
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState<string | null>(null);
-  const [newRole, setNewRole] = useState('');
+  const [newRole, setNewRole] = useState<'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer' | ''>('');
   const [error, setError] = useState('');
   
   const { user } = useAuth();
@@ -103,7 +102,7 @@ const AccessManagement = () => {
     }
   };
 
-  const handleUpdateRole = async (userRoleId: string, newRoleValue: string) => {
+  const handleUpdateRole = async (userRoleId: string, newRoleValue: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => {
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -146,7 +145,7 @@ const AccessManagement = () => {
     }
   };
 
-  const startEditing = (userRoleId: string, currentRole: string) => {
+  const startEditing = (userRoleId: string, currentRole: 'owner' | 'admin' | 'manager' | 'technical_lead' | 'business_analyst' | 'tester' | 'automation_tester' | 'performance_tester' | 'security_tester' | 'developer') => {
     setEditingUser(userRoleId);
     setNewRole(currentRole);
   };
