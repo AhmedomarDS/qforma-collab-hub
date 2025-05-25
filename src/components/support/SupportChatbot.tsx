@@ -45,7 +45,7 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your QForma support assistant. I can help you with questions about the application or create a support ticket if needed. How can I assist you today?',
+      content: "Hello! I'm your QForma support assistant. I can help you with questions about the application or create a support ticket if needed. How can I assist you today?",
       isBot: true,
       timestamp: new Date()
     }
@@ -72,7 +72,7 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({
     'defects': 'Defect management allows you to log, track, and resolve bugs found during testing. You can assign defects to team members and track their resolution status.',
     'team': 'Team management features allow you to invite team members, assign roles, and manage permissions within your company workspace.',
     'billing': 'For billing and subscription questions, visit Plan and Billing in Company Settings. You can upgrade plans, view usage, and manage payment methods.',
-    'login': 'If you\'re having trouble logging in, ensure you\'re using the correct email and password. Check if email confirmation is required for your account.',
+    'login': "If you're having trouble logging in, ensure you're using the correct email and password. Check if email confirmation is required for your account.",
     'password': 'To reset your password, use the "Forgot Password" link on the login page. You\'ll receive an email with reset instructions.'
   };
 
@@ -81,12 +81,12 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({
     
     // Check for greetings
     if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return 'Hello! I\'m here to help you with QForma. You can ask me about features like test cases, requirements, projects, automation testing, or any other questions you have.';
+      return "Hello! I'm here to help you with QForma. You can ask me about features like test cases, requirements, projects, automation testing, or any other questions you have.";
     }
     
     // Check for help or support requests
     if (message.includes('help') || message.includes('support') || message.includes('issue') || message.includes('problem')) {
-      return 'I\'d be happy to help! Can you tell me more about what specific area you need assistance with? For example: test cases, requirements, projects, defects, automation, or billing.';
+      return "I'd be happy to help! Can you tell me more about what specific area you need assistance with? For example: test cases, requirements, projects, defects, automation, or billing.";
     }
     
     // Check knowledge base
@@ -102,7 +102,7 @@ export const SupportChatbot: React.FC<SupportChatbotProps> = ({
     }
     
     // Default response for unrecognized queries
-    return 'I understand you need help with that. While I have knowledge about QForma\'s main features (test cases, requirements, projects, automation, reports, defects, and team management), I might not have the specific information you\'re looking for. Would you like me to create a support ticket so our team can assist you directly?';
+    return "I understand you need help with that. While I have knowledge about QForma's main features (test cases, requirements, projects, automation, reports, defects, and team management), I might not have the specific information you're looking for. Would you like me to create a support ticket so our team can assist you directly?";
   };
 
   const handleSendMessage = async () => {
