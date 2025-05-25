@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const AccountSettings = () => {
   const { user } = useAuth();
@@ -21,8 +21,8 @@ const AccountSettings = () => {
         {/* Profile Photo */}
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={user?.avatar} alt={user?.name} />
-            <AvatarFallback className="text-lg">{user?.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={user?.user_metadata?.avatar} alt={user?.user_metadata?.name || user?.email} />
+            <AvatarFallback className="text-lg">{user?.user_metadata?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           <div>
             <h3 className="text-lg font-medium mb-1">Profile Photo</h3>
@@ -43,22 +43,22 @@ const AccountSettings = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" defaultValue={user?.name} placeholder="Enter your full name" />
+              <Input id="fullName" defaultValue={user?.user_metadata?.name} placeholder="Enter your full name" />
             </div>
             
             <div>
               <Label htmlFor="displayName">Display Name</Label>
-              <Input id="displayName" defaultValue={user?.name} placeholder="Enter your display name" />
+              <Input id="displayName" defaultValue={user?.user_metadata?.name} placeholder="Enter your display name" />
             </div>
             
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue={user?.email || 'user@example.com'} placeholder="Enter your email" />
+              <Input id="email" type="email" defaultValue={user?.email} placeholder="Enter your email" />
             </div>
             
             <div>
               <Label htmlFor="jobTitle">Job Title</Label>
-              <Input id="jobTitle" defaultValue={user?.role} placeholder="Enter your job title" />
+              <Input id="jobTitle" defaultValue="Tester" placeholder="Enter your job title" />
             </div>
           </div>
         </div>
