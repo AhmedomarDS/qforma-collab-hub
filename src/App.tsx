@@ -39,6 +39,7 @@ import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
 import CompanySettingsDetails from "./pages/CompanySettingsDetails";
 import ProjectExecution from "./pages/ProjectExecution";
 import ProjectDashboard from "./pages/ProjectDashboard";
+// import { FloatingSupportChatbot } from "./components/support/FloatingSupportChatbot";
 
 const queryClient = new QueryClient();
 
@@ -233,6 +234,7 @@ const App = () => (
                     
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  {/* <FloatingSupportChatbot /> */}
                 </BrowserRouter>
               </TooltipProvider>
             </ChatProvider>

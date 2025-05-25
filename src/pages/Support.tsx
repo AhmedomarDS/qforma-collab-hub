@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AppLayout from '@/components/layouts/AppLayout';
@@ -13,7 +12,6 @@ import { LifeBuoy, Plus, MessageCircle, Clock, CheckCircle } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/components/ui/use-toast';
-import { SupportChatbot } from '@/components/support/SupportChatbot';
 
 interface SupportTicket {
   id: string;
@@ -173,7 +171,12 @@ const Support = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <SupportChatbot onCreateTicket={handleCreateTicket} />
+                <div className="p-8 text-center text-gray-500">
+                  <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>AI Assistant is temporarily unavailable while we work on improvements.</p>
+                  <p className="text-sm mt-2">Please use the ticket system for support in the meantime.</p>
+                </div>
+                {/* <SupportChatbot onCreateTicket={handleCreateTicket} /> */}
               </CardContent>
             </Card>
           </TabsContent>
