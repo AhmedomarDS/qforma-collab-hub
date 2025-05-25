@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Users, Edit3, Save, X, Settings } from 'lucide-react';
+import { Shield, Users, Edit3, Save, X, Settings, Building } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -28,6 +29,7 @@ const AccessManagement = () => {
   const [editingUser, setEditingUser] = useState<string | null>(null);
   const [newRole, setNewRole] = useState<UserRoleType | null>(null);
   const [error, setError] = useState('');
+  const [companyId, setCompanyId] = useState<string | null>(null);
   
   const { user } = useAuth();
   const { toast } = useToast();
@@ -54,18 +56,47 @@ const AccessManagement = () => {
   const fetchUserRoles = async () => {
     try {
       setLoading(true);
+      setError('');
       
-      // Get current user's company
+      // First, try to get the user's current company
       const { data: profile } = await supabase
         .from('profiles')
         .select('current_company_id')
         .eq('id', user?.id)
         .single();
 
-      if (!profile?.current_company_id) {
-        setError('No company found for current user');
+      let currentCompanyId = profile?.current_company_id;
+
+      // If no current company is set, try to find any company the user belongs to
+      if (!currentCompanyId) {
+        console.log('No current company set, looking for any company association...');
+        
+        const { data: userRole } = await supabase
+          .from('user_roles')
+          .select('company_id')
+          .eq('user_id', user?.id)
+          .limit(1)
+          .single();
+
+        if (userRole?.company_id) {
+          currentCompanyId = userRole.company_id;
+          
+          // Update the user's profile to set this as their current company
+          await supabase
+            .from('profiles')
+            .update({ current_company_id: currentCompanyId })
+            .eq('id', user?.id);
+            
+          console.log('Set current company to:', currentCompanyId);
+        }
+      }
+
+      if (!currentCompanyId) {
+        setError('You are not associated with any company. Please contact your administrator.');
         return;
       }
+
+      setCompanyId(currentCompanyId);
 
       // Fetch user roles with profile information
       const { data: roles, error: rolesError } = await supabase
@@ -80,7 +111,7 @@ const AccessManagement = () => {
             email
           )
         `)
-        .eq('company_id', profile.current_company_id);
+        .eq('company_id', currentCompanyId);
 
       if (rolesError) {
         console.error('Error fetching user roles:', rolesError);
@@ -188,112 +219,128 @@ const AccessManagement = () => {
 
       {error && (
         <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+          <Building className="h-4 w-4" />
+          <AlertDescription>
+            {error}
+            {error.includes('not associated with any company') && (
+              <div className="mt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => window.location.href = '/company-settings'}
+                >
+                  Go to Company Settings
+                </Button>
+              </div>
+            )}
+          </AlertDescription>
         </Alert>
       )}
 
-      <Tabs defaultValue="users" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="users" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            User Roles
-          </TabsTrigger>
-          <TabsTrigger value="permissions" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Role Matrix & Management
-          </TabsTrigger>
-        </TabsList>
+      {!error && (
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              User Roles
+            </TabsTrigger>
+            <TabsTrigger value="permissions" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Role Matrix & Management
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="users">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                User Roles ({userRoles.length})
-              </CardTitle>
-              <CardDescription>Manage roles and permissions for team members</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {userRoles.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">No team members found</p>
-              ) : (
-                <div className="space-y-4">
-                  {userRoles.map((userRole) => (
-                    <div key={userRole.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                          {userRole.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-medium">{userRole.name}</p>
-                          <p className="text-sm text-muted-foreground">{userRole.email}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Joined {new Date(userRole.joined_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4">
-                        {editingUser === userRole.id ? (
-                          <div className="flex items-center gap-2">
-                            <Select value={newRole || undefined} onValueChange={handleRoleChange}>
-                              <SelectTrigger className="w-48">
-                                <SelectValue placeholder="Select role" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {roles.map((role) => (
-                                  <SelectItem key={role.value} value={role.value}>
-                                    <div>
-                                      <div className="font-medium">{role.label}</div>
-                                      <div className="text-xs text-muted-foreground">{role.description}</div>
-                                    </div>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Button 
-                              size="sm" 
-                              onClick={() => isValidRole(newRole) && handleUpdateRole(userRole.id, newRole)}
-                              disabled={!isValidRole(newRole) || newRole === userRole.role}
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              onClick={cancelEditing}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  User Roles ({userRoles.length})
+                </CardTitle>
+                <CardDescription>Manage roles and permissions for team members</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {userRoles.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-4">No team members found</p>
+                ) : (
+                  <div className="space-y-4">
+                    {userRoles.map((userRole) => (
+                      <div key={userRole.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            {userRole.name.charAt(0).toUpperCase()}
                           </div>
-                        ) : (
-                          <>
-                            <Badge className={getRoleBadgeColor(userRole.role)}>
-                              {roles.find(r => r.value === userRole.role)?.label || userRole.role}
-                            </Badge>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => startEditing(userRole.id, userRole.role)}
-                              disabled={userRole.user_id === user?.id}
-                            >
-                              <Edit3 className="h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
+                          <div>
+                            <p className="font-medium">{userRole.name}</p>
+                            <p className="text-sm text-muted-foreground">{userRole.email}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Joined {new Date(userRole.joined_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          {editingUser === userRole.id ? (
+                            <div className="flex items-center gap-2">
+                              <Select value={newRole || undefined} onValueChange={handleRoleChange}>
+                                <SelectTrigger className="w-48">
+                                  <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {roles.map((role) => (
+                                    <SelectItem key={role.value} value={role.value}>
+                                      <div>
+                                        <div className="font-medium">{role.label}</div>
+                                        <div className="text-xs text-muted-foreground">{role.description}</div>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button 
+                                size="sm" 
+                                onClick={() => isValidRole(newRole) && handleUpdateRole(userRole.id, newRole)}
+                                disabled={!isValidRole(newRole) || newRole === userRole.role}
+                              >
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={cancelEditing}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              <Badge className={getRoleBadgeColor(userRole.role)}>
+                                {roles.find(r => r.value === userRole.role)?.label || userRole.role}
+                              </Badge>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => startEditing(userRole.id, userRole.role)}
+                                disabled={userRole.user_id === user?.id}
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="permissions">
-          <RolePermissionsMatrix />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="permissions">
+            <RolePermissionsMatrix />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };
