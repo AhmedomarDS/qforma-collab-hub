@@ -14,7 +14,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { CheckCircle, ShieldCheck, Zap, Package, Cpu, Smartphone, GitBranch, Download } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
 
 // Pricing plan data
@@ -304,7 +304,7 @@ const Landing = () => {
                 </CardContent>
                 <CardFooter>
                   <Button 
-                    onClick={() => handleRegister(plan.name)} 
+                    onClick={plan.name === 'Enterprise' ? () => navigate('/contact-sales') : () => handleRegister(plan.name)} 
                     className={`w-full ${
                       plan.highlighted 
                         ? 'bg-qforma-blue hover:bg-qforma-blue/90' 
@@ -323,7 +323,7 @@ const Landing = () => {
           
           <div className="mt-12 text-center">
             <p className="text-muted-foreground">
-              {t('landing.pricing.customSolution')} <Button variant="link" className="p-0 h-auto">{t('landing.pricing.contactSales')}</Button>
+              {t('landing.pricing.customSolution')} <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/contact-sales')}>{t('landing.pricing.contactSales')}</Button>
             </p>
           </div>
         </div>
@@ -444,7 +444,7 @@ const Landing = () => {
               variant="outline" 
               size="lg" 
               className="bg-transparent border-white text-white hover:bg-white hover:text-qforma-blue"
-              onClick={() => navigate('/admin')}
+              onClick={() => navigate('/contact-sales')}
             >
               Contact Sales
             </Button>
@@ -513,7 +513,7 @@ const Landing = () => {
                 <ul className="space-y-2">
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.about')}</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.careers')}</Button></li>
-                  <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/admin')}>Contact Sales</Button></li>
+                  <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/contact-sales')}>Contact Sales</Button></li>
                   <li><Button variant="link" className="p-0 h-auto">{t('landing.footer.company.partners')}</Button></li>
                 </ul>
               </div>

@@ -3,246 +3,105 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import { AuthProvider, useAuth } from "./hooks/useAuth";
-import { DashboardProvider } from "./contexts/DashboardContext";
-import { RequirementsProvider } from "./contexts/RequirementsContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import { ProjectProvider } from "./contexts/ProjectContext";
-
+import { RequirementsProvider } from "./contexts/RequirementsContext";
+import { DashboardProvider } from "./contexts/DashboardContext";
+import Index from "./pages/Index";
 import Landing from "./pages/Landing";
+import ContactSales from "./pages/ContactSales";
 import Auth from "./pages/Auth";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import Projects from "./pages/Projects";
+import ProjectDashboard from "./pages/ProjectDashboard";
 import Requirements from "./pages/Requirements";
 import TestCases from "./pages/TestCases";
 import TestPlans from "./pages/TestPlans";
-import TraceabilityMatrix from "./pages/TraceabilityMatrix";
-import Chat from "./pages/Chat";
+import ProjectExecution from "./pages/ProjectExecution";
 import Defects from "./pages/Defects";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Support from "./pages/Support";
-import NotFound from "./pages/NotFound";
-import Projects from "./pages/Projects";
+import CompanySettings from "./pages/CompanySettings";
+import CompanySettingsDetails from "./pages/CompanySettingsDetails";
+import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
+import PlanAndBilling from "./pages/PlanAndBilling";
+import PlanSelection from "./pages/PlanSelection";
 import Tasks from "./pages/Tasks";
-import DesignManagement from "./pages/DesignManagement";
+import Support from "./pages/Support";
 import AutomationTesting from "./pages/AutomationTesting";
 import PerformanceTesting from "./pages/PerformanceTesting";
+import SecurityTesting from "./pages/SecurityTesting";
 import BrowserCompatibility from "./pages/BrowserCompatibility";
 import MobileCompatibility from "./pages/MobileCompatibility";
-import SecurityTesting from "./pages/SecurityTesting";
-import PlanSelection from "./pages/PlanSelection";
-import PlanAndBilling from "./pages/PlanAndBilling";
-import CompanySettingsInvitations from "./pages/CompanySettingsInvitations";
-import CompanySettingsDetails from "./pages/CompanySettingsDetails";
-import ProjectExecution from "./pages/ProjectExecution";
-import ProjectDashboard from "./pages/ProjectDashboard";
-// import { FloatingSupportChatbot } from "./components/support/FloatingSupportChatbot";
+import DesignManagement from "./pages/DesignManagement";
+import TraceabilityMatrix from "./pages/TraceabilityMatrix";
+import ReleaseManagement from "./pages/ReleaseManagement";
+import Chat from "./pages/Chat";
+import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
+
+import "./App.css";
 
 const queryClient = new QueryClient();
 
-// Protected Route wrapper component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <DashboardProvider>
-        <RequirementsProvider>
-          <ProjectProvider>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
             <ChatProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/landing" element={<Landing />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/plan-selection" element={<PlanSelection />} />
-                    
-                    <Route path="/" element={<Navigate to="/landing" replace />} />
-                    
-                    {/* QForma Admin Route - separate from customer space */}
-                    <Route path="/admin" element={
-                      <ProtectedRoute>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    } />
-                    
-                    {/* Customer Space Routes */}
-                    <Route path="/dashboard" element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/plan-billing" element={
-                      <ProtectedRoute>
-                        <PlanAndBilling />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/project-execution" element={
-                      <ProtectedRoute>
-                        <ProjectExecution />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/projects" element={
-                      <ProtectedRoute>
-                        <Projects />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/projects/:projectId/dashboard" element={
-                      <ProtectedRoute>
-                        <ProjectDashboard />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/project-dashboard" element={
-                      <ProtectedRoute>
-                        <ProjectDashboard />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/requirements" element={
-                      <ProtectedRoute>
-                        <Requirements />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/test-cases" element={
-                      <ProtectedRoute>
-                        <TestCases />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/test-plans" element={
-                      <ProtectedRoute>
-                        <TestPlans />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/traceability-matrix" element={
-                      <ProtectedRoute>
-                        <TraceabilityMatrix />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/chat" element={
-                      <ProtectedRoute>
-                        <Chat />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/defects" element={
-                      <ProtectedRoute>
-                        <Defects />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/reports" element={
-                      <ProtectedRoute>
-                        <Reports />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/settings" element={
-                      <ProtectedRoute>
-                        <Settings />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/support" element={
-                      <ProtectedRoute>
-                        <Support />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/tasks" element={
-                      <ProtectedRoute>
-                        <Tasks />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/design-management" element={
-                      <ProtectedRoute>
-                        <DesignManagement />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/automation-testing" element={
-                      <ProtectedRoute>
-                        <AutomationTesting />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/performance-testing" element={
-                      <ProtectedRoute>
-                        <PerformanceTesting />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/browser-compatibility" element={
-                      <ProtectedRoute>
-                        <BrowserCompatibility />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/mobile-compatibility" element={
-                      <ProtectedRoute>
-                        <MobileCompatibility />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/security-testing" element={
-                      <ProtectedRoute>
-                        <SecurityTesting />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/company-settings/invitations" element={
-                      <ProtectedRoute>
-                        <CompanySettingsInvitations />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="/company-settings/details" element={
-                      <ProtectedRoute>
-                        <CompanySettingsDetails />
-                      </ProtectedRoute>
-                    } />
-                    
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                  {/* <FloatingSupportChatbot /> */}
-                </BrowserRouter>
-              </TooltipProvider>
+              <ProjectProvider>
+                <RequirementsProvider>
+                  <DashboardProvider>
+                    <Routes>
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/contact-sales" element={<ContactSales />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/projects" element={<Projects />} />
+                      <Route path="/projects/:id" element={<ProjectDashboard />} />
+                      <Route path="/requirements" element={<Requirements />} />
+                      <Route path="/test-cases" element={<TestCases />} />
+                      <Route path="/test-plans" element={<TestPlans />} />
+                      <Route path="/test-execution" element={<ProjectExecution />} />
+                      <Route path="/defects" element={<Defects />} />
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/company-settings" element={<CompanySettings />} />
+                      <Route path="/company-settings/details" element={<CompanySettingsDetails />} />
+                      <Route path="/company-settings/invitations" element={<CompanySettingsInvitations />} />
+                      <Route path="/plan-billing" element={<PlanAndBilling />} />
+                      <Route path="/plan-selection" element={<PlanSelection />} />
+                      <Route path="/tasks" element={<Tasks />} />
+                      <Route path="/support" element={<Support />} />
+                      <Route path="/automation-testing" element={<AutomationTesting />} />
+                      <Route path="/performance-testing" element={<PerformanceTesting />} />
+                      <Route path="/security-testing" element={<SecurityTesting />} />
+                      <Route path="/browser-compatibility" element={<BrowserCompatibility />} />
+                      <Route path="/mobile-compatibility" element={<MobileCompatibility />} />
+                      <Route path="/design-management" element={<DesignManagement />} />
+                      <Route path="/traceability-matrix" element={<TraceabilityMatrix />} />
+                      <Route path="/release-management" element={<ReleaseManagement />} />
+                      <Route path="/chat" element={<Chat />} />
+                      <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </DashboardProvider>
+                </RequirementsProvider>
+              </ProjectProvider>
             </ChatProvider>
-          </ProjectProvider>
-        </RequirementsProvider>
-      </DashboardProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

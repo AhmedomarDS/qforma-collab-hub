@@ -3,10 +3,19 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { Mail, Building, Phone, MessageSquare } from 'lucide-react';
+
+interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  phone?: string;
+  message?: string;
+  created_at: string;
+}
 
 export const ContactSubmissionsManagement = () => {
   const { data: contactSubmissions, isLoading } = useQuery({
@@ -18,7 +27,7 @@ export const ContactSubmissionsManagement = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as ContactSubmission[];
     }
   });
 
